@@ -6,23 +6,31 @@ public class Particle {
     private double y;
     private double radius;
 
-    public int getId() {
-        return id;
-    }
+    private double property;
 
-    public Particle(int id, double boardLength, double radius) {
+    public Particle(int id, double boardLength, double radius,double property) {
         this.id=id;
         this.x= Math.random()*boardLength;
         this.y= Math.random()*boardLength;
+        this.radius = radius;
+        this.property = property;
+    }
+
+        public Particle(int id, double x, double y, double radius,double property) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
         this.radius = radius;
     }
 
     @Override
     public String toString() {
         return "Particle{" +
-                "x=" + x +
+                "id=" + id +
+                ", x=" + x +
                 ", y=" + y +
                 ", radius=" + radius +
+                ", property=" + property +
                 '}';
     }
 
@@ -45,6 +53,10 @@ public class Particle {
 
     public double getRadius() {
         return radius;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
