@@ -1,6 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,21 +36,10 @@ public class CellIndexMethod {
             System.out.println(l);
        });
 
-       generateOutput(neighborsMap);
+       Parser.generateOutput(neighborsMap,OUTPUT_FILE);
+
     }
 
-    public static void generateOutput(Map<Particle,List<Particle>> neighbors) throws IOException {
-        FileWriter fw = new FileWriter(OUTPUT_FILE);
-        BufferedWriter bw = new BufferedWriter(fw);
-
-
-        neighbors.forEach((particle, particles) -> {
-        });
-
-        bw.flush();
-        bw.close();
-
-}
 
       public static void setL(int l) {
         L = l;

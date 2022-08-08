@@ -1,9 +1,7 @@
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class Parser {
@@ -33,6 +31,32 @@ public class Parser {
         }
 
         return particles;
+    }
+
+     public static  void generateOutput(Map<Particle,List<Particle>> neighbors, String path) throws IOException {
+
+            File file = new File(path);
+            if(!file.exists()){
+                file.createNewFile();
+            }
+
+        FileWriter fw = new FileWriter(file,true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        neighbors.forEach((particle, particles) -> {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append("[ ");
+                    sb.append(particle.getId());
+                    for (Particle p: particles) {
+                        sb.append(String.format(" %d",p.getId()));
+                    }
+                     sb.append(" ]");
+                     pw.println(sb);
+
+        });
+
+        pw.close();
     }
 
 
