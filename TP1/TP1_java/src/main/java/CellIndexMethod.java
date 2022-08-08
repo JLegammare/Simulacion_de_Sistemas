@@ -1,3 +1,5 @@
+import org.apache.commons.cli.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -21,8 +23,39 @@ public class CellIndexMethod {
 
     public static void main(String[] args) throws IOException {
 
-        List<Particle> particles = Parser.parseParticles(STATIC_FILE,DYNAMIC_FILE);
-        double boardLength = L*M;
+        Options options = new Options();
+
+        Option dynamicInput = new Option("d", "dynamic-input", true, "dynamic input file path");
+        dynamicInput.setRequired(true);
+        options.addOption(dynamicInput);
+
+        Option staticInput = new Option("s", "static-input", true, "static input file path");
+        staticInput.setRequired(true);
+        options.addOption(staticInput);
+
+        Option output = new Option("o", "output", true, "output file path");
+        output.setRequired(true);
+        options.addOption(output);
+
+        CommandLineParser parser = new DefaultParser();
+        HelpFormatter formatter = new HelpFormatter();
+        CommandLine cmd;
+
+        try{
+            cmd = parser.parse(options,args);
+
+        } catch (ParseException e) {
+            System.out.println(e.getMessage());
+            formatter.printHelp("utility-name",options);
+            throw new RuntimeException(e);
+        }
+
+        String staticInputFilePath = cmd.getOptionValue("static-input");
+        String dynamicInputFilePath = cmd.getOptionValue("dynamic-input");
+        String outputFilePath = cmd.getOptionValue("output");
+
+
+        List<Particle> particles = Parser.parseParticles(staticInputFilePath,dynamicInputFilePath);
 
         Map<Particle,List<Particle>> neighborsMap = new HashMap<>();
 
@@ -32,11 +65,7 @@ public class CellIndexMethod {
             ).collect(Collectors.toList()));
         }
 
-       neighborsMap.forEach((i,l)->{
-            System.out.println(l);
-       });
-
-       Parser.generateOutput(neighborsMap,OUTPUT_FILE);
+       Parser.generateOutput(neighborsMap,outputFilePath);
 
     }
 

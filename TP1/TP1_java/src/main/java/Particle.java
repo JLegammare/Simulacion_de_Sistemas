@@ -21,6 +21,7 @@ public class Particle {
         this.x = x;
         this.y = y;
         this.radius = radius;
+        this.property = property;
     }
 
     @Override
