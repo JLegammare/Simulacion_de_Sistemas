@@ -21,7 +21,7 @@ public class CellIndexMethod {
         Set<Particle> possibleNeighbors;
         List<Cell> cells = new ArrayList<>();
 
-        double boardLength = l*m;
+        int square_m= m*m;
 
         List<Particle> particles = parser.parseParticles(staticInputFilePath,dynamicInputFilePath, l, m);
 
@@ -30,7 +30,7 @@ public class CellIndexMethod {
             System.exit(1);
         }
 
-        for(int i = 0; i < m*m; i++)
+        for(int i = 0; i < square_m; i++)
             cells.add(new Cell(i));
 
         for (int i = 0; i < n; i++) {
@@ -38,7 +38,7 @@ public class CellIndexMethod {
             cells.get(p.getCellNum()).addParticle(p);
         }
 
-        for(int i = 0; i < m*m; i++) {
+        for(int i = 0; i < square_m; i++) {
             Cell c = cells.get(i);
             c.addHalfNeighbors(cells, m);
 
@@ -53,21 +53,7 @@ public class CellIndexMethod {
         }
         completeNeighborsList(particles);
 
-//        Map<Particle,List<Particle>> neighborsMap = new HashMap<>();
-//
-//        for (Particle p: particles) {
-//            neighborsMap.put(p,particles.stream().filter(particle ->
-//                particle.checkIfNeighbor(p,rc)
-//            ).collect(Collectors.toList()));
-//        }
-
-        particles.forEach((i) -> {
-            System.out.println(i.getId() + "->" + i.getNeighbors().stream().map(Particle::getId).sorted().collect(Collectors.toList()));
-        });
-
-
-
-       //parser.generateOutput(neighborsMap,outputFilePath);
+       parser.generateOutput(particles,outputFilePath);
 
     }
 

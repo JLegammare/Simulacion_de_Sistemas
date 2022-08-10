@@ -33,7 +33,7 @@ public class Parser {
         return particles;
     }
 
-    public void generateOutput(Map<Particle,List<Particle>> neighbors, String path) throws IOException {
+    public void generateOutput(List<Particle> particles, String path) throws IOException {
 
         File file = new File(path);
         if(!file.exists()){
@@ -44,10 +44,10 @@ public class Parser {
         BufferedWriter bw = new BufferedWriter(fw);
         PrintWriter pw = new PrintWriter(bw);
 
-        neighbors.forEach((particle, particles) -> {
+        particles.forEach((particle) -> {
             StringBuilder sb = new StringBuilder();
             sb.append(particle.getId());
-            for (Particle p: particles) {
+            for (Particle p: particle.getNeighbors()) {
                 sb.append(String.format(" %d",p.getId()));
             }
             pw.println(sb);
