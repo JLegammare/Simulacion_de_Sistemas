@@ -46,12 +46,10 @@ public class Parser {
 
         neighbors.forEach((particle, particles) -> {
             StringBuilder sb = new StringBuilder();
-            sb.append("[ ");
             sb.append(particle.getId());
             for (Particle p: particles) {
                 sb.append(String.format(" %d",p.getId()));
             }
-            sb.append(" ]");
             pw.println(sb);
 
         });
