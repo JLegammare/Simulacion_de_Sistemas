@@ -5,13 +5,14 @@ import plotly.graph_objects as go
 from models.config import Config
 
 
+#TODO: remove magic numbers
 def plot_dots(particles: List, neighbors: List, config: Config):
     x_values: List = []
     y_values: List = []
     radius: List = []
     color: List = []
     n = len(particles)
-    plot_size: float = config.L * config.M * 2
+    plot_size: float = config.L * config.M
 
     for i in range(len(particles)):
         x_values.append(particles[i].x)
@@ -23,11 +24,13 @@ def plot_dots(particles: List, neighbors: List, config: Config):
         x=x_values,
         y=y_values,
         mode='markers',
+
         marker=dict(size=radius, color=color))
     )
     fig.update_layout(
         width=plot_size,
         height=plot_size
     )
+
 
     fig.show()

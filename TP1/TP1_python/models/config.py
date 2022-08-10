@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Config:
-    M: int
     N: int
+    M: int
     Rc: float
     L: float
     static_file: str
