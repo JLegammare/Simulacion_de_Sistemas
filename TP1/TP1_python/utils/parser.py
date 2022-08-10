@@ -1,6 +1,4 @@
 import argparse
-import getopt
-import sys
 from typing import List
 
 from models.config import Config

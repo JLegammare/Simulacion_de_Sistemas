@@ -13,17 +13,16 @@ public class CellIndexMethod {
         String staticInputFilePath = cmd.getOptionValue("static-input");
         String dynamicInputFilePath = cmd.getOptionValue("dynamic-input");
         String outputFilePath = cmd.getOptionValue("output");
+
         int n = Integer.parseInt(cmd.getOptionValue("n_particles"));
         int l = Integer.parseInt(cmd.getOptionValue("length"));
-        int rc = Integer.parseInt(cmd.getOptionValue("i_radius"));
-
+        float rc = Integer.parseInt(cmd.getOptionValue("i_radius"));
         int m = Integer.parseInt(cmd.getOptionValue("m_cells"));
-        Set<Particle> possibleNeighbors;
-        List<Cell> cells = new ArrayList<>();
-
-        int square_m= m*m;
 
         List<Particle> particles = parser.parseParticles(staticInputFilePath,dynamicInputFilePath, l, m);
+        List<Cell> cells = new ArrayList<>();
+        int square_m= m*m;
+
 
         if (particles.size() != n){
             //TODO: Throw exception and show a message
@@ -37,6 +36,18 @@ public class CellIndexMethod {
             Particle p = particles.get(i);
             cells.get(p.getCellNum()).addParticle(p);
         }
+
+        getNeighborsList(m,cells,particles,rc);
+
+       parser.generateOutput(particles,outputFilePath);
+
+    }
+
+    //completes the list of neighbors a particle has
+
+    private static void getNeighborsList(int m, List<Cell> cells, List<Particle> particles, float rc){
+        Set<Particle> possibleNeighbors;
+        int square_m = m*m;
 
         for(int i = 0; i < square_m; i++) {
             Cell c = cells.get(i);
@@ -53,12 +64,9 @@ public class CellIndexMethod {
         }
         completeNeighborsList(particles);
 
-       parser.generateOutput(particles,outputFilePath);
-
     }
 
-    //completes the list of neighbors a particle has
-    private static void completeNeighborsList(List<Particle> particles){
+        private static void completeNeighborsList(List<Particle> particles){
         for(Particle particle : particles){
             for(Particle neighbor : particle.getNeighbors()){
                 if(!neighbor.getNeighbors().contains(particle))
@@ -66,6 +74,7 @@ public class CellIndexMethod {
             }
         }
     }
+
 
 
 }

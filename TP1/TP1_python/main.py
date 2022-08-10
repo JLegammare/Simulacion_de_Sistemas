@@ -1,9 +1,6 @@
-import sys
-
 from models.config import Config
-from utils.parser import parse_arguments, parse_input_particles, parse_output_file
-
 from plots.plot import plot_dots
+from utils.parser import parse_arguments, parse_input_particles, parse_output_file
 
 
 def main(config: Config):
@@ -14,5 +11,5 @@ def main(config: Config):
 
 
 if __name__ == '__main__':
-    config = parse_arguments()
-    main(config)
+    conf = parse_arguments()
+    main(conf)

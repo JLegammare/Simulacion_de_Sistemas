@@ -1,38 +1,74 @@
+import random
 from typing import List
 
 import plotly.graph_objects as go
 
 from models.config import Config
 
+# TODO: remove magic numbers
+from models.particle import Particle
 
-#TODO: remove magic numbers
-def plot_dots(particles: List, neighbors: List, config: Config):
-    x_values: List = []
-    y_values: List = []
-    radius: List = []
-    color: List = []
+
+def plot_dots(particles: List[Particle], neighbors: List[List[int]], config: Config):
+    x_values = list(map(lambda p: p.x, particles))
+    y_values = list(map(lambda p: p.y, particles))
+    text = list(map(lambda p: "id: {id}".format(id=p.id), particles))
+
     n = len(particles)
-    plot_size: float = config.L * config.M
-
-    for i in range(len(particles)):
-        x_values.append(particles[i].x)
-        y_values.append(particles[i].y)
-        radius.append(particles[i].radius * 30)
-        color.append(7)
-
-    fig = go.Figure(data=go.Scatter(
-        x=x_values,
-        y=y_values,
-        mode='markers',
-
-        marker=dict(size=radius, color=color))
-    )
+    plot_size = 1000
+    fig = go.Figure()
     fig.update_layout(
         width=plot_size,
         height=plot_size
     )
 
-    fig.update_xaxes(dtick=config.L)
-    fig.update_yaxes(dtick=config.L)
+    n_random = random.randrange(0, n, 1)
+    neighborhood_ids = neighbors[n_random]
+    neighbors_particles = []
+    n = len(neighborhood_ids)
+
+    for i in range(n):
+        neighbors_particles.append(particles[neighborhood_ids[i]])
+
+    for i in range(n):
+        particles.remove(neighbors_particles[i])
+
+    _create_circles(neighbors_particles, "LightSeaGreen",fig, config.Rc)
+
+    chosen_particle = neighbors_particles.pop(0)
+
+    _create_circles(neighbors_particles, "blue", fig,0)
+    _create_circles([chosen_particle], "red", fig,0)
+    _create_circles(particles, "yellow", fig,0)
+
+    fig.add_trace(go.Scatter(
+        x=x_values,
+        y=y_values,
+        mode='markers',
+        text=text,
+    ))
 
     fig.show()
+
+
+def _create_circles(particles: List[Particle], color, fig, rc):
+    n = len(particles)
+
+    for i in range(n):
+        chosen_particle = particles[i]
+        x, y = chosen_particle.x, chosen_particle.y
+        radius = chosen_particle.radius
+        x0, y0 = x - radius - rc, y - radius - rc
+        x1, y1 = x + radius + rc, y + radius + rc
+        if rc != 0:
+            fig.add_shape(type="circle",
+                          xref="x", yref="y",
+                          x0=x0, y0=y0, x1=x1, y1=y1,
+                          line_color=color,
+                          )
+        else:
+            fig.add_shape(type="circle",
+                          xref="x", yref="y",
+                          x0=x0, y0=y0, x1=x1, y1=y1,
+                          fillcolor=color,
+                          )
