@@ -8,7 +8,7 @@ import java.util.Scanner;
 
 public class Parser {
 
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath) throws IOException {
+    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath, int l, int m) throws IOException {
 
         File staticFile = new File(staticFilePath);
         File dynamicFile = new File(dynamicFilePath);
@@ -27,7 +27,7 @@ public class Parser {
             double property = staticScanner.nextDouble();
             double posX = dynamicScanner.nextDouble();
             double posY = dynamicScanner.nextDouble();
-            particles.add(new Particle(j,posX,posY,radius,property));
+            particles.add(new Particle(j,posX,posY,radius,property, l, m));
         }
 
         return particles;

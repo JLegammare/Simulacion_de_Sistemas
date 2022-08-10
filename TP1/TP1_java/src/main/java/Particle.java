@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class Particle {
@@ -5,6 +7,8 @@ public class Particle {
     private double x;
     private double y;
     private double radius;
+    private int cellNum;
+    private List<Particle> neighbors = new ArrayList<>();
 
     private double property;
 
@@ -16,12 +20,13 @@ public class Particle {
         this.property = property;
     }
 
-        public Particle(int id, double x, double y, double radius,double property) {
+        public Particle(int id, double x, double y, double radius,double property, int L, int M) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.property = property;
+        this.cellNum = calculateCellNum(x, y, L, M);
     }
 
     @Override
@@ -44,6 +49,10 @@ public class Particle {
         return !this.equals(p) && calculateDistance(p) <= rc;
     }
 
+    public void addNeighbor(Particle p){
+        neighbors.add(p);
+    }
+
     public double getX() {
         return x;
     }
@@ -58,6 +67,26 @@ public class Particle {
 
     public int getId() {
         return id;
+    }
+
+    public int getCellNum() {
+        return cellNum;
+    }
+
+    public List<Particle> getNeighbors() {
+        return neighbors;
+    }
+
+    public void setNeighbors(List<Particle> neighbors) {
+        this.neighbors = neighbors;
+    }
+
+    public int calculateCellNum(double x, double y, int L, int M){
+        int col = (int) x/L;
+        int row = (int) y/L;
+
+        return col + M*(row % M);
+
     }
 
     @Override
