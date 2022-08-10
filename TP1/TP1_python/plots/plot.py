@@ -32,5 +32,7 @@ def plot_dots(particles: List, neighbors: List, config: Config):
         height=plot_size
     )
 
+    fig.update_xaxes(dtick=config.L)
+    fig.update_yaxes(dtick=config.L)
 
     fig.show()
