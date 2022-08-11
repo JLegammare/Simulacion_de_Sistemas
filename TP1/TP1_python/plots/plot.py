@@ -5,24 +5,22 @@ import plotly.graph_objects as go
 
 from models.config import Config
 
-# TODO: remove magic numbers
 from models.particle import Particle
 
+PLOT_SIZE = 1000
 
 def plot_dots(particles: List[Particle], neighbors: List[List[int]], config: Config):
     x_values = list(map(lambda p: p.x, particles))
     y_values = list(map(lambda p: p.y, particles))
     text = list(map(lambda p: "id: {id}".format(id=p.id), particles))
 
-    n = len(particles)
-    plot_size = 1000
     fig = go.Figure()
     fig.update_layout(
-        width=plot_size,
-        height=plot_size
+        width=PLOT_SIZE,
+        height=PLOT_SIZE
     )
 
-    n_random = random.randrange(0, n, 1)
+    n_random = random.randrange(0, len(particles), 1)
     neighborhood_ids = neighbors[n_random]
     neighbors_particles = []
     n = len(neighborhood_ids)
