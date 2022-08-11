@@ -81,7 +81,8 @@ public class Particle {
         this.neighbors = neighbors;
     }
 
-    public int calculateCellNum(double x, double y, int L, int M){
+    private int calculateCellNum(double x, double y, int L, int M){
+
         int col = (int) x/L;
         int row = (int) y/L;
 
