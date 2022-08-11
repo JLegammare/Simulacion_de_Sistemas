@@ -9,6 +9,7 @@ from models.particle import Particle
 
 PLOT_SIZE = 1000
 
+
 def plot_dots(particles: List[Particle], neighbors: List[List[int]], config: Config):
     x_values = list(map(lambda p: p.x, particles))
     y_values = list(map(lambda p: p.y, particles))
@@ -31,13 +32,13 @@ def plot_dots(particles: List[Particle], neighbors: List[List[int]], config: Con
     for i in range(n):
         particles.remove(neighbors_particles[i])
 
-    _create_circles(neighbors_particles, "LightSeaGreen",fig, config.Rc)
+    _create_circles(neighbors_particles, "LightSeaGreen", fig, config.Rc)
 
     chosen_particle = neighbors_particles.pop(0)
 
-    _create_circles(neighbors_particles, "blue", fig,0)
-    _create_circles([chosen_particle], "red", fig,0)
-    _create_circles(particles, "yellow", fig,0)
+    _create_circles(neighbors_particles, "blue", fig, 0)
+    _create_circles([chosen_particle], "red", fig, 0)
+    _create_circles(particles, "yellow", fig, 0)
 
     fig.add_trace(go.Scatter(
         x=x_values,
