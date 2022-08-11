@@ -1,7 +1,6 @@
 import org.apache.commons.cli.*;
 
 import java.io.*;
-import java.net.PasswordAuthentication;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,68 +19,65 @@ public class CellIndexMethod {
         float rc = Integer.parseInt(cmd.getOptionValue("i_radius"));
         int m = Integer.parseInt(cmd.getOptionValue("m_cells"));
 
-        boolean borders = true;
+        boolean borders = false;
 
         List<Particle> particles = parser.parseParticles(staticInputFilePath,dynamicInputFilePath, l, m);
 
 
-        if (particles.size() != n){
+         if (particles.size() != n){
             //TODO: Throw exception and show a message
             System.exit(1);
         }
 
         Cell[][] cells = createCells(m,borders);
 
-        Map<Particle,Set<Particle>> neighborhoods= new HashMap<>();
+        Map<Particle,List<Particle>> neighborhoods= new HashMap<>();
 
         for (int i = 0; i < n; i++) {
             Particle p = particles.get(i);
             addParticle(p, cells, borders, m);
         }
 
-        //todo: borrar
-        for (Cell[] cell : cells) {
-            for (Cell value : cell) {
-                System.out.print(value);
-            }
-            System.out.println();
-        }
+//        //todo: borrar
+//        for (Cell[] cell : cells) {
+//            for (Cell value : cell) {
+//                System.out.print(value);
+//            }
+//            System.out.println();
+//        }
 
-        getNeighborsList(m,cells,particles,rc,neighborhoods,borders);
+        getAllNeighbors(m,cells,particles,rc,neighborhoods,borders);
 //
-//        parser.generateOutput(particles,outputFilePath);
+        parser.generateOutput(neighborhoods,outputFilePath);
+
+        particles.forEach((i) -> {
+            System.out.println(i.getId() + "->" + neighborhoods.get(i).stream().map(Particle::getId).sorted().collect(Collectors.toList()));
+        });
 
     }
 
     //completes the list of neighbors a particle has
 
-    private static void getNeighborsList(int m, Cell[][] cells, List<Particle> particles, float rc,Map<Particle,Set<Particle>> neighborhoods, boolean borders){
-        Set<Particle> possibleNeighbors;
+    private static void getAllNeighbors(int m, Cell[][] cells, List<Particle> particles, float rc, Map<Particle,List<Particle>> neighborhoods, boolean borders){
+        List<Particle> possibleNeighbors;
         Map<Cell,List<Cell>> cellsMap = new HashMap<>();
         int aux_m = borders?m+1:m;
-        int square_m = m*m;
+
 
         for(int i= borders?1:0; i < aux_m; i++){
             for(int j= borders?1:0; j < aux_m; j++){
                 Cell c = cells[i][j];
                 cellsMap.put(c,addHalfNeighbors(i,j, cells, m,borders));
-                //Esta linea
-
-                possibleNeighbors = c.findPossibleNeighbors();
+                possibleNeighbors = findPossibleNeighbors(c, cellsMap.get(c));
                 for (Particle p : c.getParticles()) {
-                    p.setNeighbors(possibleNeighbors.stream().filter(particle ->
+                    neighborhoods.put(p,possibleNeighbors.stream().filter(particle ->
                             particle.checkIfNeighbor(p, rc)).collect(Collectors.toList()));
-
-                    //todo: creo que se puede borrar esto
-                    if (!particles.contains(p)) {
-                        particles.add(p);
-                    }
                 }
-
             }
         }
+        completeNeighborsList(particles, neighborhoods);
 
-        completeNeighborsList(particles);
+
 
     }
 
@@ -109,16 +105,17 @@ public class CellIndexMethod {
         return cellList;
     }
 
-        private static void completeNeighborsList(List<Particle> particles){
+
+    private static void completeNeighborsList(List<Particle> particles, Map<Particle,List<Particle>> neighborhoods){
             for(Particle particle : particles){
-                for(Particle neighbor : particle.getNeighbors()){
-                    if(!neighbor.getNeighbors().contains(particle))
-                        neighbor.addNeighbor(particle);
+                for(Particle neighbor : neighborhoods.get(particle)){
+                    if(!neighborhoods.get(neighbor).contains(particle))
+                        neighborhoods.put(neighbor, neighborhoods.get(neighbor));
                 }
             }
         }
 
-        private static Cell[][] createCells(int m, boolean borders){
+    private static Cell[][] createCells(int m, boolean borders){
 
             int aux_m = borders?m+1:m;
             int id = 0;
@@ -151,10 +148,10 @@ public class CellIndexMethod {
             return cellsBoard;
         }
 
-        private static void addParticle(Particle particle, Cell[][] cells,boolean borders,int m){
+    private static void addParticle(Particle particle, Cell[][] cells,boolean borders,int m){
             int aux_m = borders?m+1:m;
-            for (int i= borders?1:0; i <m; i++) {
-                for (int j= borders?1:0; j <m; j++) {
+            for (int i= borders?1:0; i <aux_m; i++) {
+                for (int j= borders?1:0; j <aux_m; j++) {
                     Cell cell = cells[i][j];
                     if(cell.getNumber() == particle.getCellNum()){
                         cell.addParticle(particle);
@@ -165,9 +162,15 @@ public class CellIndexMethod {
 
         }
 
-        private static void findNeighbors(List<Particle> particles, Cell[][] cells){
-
+    public static List<Particle> findPossibleNeighbors(Cell cell, List<Cell> neighborCells){
+        List<Particle> possibleNeighbors = new ArrayList<>();
+        if(!cell.getParticles().isEmpty()){
+            possibleNeighbors.addAll(cell.getParticles());
+            for(Cell c: neighborCells){
+                possibleNeighbors.addAll(c.getParticles());
+            }
         }
-
-
+        return possibleNeighbors;
     }
+
+}

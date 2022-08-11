@@ -22,29 +22,29 @@ public class Cell {
         particles.add(p);
     }
 
-    public void addHalfNeighbors(Cell[][] cells, int M){
-
-
-        //add right cell
-        if((x+1) % M > 0 && x > 0){
-            halfNeighborCells.add(cells[y][x+1]);
-        }
-        //add diagonal down right cell
-        if((number + M) < M*M && (number + M + 1) % M > 0 ) {
-          //  halfNeighborCells.add(cells.get(number + M + 1));
-        }
-        //add upper cell
-        if( y > 0 && ((number - M) % M >= 0 || (number - M) == 0)){
-         //   halfNeighborCells.add(cells.get(number - M));
-        }
-        //add diagonal up cell
-        if((number - M + 1) % M != 0 && number - M >= 0){
-       //     halfNeighborCells.add(cells.get(number - M + 1));
-        }
-
-        System.out.println(number + "--->" + halfNeighborCells.stream().map(Cell::getNumber).sorted().collect(Collectors.toList()) );
-
-    }
+//    public void addHalfNeighbors(Cell[][] cells, int M){
+//
+//
+//        //add right cell
+//        if((x+1) % M > 0 && x > 0){
+//            halfNeighborCells.add(cells[y][x+1]);
+//        }
+//        //add diagonal down right cell
+//        if((number + M) < M*M && (number + M + 1) % M > 0 ) {
+//          //  halfNeighborCells.add(cells.get(number + M + 1));
+//        }
+//        //add upper cell
+//        if( y > 0 && ((number - M) % M >= 0 || (number - M) == 0)){
+//         //   halfNeighborCells.add(cells.get(number - M));
+//        }
+//        //add diagonal up cell
+//        if((number - M + 1) % M != 0 && number - M >= 0){
+//       //     halfNeighborCells.add(cells.get(number - M + 1));
+//        }
+//
+//        System.out.println(number + "--->" + halfNeighborCells.stream().map(Cell::getNumber).sorted().collect(Collectors.toList()) );
+//
+//    }
 
 //    public void addHalfNeighborsNoBorders(List<Cell> cells, int M){
 //
@@ -72,17 +72,17 @@ public class Cell {
 //    }
 
 
-    public Set<Particle> findPossibleNeighbors(){
-        if(!particles.isEmpty()) {
-            for (Cell cell : halfNeighborCells) {
-
-                possibleNeighbors.addAll(cell.particles);
-                possibleNeighbors.addAll(particles);
-            }
-        }
-        return possibleNeighbors;
-
-    }
+//    public Set<Particle> findPossibleNeighbors(){
+//        if(!particles.isEmpty()) {
+//            for (Cell cell : halfNeighborCells) {
+//
+//                possibleNeighbors.addAll(cell.particles);
+//                possibleNeighbors.addAll(particles);
+//            }
+//        }
+//        return possibleNeighbors;
+//
+//    }
 
     //TODO: hacer lo mismo pero sin bordes
 

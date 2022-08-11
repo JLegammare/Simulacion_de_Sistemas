@@ -37,6 +37,7 @@ public class Particle {
                 ", y=" + y +
                 ", radius=" + radius +
                 ", property=" + property +
+                ", CELL=" + cellNum +
                 '}';
     }
 
