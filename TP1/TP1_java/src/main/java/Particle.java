@@ -8,8 +8,6 @@ public class Particle {
     private double y;
     private double radius;
     private int cellNum;
-    private List<Particle> neighbors = new ArrayList<>();
-
     private double property;
 
     public Particle(int id, double boardLength, double radius,double property) {
@@ -20,13 +18,26 @@ public class Particle {
         this.property = property;
     }
 
-        public Particle(int id, double x, double y, double radius,double property, int L, int M) {
+    public Particle(int id, double x, double y, double radius,double property, int L, int M) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.radius = radius;
         this.property = property;
         this.cellNum = calculateCellNum(x, y, L, M);
+    }
+
+    public double getProperty() {
+        return property;
+    }
+
+    public Particle(int id, double x, double y, double radius, double property, int cellNum) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.property = property;
+        this.cellNum = cellNum;
     }
 
     @Override
@@ -42,17 +53,13 @@ public class Particle {
     }
 
     public double calculateDistance(Particle p){
-        double a = Math.sqrt(Math.pow(x-p.x,2) + Math.pow(y-p.y,2))-p.radius-radius;
-        return a;
+        return Math.sqrt(Math.pow(x-p.x,2) + Math.pow(y-p.y,2))-p.radius-radius;
     }
 
     public boolean checkIfNeighbor(Particle p,double rc){
         return !this.equals(p) && calculateDistance(p) <= rc;
     }
 
-    public void addNeighbor(Particle p){
-        neighbors.add(p);
-    }
 
     public double getX() {
         return x;
@@ -74,18 +81,16 @@ public class Particle {
         return cellNum;
     }
 
-    public List<Particle> getNeighbors() {
-        return neighbors;
-    }
-
-    public void setNeighbors(List<Particle> neighbors) {
-        this.neighbors = neighbors;
-    }
 
     private int calculateCellNum(double x, double y, int L, int M){
+        List<Integer> aux = new ArrayList<>();
+
+        for (int i = M; i >0 ; i--) {
+            aux.add(i);
+        }
 
         int col = (int) x/L;
-        int row = (int) y/L;
+        int row = aux.get(((int) y/L));
 
         return col + M*(row % M);
 

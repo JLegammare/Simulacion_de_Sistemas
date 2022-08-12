@@ -21,7 +21,7 @@ def plot_dots(particles: List[Particle], neighbors: List[List[int]], config: Con
         height=PLOT_SIZE
     )
 
-    n_random = random.randrange(0, len(particles), 1)
+    n_random = 10
     neighborhood_ids = neighbors[n_random]
     neighbors_particles = []
     n = len(neighborhood_ids)
