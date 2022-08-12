@@ -23,10 +23,10 @@ public class Parser {
         List<Particle> particles = new ArrayList<>();
 
         for (int j = 0; staticScanner.hasNextLine() && dynamicScanner.hasNextLine(); j++) {
-            double radius = staticScanner.nextDouble();
-            double property = staticScanner.nextDouble();
-            double posX = dynamicScanner.nextDouble();
-            double posY = dynamicScanner.nextDouble();
+            float radius = staticScanner.nextFloat();
+            float property = staticScanner.nextFloat();
+            float posX = dynamicScanner.nextFloat();
+            float posY = dynamicScanner.nextFloat();
             particles.add(new Particle(j,posX,posY,radius,property, l, m));
         }
 

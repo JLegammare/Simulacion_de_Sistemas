@@ -2,98 +2,74 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class Particle {
+public class Particle implements Comparable<Particle> {
     private int id;
-    private double x;
-    private double y;
-    private double radius;
-    private int cellNum;
+    private Pair<Float, Float> coordinates;
+    private float radius;
     private double property;
 
-    public Particle(int id, double boardLength, double radius,double property) {
-        this.id=id;
-        this.x= Math.random()*boardLength;
-        this.y= Math.random()*boardLength;
-        this.radius = radius;
-        this.property = property;
-    }
+//    public Particle(int id, double boardLength, double radius,double property) {
+//        this.id=id;
+//        this.x= Math.random()*boardLength;
+//        this.y= Math.random()*boardLength;
+//        this.radius = radius;
+//        this.property = property;
+//    }
 
-    public Particle(int id, double x, double y, double radius,double property, int L, int M) {
+    public Particle(int id, float x, float y, float radius, double property, int L, int M) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.coordinates = new Pair<>(x, y);
         this.radius = radius;
         this.property = property;
-        this.cellNum = calculateCellNum(x, y, L, M);
     }
 
     public double getProperty() {
         return property;
     }
 
-    public Particle(int id, double x, double y, double radius, double property, int cellNum) {
+    public Particle(int id, float x, float y, float radius, double property) {
         this.id = id;
-        this.x = x;
-        this.y = y;
+        this.coordinates = new Pair<>(x, y);
         this.radius = radius;
         this.property = property;
-        this.cellNum = cellNum;
     }
 
     @Override
     public String toString() {
         return "Particle{" +
                 "id=" + id +
-                ", x=" + x +
-                ", y=" + y +
+                ", x=" + coordinates.getX_value() +
+                ", y=" + coordinates.getY_value() +
                 ", radius=" + radius +
                 ", property=" + property +
-                ", CELL=" + cellNum +
                 '}';
     }
 
-    public double calculateDistance(Particle p){
-        return Math.sqrt(Math.pow(x-p.x,2) + Math.pow(y-p.y,2))-p.radius-radius;
+    public double calculateDistance(Particle p) {
+        float x = coordinates.getX_value();
+        float y = coordinates.getY_value();
+        return Math.sqrt(Math.pow(x - p.getX(), 2) + Math.pow(y - p.getY(), 2)) - p.radius - radius;
     }
 
-    public boolean checkIfNeighbor(Particle p,double rc){
+    public boolean checkIfNeighbor(Particle p, double rc) {
         return !this.equals(p) && calculateDistance(p) <= rc;
     }
 
 
-    public double getX() {
-        return x;
+    public float getX() {
+        return coordinates.getX_value();
     }
 
-    public double getY() {
-        return y;
+    public float getY() {
+        return coordinates.getY_value();
     }
 
-    public double getRadius() {
+    public float getRadius() {
         return radius;
     }
 
     public int getId() {
         return id;
-    }
-
-    public int getCellNum() {
-        return cellNum;
-    }
-
-
-    private int calculateCellNum(double x, double y, int L, int M){
-        List<Integer> aux = new ArrayList<>();
-
-        for (int i = M; i >0 ; i--) {
-            aux.add(i);
-        }
-
-        int col = (int) x/L;
-        int row = aux.get(((int) y/L));
-
-        return col + M*(row % M);
-
     }
 
     @Override
@@ -107,5 +83,10 @@ public class Particle {
     @Override
     public int hashCode() {
         return Objects.hash(id);
+    }
+
+    @Override
+    public int compareTo(Particle p) {
+        return this.id-p.id;
     }
 }

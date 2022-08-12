@@ -1,28 +1,46 @@
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.*;
 
-public class Cell {
+public class Cell implements Comparable<Cell> {
 
-    private int number;
-    private int x;
-    private int y;
+    private Pair<Integer,Integer> cellCoordinates;
     private final List<Particle> particles = new ArrayList<>();
 
-    public Cell(int number, int x, int y) {
-        this.number = number;
-        this.x = x;
-        this.y = y;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Cell cell = (Cell) o;
+        return cellCoordinates.equals(cell.cellCoordinates) && Objects.equals(particles, cell.particles);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(cellCoordinates, particles);
+    }
+
+    public Pair<Integer, Integer> getCellCoordinates() {
+        return cellCoordinates;
+    }
+
+    @Override
+    public String toString() {
+        return "Cell{" +
+                "cordinates=" + cellCoordinates +
+                ", particles=" + particles +
+                '}';
+    }
+
+    public Cell(int x, int y) {
+        this.cellCoordinates = new Pair<>(x,y);
     }
 
     public int getX() {
-        return x;
+        return cellCoordinates.getX_value();
     }
 
     public int getY() {
-        return y;
+        return cellCoordinates.getY_value();
     }
 
     public void addParticle(Particle p){
@@ -34,27 +52,13 @@ public class Cell {
     }
 
 
-    //TODO: hacer lo mismo pero sin bordes
-
-    public int getNumber() {
-        return number;
-    }
-
-    public void setNumber(int number) {
-        this.number = number;
-    }
-
     public List<Particle> getParticles() {
         return particles;
     }
 
     @Override
-    public String toString() {
-        return "Cell{" +
-                "number=" + number +
-                ", particles=" + particles +
-//                ", possibleNeighbors=" + possibleNeighbors +
-//                ", halfNeighborCells=" + halfNeighborCells +
-                '}';
+    public int compareTo(Cell o) {
+        int xComparation = this.getX() - o.getX();
+        return xComparation != 0?xComparation: this.getY() - o.getY();
     }
 }
