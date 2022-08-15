@@ -4,8 +4,8 @@ import java.util.Objects;
 
 public class Particle implements Comparable<Particle> {
     private int id;
-    private Pair<Float, Float> coordinates;
-    private float radius;
+    private Pair<Double, Double> coordinates;
+    private double radius;
     private double property;
 
 //    public Particle(int id, double boardLength, double radius,double property) {
@@ -16,7 +16,7 @@ public class Particle implements Comparable<Particle> {
 //        this.property = property;
 //    }
 
-    public Particle(int id, float x, float y, float radius, double property, int L, int M) {
+    public Particle(int id, double x, double y, double radius, double property, int L, int M) {
         this.id = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
@@ -27,7 +27,7 @@ public class Particle implements Comparable<Particle> {
         return property;
     }
 
-    public Particle(int id, float x, float y, float radius, double property) {
+    public Particle(int id, double x, double y, double radius, double property) {
         this.id = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
@@ -46,8 +46,8 @@ public class Particle implements Comparable<Particle> {
     }
 
     public double calculateDistance(Particle p) {
-        float x = coordinates.getX_value();
-        float y = coordinates.getY_value();
+        double x = coordinates.getX_value();
+        double y = coordinates.getY_value();
         return Math.sqrt(Math.pow(x - p.getX(), 2) + Math.pow(y - p.getY(), 2)) - p.radius - radius;
     }
 
@@ -56,15 +56,15 @@ public class Particle implements Comparable<Particle> {
     }
 
 
-    public float getX() {
+    public double getX() {
         return coordinates.getX_value();
     }
 
-    public float getY() {
+    public double getY() {
         return coordinates.getY_value();
     }
 
-    public float getRadius() {
+    public double getRadius() {
         return radius;
     }
 
