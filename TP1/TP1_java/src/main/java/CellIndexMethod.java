@@ -1,8 +1,8 @@
-import org.apache.commons.cli.*;
+import org.apache.commons.cli.CommandLine;
 
-import java.io.*;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class CellIndexMethod {
 

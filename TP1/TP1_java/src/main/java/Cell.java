@@ -1,8 +1,10 @@
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class Cell implements Comparable<Cell> {
 
-    private Pair<Integer,Integer> cellCoordinates;
+    private final Pair<Integer,Integer> cellCoordinates;
     private final List<Particle> particles = new ArrayList<>();
 
 

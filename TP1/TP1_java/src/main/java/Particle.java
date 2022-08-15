@@ -1,20 +1,11 @@
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class Particle implements Comparable<Particle> {
-    private int id;
-    private Pair<Double, Double> coordinates;
-    private double radius;
-    private double property;
+    private final int id;
+    private final Pair<Double, Double> coordinates;
+    private final double radius;
+    private final double property;
 
-//    public Particle(int id, double boardLength, double radius,double property) {
-//        this.id=id;
-//        this.x= Math.random()*boardLength;
-//        this.y= Math.random()*boardLength;
-//        this.radius = radius;
-//        this.property = property;
-//    }
 
     public Particle(int id, double x, double y, double radius, double property, int L, int M) {
         this.id = id;

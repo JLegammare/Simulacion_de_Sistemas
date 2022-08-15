@@ -3,10 +3,10 @@ import java.util.stream.Collectors;
 
 public class Board {
 
-    private Map<Cell, List<Cell>> neighborCells = new TreeMap<>();
-    private double l;
-    private int m;
-    private boolean periodicCondition;
+    private final Map<Cell, List<Cell>> neighborCells = new TreeMap<>();
+    private final double l;
+    private final int m;
+    private final boolean periodicCondition;
 
     public Board(int m, double l, boolean periodicCondition) {
         this.periodicCondition = periodicCondition;
@@ -49,7 +49,7 @@ public class Board {
 
     }
 
-    private static void addHalfNeighborsCells(Cell cell, Map<Cell, List<Cell>> cellsBoard) {
+    private void addHalfNeighborsCells(Cell cell, Map<Cell, List<Cell>> cellsBoard) {
 
         Set<Cell> cellsSet = cellsBoard.keySet();
         List<Cell> selectedNeighborhood = cellsBoard.get(cell);
@@ -78,13 +78,12 @@ public class Board {
 
         }).collect(Collectors.toList()));
 
-
-//         if (periodicCondition) {
+         if (periodicCondition) {
 //            cellList.add(cells.get(new Pair<>(x + 1, y + 1)));
 //            cellList.add(cells.get(new Pair<>(x - 1, y + 1)));
 //            cellList.add(cells.get(new Pair<>(x - 1, y)));
 //            cellList.add(cells.get(new Pair<>(x + 1, y + 1)));
-
+         }
 
     }
 
@@ -98,9 +97,9 @@ public class Board {
             }
         }
 
-//        if(periodicCondition){
+        if(periodicCondition){
 //            addBorderParticles();
-//        }
+        }
     }
 
     public static Pair<Integer, Integer> getParticleCell(Particle p, int m, double l) {
@@ -142,7 +141,7 @@ public class Board {
     }
 
 
-//        private static void borderParticles(Map<Cell, List<Cell>> cellsBoard, int m, int l) {
+        private void borderParticles(Map<Cell, List<Cell>> cellsBoard, int m, int l) {
 //
 //        double distance = m * l;
 //        int incM = m + 1;
@@ -216,7 +215,7 @@ public class Board {
 //                p.getRadius(),
 //                p.getProperty())).collect(Collectors.toList()));
 //
-//    }
+    }
 
 
 }
