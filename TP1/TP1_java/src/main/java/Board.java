@@ -1,6 +1,4 @@
-import javax.swing.border.Border;
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Board {
@@ -160,19 +158,8 @@ public class Board {
             });
         }
 
-        completeNeighborsList(neighborhoods);
+        //completeNeighborsList(neighborhoods);
         return neighborhoods;
-    }
-
-    private void completeNeighborsList(Map<Particle, Set<Particle>> neighborhoods) {
-        List<Particle> particleList = new LinkedList<>();
-        neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
-        particleList.sort(Comparator.comparingInt(Particle::getId));
-        for (Particle particle : particleList) {
-            for (Particle neighbor : neighborhoods.get(particle)) {
-                neighborhoods.get(neighbor).add(particle);
-            }
-        }
     }
 
     private List<Particle> getAllBoardParticles() {
