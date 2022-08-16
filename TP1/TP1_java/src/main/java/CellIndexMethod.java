@@ -3,6 +3,7 @@ import org.apache.commons.cli.CommandLine;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class CellIndexMethod {
 
@@ -32,7 +33,7 @@ public class CellIndexMethod {
 
         board.addParticlesToBoard(particles);
 
-        Map<Particle, List<Particle>> neighborhoods = board.getAllNeighbors(rc);
+        Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
         parser.generateOutput(neighborhoods, outputFilePath);
     }
 

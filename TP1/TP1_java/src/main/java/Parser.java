@@ -1,10 +1,7 @@
 import org.apache.commons.cli.*;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 public class Parser {
 
@@ -33,7 +30,7 @@ public class Parser {
         return particles;
     }
 
-    public void generateOutput(Map<Particle,List<Particle>> neighborhoods, String path) throws IOException {
+    public void generateOutput(Map<Particle,Set<Particle>> neighborhoods, String path) throws IOException {
 
         File file = new File(path);
         if(!file.exists()){

@@ -1,11 +1,13 @@
 import javax.swing.border.Border;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class Board {
 
     private final Map<Cell, List<Cell>> neighborCells = new TreeMap<>();
     private final Map<Pair<Integer, Integer>, Cell> cellMap = new TreeMap<>();
+
     private final double l;
     private final int m;
     private final boolean periodicCondition;
@@ -33,7 +35,6 @@ public class Board {
             initialIndex = 0;
             lastIndex = m - 1;
         }
-
         for (int i = initialIndex; i <= lastIndex; i++) {
             for (int j = initialIndex; j <= lastIndex; j++) {
                 Cell cell = new Cell(i, j);
@@ -112,7 +113,6 @@ public class Board {
             addPeriodicParticles(new Pair<>(-1, m), new Pair<>(lastIndex, m), -boardSideLenght, boardSideLenght);
             addPeriodicParticles(new Pair<>(m, -1), new Pair<>(0, lastIndex), boardSideLenght, -boardSideLenght);
 
-
         }
     }
 
@@ -141,34 +141,46 @@ public class Board {
 
     }
 
-    public Map<Particle, List<Particle>> getAllNeighbors(double rc) {
+    public Map<Particle, Set<Particle>> getAllNeighbors(double rc) {
 
         Set<Cell> cells = neighborCells.keySet();
-        Map<Particle, List<Particle>> neighborhoods = new TreeMap<>();
+        Map<Particle, Set<Particle>> neighborhoods = new TreeMap<>();
 
         for (Cell cell : cells) {
             List<Particle> possibleNeighbors = new ArrayList<>();
             neighborCells.get(cell).stream().map(Cell::getParticles).forEach(possibleNeighbors::addAll);
             possibleNeighbors.addAll(cell.getParticles());
-            possibleNeighbors.forEach(particle -> neighborhoods.put(particle,
-                    possibleNeighbors.stream().filter(particle1 ->
-                            particle1.checkIfNeighbor(particle, rc)).collect(Collectors.toList())));
+            possibleNeighbors.forEach(particle -> {
+                Set<Particle> p = neighborhoods.get(particle);
+                neighborhoods.put(particle, possibleNeighbors.stream().filter(particle1 ->
+                        particle1.checkIfNeighbor(particle, rc)).collect(Collectors.toSet()));
+                if(p!=null){
+                    neighborhoods.get(particle).addAll(p);
+                }
+            });
         }
 
         completeNeighborsList(neighborhoods);
         return neighborhoods;
     }
 
-    private void completeNeighborsList(Map<Particle, List<Particle>> neighborhoods) {
+    private void completeNeighborsList(Map<Particle, Set<Particle>> neighborhoods) {
         List<Particle> particleList = new LinkedList<>();
         neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
-        particleList.sort((p1,p2)-> p1.getId()-p2.getId());
+        particleList.sort(Comparator.comparingInt(Particle::getId));
         for (Particle particle : particleList) {
             for (Particle neighbor : neighborhoods.get(particle)) {
-                if (!neighborhoods.get(neighbor).contains(particle))
-                    neighborhoods.get(neighbor).add(particle);
+                neighborhoods.get(neighbor).add(particle);
             }
         }
     }
+
+    private List<Particle> getAllBoardParticles() {
+        List<Particle> particleList = new LinkedList<>();
+        neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
+        particleList.sort(Comparator.comparingInt(Particle::getId));
+        return particleList;
+    }
+
 
 }
