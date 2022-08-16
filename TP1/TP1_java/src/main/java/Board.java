@@ -10,13 +10,13 @@ public class Board {
     private final int m;
     private final boolean periodicCondition;
 
-    private final double boardSideLenght;
+    private final double boardSideLength;
 
     public Board(int m, double l, boolean periodicCondition) {
         this.periodicCondition = periodicCondition;
         this.m = m;
         this.l = l;
-        this.boardSideLenght = m * l;
+        this.boardSideLength = m * l;
         createCells(periodicCondition);
     }
 
@@ -95,21 +95,21 @@ public class Board {
             for (int i = 0; i <= lastIndex; i++) {
 
                 //bottom side
-                addPeriodicParticles(new Pair<>(i, -1), new Pair<>(i, lastIndex), 0, -boardSideLenght);
+                addPeriodicParticles(new Pair<>(i, -1), new Pair<>(i, lastIndex), 0, -boardSideLength);
                 //top side
-                addPeriodicParticles(new Pair<>(i, m), new Pair<>(i, 0), 0, boardSideLenght);
+                addPeriodicParticles(new Pair<>(i, m), new Pair<>(i, 0), 0, boardSideLength);
                 //left side
-                addPeriodicParticles(new Pair<>(-1, i), new Pair<>(lastIndex, i), -boardSideLenght, 0);
+                addPeriodicParticles(new Pair<>(-1, i), new Pair<>(lastIndex, i), -boardSideLength, 0);
                 // right side
-                addPeriodicParticles(new Pair<>(m, i), new Pair<>(0, i), boardSideLenght, 0);
+                addPeriodicParticles(new Pair<>(m, i), new Pair<>(0, i), boardSideLength, 0);
 
             }
 
             //corners
-            addPeriodicParticles(new Pair<>(-1, -1), new Pair<>(lastIndex, lastIndex), -boardSideLenght, -boardSideLenght);
-            addPeriodicParticles(new Pair<>(m, m), new Pair<>(0, 0), boardSideLenght, boardSideLenght);
-            addPeriodicParticles(new Pair<>(-1, m), new Pair<>(lastIndex, m), -boardSideLenght, boardSideLenght);
-            addPeriodicParticles(new Pair<>(m, -1), new Pair<>(0, lastIndex), boardSideLenght, -boardSideLenght);
+            addPeriodicParticles(new Pair<>(-1, -1), new Pair<>(lastIndex, lastIndex), -boardSideLength, -boardSideLength);
+            addPeriodicParticles(new Pair<>(m, m), new Pair<>(0, 0), boardSideLength, boardSideLength);
+            addPeriodicParticles(new Pair<>(-1, m), new Pair<>(lastIndex, m), -boardSideLength, boardSideLength);
+            addPeriodicParticles(new Pair<>(m, -1), new Pair<>(0, lastIndex), boardSideLength, -boardSideLength);
 
         }
     }
