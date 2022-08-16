@@ -27,7 +27,7 @@ public class Parser {
             float property = staticScanner.nextFloat();
             float posX = dynamicScanner.nextFloat();
             float posY = dynamicScanner.nextFloat();
-            particles.add(new Particle(j,posX,posY,radius,property, l, m));
+            particles.add(new Particle(j,posX,posY,radius,property));
         }
 
         return particles;

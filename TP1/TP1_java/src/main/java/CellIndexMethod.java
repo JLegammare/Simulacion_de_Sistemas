@@ -19,7 +19,7 @@ public class CellIndexMethod {
         double rc = Float.parseFloat(cmd.getOptionValue("i_radius"));
         int m = Integer.parseInt(cmd.getOptionValue("m_cells"));
 
-        boolean periodicCondition = false;
+        boolean periodicCondition = true;
 
         List<Particle> particles = parser.parseParticles(staticInputFilePath, dynamicInputFilePath, l, m);
 
@@ -32,7 +32,7 @@ public class CellIndexMethod {
 
         board.addParticlesToBoard(particles);
 
-        Map<Particle, List<Particle>> neighborhoods = board.getAllNeighbors(particles, rc);
+        Map<Particle, List<Particle>> neighborhoods = board.getAllNeighbors(rc);
         parser.generateOutput(neighborhoods, outputFilePath);
     }
 

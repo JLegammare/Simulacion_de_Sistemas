@@ -7,7 +7,7 @@ public class Particle implements Comparable<Particle> {
     private final double property;
 
 
-    public Particle(int id, double x, double y, double radius, double property, int L, int M) {
+    public Particle(int id, double x, double y, double radius, double property) {
         this.id = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
@@ -16,13 +16,6 @@ public class Particle implements Comparable<Particle> {
 
     public double getProperty() {
         return property;
-    }
-
-    public Particle(int id, double x, double y, double radius, double property) {
-        this.id = id;
-        this.coordinates = new Pair<>(x, y);
-        this.radius = radius;
-        this.property = property;
     }
 
     @Override

@@ -1,48 +1,45 @@
+import javax.swing.border.Border;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class Board {
 
     private final Map<Cell, List<Cell>> neighborCells = new TreeMap<>();
+    private final Map<Pair<Integer, Integer>, Cell> cellMap = new TreeMap<>();
     private final double l;
     private final int m;
     private final boolean periodicCondition;
+
+    private final double boardSideLenght;
 
     public Board(int m, double l, boolean periodicCondition) {
         this.periodicCondition = periodicCondition;
         this.m = m;
         this.l = l;
-        createCells(m, periodicCondition);
+        this.boardSideLenght = m * l;
+        createCells(periodicCondition);
     }
 
 
-    private void createCells(int m, boolean periodicCondition) {
+    private void createCells(boolean periodicCondition) {
 
-        int lastElementPosition = periodicCondition ? m + 1 : m;
-
-        for (int i = periodicCondition ? 1 : 0; i < lastElementPosition; i++) {
-            for (int j = periodicCondition ? 1 : 0; j < lastElementPosition; j++) {
-                neighborCells.put(new Cell(i, j), new ArrayList<>());
-            }
-        }
+        int lastIndex;
+        int initialIndex;
 
         if (periodicCondition) {
+            initialIndex = -1;
+            lastIndex = m;
+        } else {
+            initialIndex = 0;
+            lastIndex = m - 1;
+        }
 
-            int newMax = m + 1;
-
-            //laterales
-            for (int k = 1; k < newMax; k++) {
-                neighborCells.put(new Cell(0, k), new ArrayList<>());
-                neighborCells.put(new Cell(newMax, k), new ArrayList<>());
-                neighborCells.put(new Cell(k, 0), new ArrayList<>());
-                neighborCells.put(new Cell(k, newMax), new ArrayList<>());
+        for (int i = initialIndex; i <= lastIndex; i++) {
+            for (int j = initialIndex; j <= lastIndex; j++) {
+                Cell cell = new Cell(i, j);
+                neighborCells.put(cell, new ArrayList<>());
+                cellMap.put(new Pair<>(i, j), cell);
             }
-
-            //esquinas
-            neighborCells.put(new Cell(0, 0), new ArrayList<>());
-            neighborCells.put(new Cell(0, newMax), new ArrayList<>());
-            neighborCells.put(new Cell(newMax, 0), new ArrayList<>());
-            neighborCells.put(new Cell(newMax, newMax), new ArrayList<>());
         }
 
         neighborCells.keySet().forEach(cell -> addHalfNeighborsCells(cell, neighborCells));
@@ -78,42 +75,73 @@ public class Board {
 
         }).collect(Collectors.toList()));
 
-         if (periodicCondition) {
-//            cellList.add(cells.get(new Pair<>(x + 1, y + 1)));
-//            cellList.add(cells.get(new Pair<>(x - 1, y + 1)));
-//            cellList.add(cells.get(new Pair<>(x - 1, y)));
-//            cellList.add(cells.get(new Pair<>(x + 1, y + 1)));
-         }
 
     }
 
     public void addParticlesToBoard(List<Particle> particles) {
         Set<Cell> cells = neighborCells.keySet();
+
         for (Particle particle : particles) {
             for (Cell cell : cells) {
-                if (cell.getCellCoordinates().equals(getParticleCell(particle, m, l))) {
+                if (cell.getCellCoordinates().equals(getParticleCell(particle, l))) {
                     cell.addParticle(particle);
                 }
             }
         }
 
-        if(periodicCondition){
-//            addBorderParticles();
+        if (periodicCondition) {
+
+            int lastIndex = m - 1;
+
+            for (int i = 0; i <= lastIndex; i++) {
+
+                //bottom side
+                addPeriodicParticles(new Pair<>(i, -1), new Pair<>(i, lastIndex), 0, -boardSideLenght);
+                //top side
+                addPeriodicParticles(new Pair<>(i, m), new Pair<>(i, 0), 0, boardSideLenght);
+                //left side
+                addPeriodicParticles(new Pair<>(-1, i), new Pair<>(lastIndex, i), -boardSideLenght, 0);
+                // right side
+                addPeriodicParticles(new Pair<>(m, i), new Pair<>(0, i), boardSideLenght, 0);
+
+            }
+
+            //corners
+            addPeriodicParticles(new Pair<>(-1, -1), new Pair<>(lastIndex, lastIndex), -boardSideLenght, -boardSideLenght);
+            addPeriodicParticles(new Pair<>(m, m), new Pair<>(0, 0), boardSideLenght, boardSideLenght);
+            addPeriodicParticles(new Pair<>(-1, m), new Pair<>(lastIndex, m), -boardSideLenght, boardSideLenght);
+            addPeriodicParticles(new Pair<>(m, -1), new Pair<>(0, lastIndex), boardSideLenght, -boardSideLenght);
+
+
         }
     }
 
-    public static Pair<Integer, Integer> getParticleCell(Particle p, int m, double l) {
+    private void addPeriodicParticles(Pair<Integer, Integer> borderCoordinates, Pair<Integer, Integer> cellCoordinates, double xTranslation, double yTranslation) {
+
+        Cell cell = cellMap.get(cellCoordinates);
+        Cell borderCell = cellMap.get(borderCoordinates);
+        borderCell.addParticles(cell.getParticles().stream().map(
+                        p -> new Particle(
+                                p.getId(),
+                                p.getX() + xTranslation,
+                                p.getY() + yTranslation, p.getRadius(),
+                                p.getProperty()))
+                .collect(Collectors.toList()));
+    }
+
+
+    private static Pair<Integer, Integer> getParticleCell(Particle p, double l) {
         double x = p.getX();
         double y = p.getY();
 
-        int col = (int) (x / l);
-        int row = (int) (y / l);
+        int col = (int) (y / l);
+        int row = (int) (x / l);
 
         return new Pair<>(row, col);
 
     }
 
-    public Map<Particle, List<Particle>> getAllNeighbors(List<Particle> particles, double rc) {
+    public Map<Particle, List<Particle>> getAllNeighbors(double rc) {
 
         Set<Cell> cells = neighborCells.keySet();
         Map<Particle, List<Particle>> neighborhoods = new TreeMap<>();
@@ -127,95 +155,20 @@ public class Board {
                             particle1.checkIfNeighbor(particle, rc)).collect(Collectors.toList())));
         }
 
-        completeNeighborsList(neighborhoods, particles);
+        completeNeighborsList(neighborhoods);
         return neighborhoods;
     }
 
-    private void completeNeighborsList(Map<Particle, List<Particle>> neighborhoods, List<Particle> particles) {
-        for (Particle particle : particles) {
+    private void completeNeighborsList(Map<Particle, List<Particle>> neighborhoods) {
+        List<Particle> particleList = new LinkedList<>();
+        neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
+        particleList.sort((p1,p2)-> p1.getId()-p2.getId());
+        for (Particle particle : particleList) {
             for (Particle neighbor : neighborhoods.get(particle)) {
                 if (!neighborhoods.get(neighbor).contains(particle))
                     neighborhoods.get(neighbor).add(particle);
             }
         }
     }
-
-
-        private void borderParticles(Map<Cell, List<Cell>> cellsBoard, int m, int l) {
-//
-//        double distance = m * l;
-//        int incM = m + 1;
-//        for (int k = 1; k < incM; k++) {
-//            int finalK = k;
-//            //first line
-//            Cell c = cellsBoard[m][k];
-//            cellsBoard[0][finalK].addParticles(c.getParticles().stream().map(p -> new Particle(
-//                    p.getId(),
-//                    p.getX(),
-//                    p.getY() - distance,
-//                    p.getRadius(),
-//                    p.getProperty())).collect(Collectors.toList()));
-//            //last line
-//            c = cellsBoard[1][k];
-//            cellsBoard[incM][finalK].addParticles(c.getParticles().stream().map(p -> new Particle(
-//                    p.getId(),
-//                    p.getX(),
-//                    p.getY() + distance,
-//                    p.getRadius(),
-//                    p.getProperty())).collect(Collectors.toList()));
-//
-//            //first column
-//            c = cellsBoard[k][m];
-//            cellsBoard[incM][finalK].addParticles(c.getParticles().stream().map(p -> new Particle(
-//                    p.getId(),
-//                    p.getX() - distance,
-//                    p.getY(),
-//                    p.getRadius(),
-//                    p.getProperty())).collect(Collectors.toList()));
-//
-//            //last column
-//            c = cellsBoard[k][1];
-//            cellsBoard[k][incM].addParticles(c.getParticles().stream().map(p -> new Particle(
-//                    p.getId(),
-//                    p.getX() + distance,
-//                    p.getY(),
-//                    p.getRadius(),
-//                    p.getProperty())).collect(Collectors.toList()));
-//
-//        }
-//        //top left corner
-//        cellsBoard[0][0].addParticles(cellsBoard[m][m].getParticles().stream().map(p -> new Particle(
-//                p.getId(),
-//                p.getX() - distance,
-//                p.getY() + distance,
-//                p.getRadius(),
-//                p.getProperty())).collect(Collectors.toList()));
-//
-//        //top right corner
-//        cellsBoard[0][incM].addParticles(cellsBoard[m][1].getParticles().stream().map(p -> new Particle(
-//                p.getId(),
-//                p.getX() + distance,
-//                p.getY() + distance,
-//                p.getRadius(),
-//                p.getProperty())).collect(Collectors.toList()));
-//
-//        //bottom left corner
-//        cellsBoard[incM][0].addParticles(cellsBoard[1][m].getParticles().stream().map(p -> new Particle(
-//                p.getId(),
-//                p.getX() - distance,
-//                p.getY() - distance,
-//                p.getRadius(),
-//                p.getProperty())).collect(Collectors.toList()));
-//
-//        //bottom right corner
-//        cellsBoard[incM][incM].addParticles(cellsBoard[1][1].getParticles().stream().map(p -> new Particle(
-//                p.getId(),
-//                p.getX() + distance,
-//                p.getY() - distance,
-//                p.getRadius(),
-//                p.getProperty())).collect(Collectors.toList()));
-//
-    }
-
 
 }
