@@ -5,7 +5,9 @@ import java.util.*;
 
 public class Parser {
 
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath, int l, int m) throws IOException {
+   private double maxRadius = 0;
+
+    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath) throws IOException {
 
         File staticFile = new File(staticFilePath);
         File dynamicFile = new File(dynamicFilePath);
@@ -24,6 +26,8 @@ public class Parser {
             float property = staticScanner.nextFloat();
             float posX = dynamicScanner.nextFloat();
             float posY = dynamicScanner.nextFloat();
+            if(radius > maxRadius)
+                maxRadius = radius;
             particles.add(new Particle(j,posX,posY,radius,property));
         }
 
@@ -76,10 +80,6 @@ public class Parser {
         l.setRequired(true);
         options.addOption(l);
 
-        Option m = new Option("m", "m_cells", true, "number of cells");
-        m.setRequired(true);
-        options.addOption(m);
-
         Option rc = new Option("rc", "i_radius", true, "particle interaction radius");
         rc.setRequired(true);
         options.addOption(rc);
@@ -100,5 +100,7 @@ public class Parser {
         return cmd;
     }
 
-
+    public double getMaxRadius() {
+        return maxRadius;
+    }
 }

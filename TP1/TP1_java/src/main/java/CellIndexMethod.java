@@ -18,15 +18,19 @@ public class CellIndexMethod {
         int n = Integer.parseInt(cmd.getOptionValue("n_particles"));
         int l = Integer.parseInt(cmd.getOptionValue("length"));
         double rc = Float.parseFloat(cmd.getOptionValue("i_radius"));
-        int m = Integer.parseInt(cmd.getOptionValue("m_cells"));
 
         boolean periodicCondition = true;
 
-        List<Particle> particles = parser.parseParticles(staticInputFilePath, dynamicInputFilePath, l, m);
+        List<Particle> particles = parser.parseParticles(staticInputFilePath, dynamicInputFilePath);
 
         if (particles.size() != n) {
             //TODO: Throw exception and show a message
             System.exit(1);
+        }
+
+        int m = (int) (l/(rc + 2*parser.getMaxRadius()) + 1);
+        if((double)l/m <= rc ){
+           System.exit(1);
         }
 
         Board board = new Board(m, l, periodicCondition);
