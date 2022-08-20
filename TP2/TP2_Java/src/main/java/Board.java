@@ -120,10 +120,10 @@ public class Board {
         Cell borderCell = cellMap.get(borderCoordinates);
         borderCell.addParticles(cell.getParticles().stream().map(
                         p -> new Particle(
-                                p.getId(),
+                                p.getID(),
                                 p.getX() + xTranslation,
                                 p.getY() + yTranslation, p.getRadius(),
-                                p.getProperty()))
+                                p.getProperty(),p.getVelocity(),p.getOmega(),p.getDeltaOmega()))
                 .collect(Collectors.toList()));
     }
 
@@ -165,7 +165,7 @@ public class Board {
     private List<Particle> getAllBoardParticles() {
         List<Particle> particleList = new LinkedList<>();
         neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
-        particleList.sort(Comparator.comparingInt(Particle::getId));
+        particleList.sort(Comparator.comparingInt(Particle::getID));
         return particleList;
     }
 

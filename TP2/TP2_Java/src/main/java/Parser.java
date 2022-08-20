@@ -5,9 +5,11 @@ import java.util.*;
 
 public class Parser {
 
-   private double maxRadius = 0;
+    private double maxRadius = 0;
 
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath) throws IOException {
+    private final double n = Math.PI;
+
+    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath,String outputFile) throws IOException {
 
         File staticFile = new File(staticFilePath);
         File dynamicFile = new File(dynamicFilePath);
@@ -17,18 +19,29 @@ public class Parser {
 
         int N = Integer.parseInt(staticScanner.next());
         int L = Integer.parseInt(staticScanner.next());
-        ArrayList<Integer> times= new ArrayList<>();
-        times.add(dynamicScanner.nextInt());
+
+        //skipping t0
+        dynamicScanner.nextInt();
+
         List<Particle> particles = new ArrayList<>();
 
         for (int j = 0; staticScanner.hasNextLine() && dynamicScanner.hasNextLine(); j++) {
-            float radius = staticScanner.nextFloat();
-            float property = staticScanner.nextFloat();
-            float posX = dynamicScanner.nextFloat();
-            float posY = dynamicScanner.nextFloat();
+            double radius = staticScanner.nextDouble();
+            double property = staticScanner.nextDouble();
+            double posX = dynamicScanner.nextDouble();
+            double posY = dynamicScanner.nextDouble();
+            double velocity = dynamicScanner.nextDouble();
+            double omega = Math.random()*2*Math.PI;
+            double deltaOmega = Math.random()*n-n/2;
+
             if(radius > maxRadius)
                 maxRadius = radius;
-            particles.add(new Particle(j,posX,posY,radius,property));
+            particles.add(new Particle(j,posX,posY,radius,property,velocity,omega,deltaOmega));
+        }
+
+        File file = new File(outputFile);
+        if(file.exists()){
+            file.delete();
         }
 
         return particles;
@@ -48,12 +61,33 @@ public class Parser {
 
         neighborhoods.forEach((k,v)->{
             StringBuilder sb = new StringBuilder();
-            sb.append(k.getId());
+            sb.append(k.getID());
             for (Particle p:v) {
-                sb.append(String.format(" %d",p.getId()));
+                sb.append(String.format(" %d",p.getID()));
             }
             pw.println(sb);
         });
+        pw.close();
+    }
+
+    public void addIterationToOutput(int tn, List<Particle> particles, String path) throws IOException {
+
+        File file = new File(path);
+        if(!file.exists()){
+            file.createNewFile();
+        }
+
+        FileWriter fw = new FileWriter(file,true);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%d\n",tn));
+        for (Particle p: particles) {
+            sb.append(String.format("%d %f %f %f %f\n",p.getID(), p.getX(),p.getY(),p.getVelocity(),p.getOmega()));
+        }
+        pw.print(sb);
+
         pw.close();
     }
 
