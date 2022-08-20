@@ -1,17 +1,44 @@
 import java.util.Objects;
 
 public class Particle implements Comparable<Particle> {
-    private final int id;
+    private final int ID;
     private final Pair<Double, Double> coordinates;
     private final double radius;
     private final double property;
+    private final double velocity;
+    private double omega;
+    private final double deltaOmega;
 
 
-    public Particle(int id, double x, double y, double radius, double property) {
-        this.id = id;
+    public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double deltaOmega) {
+        this.ID = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
         this.property = property;
+        this.velocity = velocity;
+        this.omega = omega;
+        this.deltaOmega = deltaOmega;
+    }
+
+
+    public Pair<Double, Double> getCoordinates() {
+        return coordinates;
+    }
+
+    public double getVelocity() {
+        return velocity;
+    }
+
+    public double getDeltaOmega() {
+        return deltaOmega;
+    }
+
+    public double getOmega() {
+        return omega;
+    }
+
+    public void setOmega(double omega){
+        this.omega = omega;
     }
 
     public double getProperty() {
@@ -21,11 +48,12 @@ public class Particle implements Comparable<Particle> {
     @Override
     public String toString() {
         return "Particle{" +
-                "id=" + id +
-                ", x=" + coordinates.getX_value() +
-                ", y=" + coordinates.getY_value() +
+                "id=" + ID +
+                ", coordinates=" + coordinates +
                 ", radius=" + radius +
                 ", property=" + property +
+                ", velocity=" + velocity +
+                ", omega=" + omega +
                 '}';
     }
 
@@ -48,12 +76,21 @@ public class Particle implements Comparable<Particle> {
         return coordinates.getY_value();
     }
 
+    public void setX(double x) {
+        coordinates.setX_value(x);
+    }
+    public void setY(double y) {
+        coordinates.setY_value(y);
+    }
+
+
+
     public double getRadius() {
         return radius;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
     @Override
@@ -61,16 +98,16 @@ public class Particle implements Comparable<Particle> {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Particle particle = (Particle) o;
-        return id == particle.id;
+        return ID == particle.ID;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(ID);
     }
 
     @Override
     public int compareTo(Particle p) {
-        return this.id-p.id;
+        return this.ID - p.ID;
     }
 }
