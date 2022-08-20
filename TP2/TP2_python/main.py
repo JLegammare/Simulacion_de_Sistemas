@@ -1,16 +1,22 @@
-# This is a sample Python script.
+from ovito.io import export_file
+from ovito.pipeline import Pipeline
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
-
-
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+from models.config import Config
+from utils.parser import parse_arguments, parse_input_particles, parse_output_file
 
 
-# Press the green button in the gutter to run the script.
+def main(config: Config):
+    particles = parse_input_particles(config)
+    neighbours = parse_output_file(config)
+
+    # print(particles)
+    #
+    # pipeline = Pipeline(particles)
+    #
+    # export_file(pipeline, './assets/Output.txt', 'lammps/dump',
+    #             columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Radius", "Neighbor"])
+
+
 if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+    conf = parse_arguments()
+    main(conf)
