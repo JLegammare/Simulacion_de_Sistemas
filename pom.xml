@@ -10,6 +10,7 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>TP1/TP1_java</module>
+        <module>TP2/TP2_Java</module>
     </modules>
 
     <properties>
