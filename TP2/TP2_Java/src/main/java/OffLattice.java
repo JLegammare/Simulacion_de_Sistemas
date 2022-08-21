@@ -17,18 +17,13 @@ public class OffLattice {
       String dynamicInputFilePath = cmd.getOptionValue("dynamic-input");
       String outputFilePath = cmd.getOptionValue("output");
 
-      int n = Integer.parseInt(cmd.getOptionValue("n_particles"));
+      double n = Double.parseDouble(cmd.getOptionValue("n_particles"));
       int l = Integer.parseInt(cmd.getOptionValue("length"));
       double rc = Float.parseFloat(cmd.getOptionValue("i_radius"));
-
+      int m = DEFAULT_M;
       boolean periodicCondition = true;
 
-      List<Particle> particles = parser.parseParticles(staticInputFilePath, dynamicInputFilePath,outputFilePath);
-
-      Optional<Particle> maxRadiusParticleOptl = particles.stream().max((p1,p2)-> (int) (p1.getRadius()-p2.getRadius()));
-
-//      int m = maxRadiusParticleOptl.mapT(particle -> optimizedM(l, n, rc, particle.getRadius())).orElse(DEFAULT_M);
-      int m =4;
+      List<Particle> particles = ParticleGenerator.generateRandomParticles(100,m,l,n,0.1,0.03);
       Board board = new Board(m, l, periodicCondition);
       board.addParticlesToBoard(particles);
 
