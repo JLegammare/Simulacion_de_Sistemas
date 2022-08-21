@@ -7,7 +7,7 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-    private static int DEFAULT_M = 4;
+    private static int DEFAULT_M = 3;
     private static final int TOTAL_ITERATIONS = 100;
 
     public static void main(String[] args) throws IOException {
@@ -21,7 +21,7 @@ public class OffLattice {
         double n = Double.parseDouble(cmd.getOptionValue("n_particles"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
-        int m = 9;
+        int m = DEFAULT_M;
 
         validateParams(m,l,rc);
 
@@ -38,7 +38,7 @@ public class OffLattice {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
             double va = calculateOrderParameter(particles, 0.03);
             orderParameterList.add(va);
-            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, m));
+            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, m,n));
             board.addParticlesToBoard(particles);
             parser.addIterationToOutput(i, particles, outputFilePath);
 
@@ -62,7 +62,7 @@ public class OffLattice {
         }
     }
 
-    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m) {
+    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n) {
 
         double sinAvg = 0;
         double cosAvg = 0;
@@ -70,9 +70,9 @@ public class OffLattice {
         double boardLength = m * l;
 
         if (!neighbors.isEmpty()) {
-            for (Particle n : neighbors) {
-                sinAvg += sin(n.getOmega());
-                cosAvg += cos(n.getOmega());
+            for (Particle p : neighbors) {
+                sinAvg += sin(p.getOmega());
+                cosAvg += cos(p.getOmega());
             }
             sinAvg += sin(particle.getOmega());
             cosAvg += cos(particle.getOmega());
@@ -105,7 +105,7 @@ public class OffLattice {
         else
             particle.setY(newYposition);
 
-        particle.updateOmega(PI);
+        particle.updateDeltaOmega(n);
 
     }
 
