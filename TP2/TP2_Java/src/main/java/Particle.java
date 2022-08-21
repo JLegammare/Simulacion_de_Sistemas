@@ -44,7 +44,7 @@ public class Particle implements Comparable<Particle> {
         return deltaOmega;
     }
 
-    public void updateOmega(double n){
+    public void updateDeltaOmega(double n){
         this.deltaOmega = Math.random()*n-n/2;
     }
 
