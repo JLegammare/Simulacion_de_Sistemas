@@ -11,7 +11,7 @@ def main(config: Config):
 
     pipeline = import_file("./assets/Output.txt", columns=["Particle Id", "Position.X", "Position.Y","Position.Z", "Velocity", "Omega"])
     keys = pipeline.compute().particles.keys()
-    export_file(pipeline, './assets/results.txt', 'lammps/dump',
+    export_file(pipeline, './assets/results.xyz', 'lammps/dump',
                 columns=["Particle Identifier", "Position.X", "Position.Y", "Position.Z", "Velocity", "Omega"],
                 multiple_frames=True, start_frame=0,end_frame=99)
 
