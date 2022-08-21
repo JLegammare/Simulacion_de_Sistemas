@@ -19,7 +19,7 @@ public class ParticleGenerator {
             double omega = Math.random() * 2* Math.PI;
             double deltaOmega = Math.random()*n-n/2;
 
-            particles.add(new Particle(0, x, y, particleRadius, 1,initialSpeed,omega,deltaOmega));
+            particles.add(new Particle(i, x, y, particleRadius, 1,initialSpeed,omega,deltaOmega));
 
         }
 

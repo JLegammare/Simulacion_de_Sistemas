@@ -7,8 +7,8 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-    private static int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 100;
+   private static int DEFAULT_M = 4;
+   private static final int TOTAL_ITERATIONS = 25000;
 
     public static void main(String[] args) throws IOException {
         Parser parser = new Parser();
@@ -21,15 +21,16 @@ public class OffLattice {
         double n = Double.parseDouble(cmd.getOptionValue("n_particles"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
-        int m = 9;
+        int m = 4;
 
         validateParams(m,l,rc);
 
         boolean periodicCondition = true;
 
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(100, m, l, n, 0.1, 0.03);
+        List<Particle> particles = ParticleGenerator.generateRandomParticles(400, m, l, n, 0.1, 0.03);
         Board board = new Board(m, l, periodicCondition);
         board.addParticlesToBoard(particles);
+        
 
         parser.addIterationToOutput(0, particles, outputFilePath);
         List<Double> orderParameterList = new ArrayList<>();
@@ -105,7 +106,7 @@ public class OffLattice {
         else
             particle.setY(newYposition);
 
-        particle.updateOmega(PI);
+        particle.updateOmega(0.1);
 
     }
 
