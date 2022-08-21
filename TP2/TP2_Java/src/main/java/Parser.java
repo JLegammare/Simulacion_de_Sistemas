@@ -31,7 +31,8 @@ public class Parser {
             double posX = dynamicScanner.nextDouble();
             double posY = dynamicScanner.nextDouble();
             double velocity = dynamicScanner.nextDouble();
-            double omega = Math.random()*2*Math.PI;
+            double omega = dynamicScanner.nextDouble();
+            omega = Math.random()*2*Math.PI;
             double deltaOmega = Math.random()*n-n/2;
 
             if(radius > maxRadius)
@@ -84,7 +85,7 @@ public class Parser {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\n",tn));
         for (Particle p: particles) {
-            sb.append(String.format("%d %f %f %f %f\n",p.getID(), p.getX(),p.getY(),p.getVelocity(),p.getOmega()));
+            sb.append(String.format("%d %f %f %f %f\n",p.getID(), p.getX(),p.getY(),p.getVelocityModule(),p.getOmega()));
         }
         pw.print(sb);
 

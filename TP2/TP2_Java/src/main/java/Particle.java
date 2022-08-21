@@ -1,5 +1,8 @@
 import java.util.Objects;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class Particle implements Comparable<Particle> {
     private final int ID;
     private final Pair<Double, Double> coordinates;
@@ -7,7 +10,7 @@ public class Particle implements Comparable<Particle> {
     private final double property;
     private final double velocity;
     private double omega;
-    private final double deltaOmega;
+    private double deltaOmega;
 
 
     public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double deltaOmega) {
@@ -25,12 +28,24 @@ public class Particle implements Comparable<Particle> {
         return coordinates;
     }
 
-    public double getVelocity() {
+    public double getVelocityModule() {
         return velocity;
+    }
+
+    public double getXVelocity(){
+        return sin(omega)*velocity;
+    }
+
+    public double getYVelocity(){
+        return cos(omega)*velocity;
     }
 
     public double getDeltaOmega() {
         return deltaOmega;
+    }
+
+    public void updateOmega(double n){
+        this.deltaOmega = Math.random()*n-n/2;
     }
 
     public double getOmega() {
@@ -82,8 +97,6 @@ public class Particle implements Comparable<Particle> {
     public void setY(double y) {
         coordinates.setY_value(y);
     }
-
-
 
     public double getRadius() {
         return radius;

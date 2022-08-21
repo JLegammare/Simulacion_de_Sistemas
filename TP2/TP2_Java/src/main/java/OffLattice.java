@@ -3,6 +3,8 @@ import org.apache.commons.cli.CommandLine;
 import java.io.IOException;
 import java.util.*;
 
+import static java.lang.Math.*;
+
 public class OffLattice {
 
    private static int DEFAULT_M = 4;
@@ -25,20 +27,33 @@ public class OffLattice {
 
       Optional<Particle> maxRadiusParticleOptl = particles.stream().max((p1,p2)-> (int) (p1.getRadius()-p2.getRadius()));
 
-//      int m = maxRadiusParticleOptl.map(particle -> optimizedM(l, n, rc, particle.getRadius())).orElse(DEFAULT_M);
+//      int m = maxRadiusParticleOptl.mapT(particle -> optimizedM(l, n, rc, particle.getRadius())).orElse(DEFAULT_M);
       int m =4;
       Board board = new Board(m, l, periodicCondition);
       board.addParticlesToBoard(particles);
 
       parser.addIterationToOutput(0,particles,outputFilePath);
+      List<Double> orderParameterList = new ArrayList<>();
 
       for (int i = 1; i < TOTAL_ITERATIONS; i++) {
          Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
-
+         double va = calculateOrderParameter(particles,0.03);
+         orderParameterList.add(va);
          particles.forEach(p->tempEvolution(p, neighborhoods.get(p),l, m));
+         board.addParticlesToBoard(particles);
          parser.addIterationToOutput(i,particles,outputFilePath);
+
       }
 
+   }
+
+   private static double calculateOrderParameter(List<Particle> particles, double v) {
+
+        double vx = particles.stream().mapToDouble(Particle::getXVelocity).sum();
+        double vy = particles.stream().mapToDouble(Particle::getYVelocity).sum();
+        double norm = sqrt(pow(vx, 2) + pow(vy, 2));
+
+        return norm / (particles.size() * v);
 
    }
 
@@ -61,21 +76,21 @@ public class OffLattice {
 
       if(!neighbors.isEmpty()) {
          for (Particle n : neighbors) {
-            sinAvg += Math.sin(n.getOmega());
-            cosAvg += Math.cos(n.getOmega());
+            sinAvg += sin(n.getOmega());
+            cosAvg += cos(n.getOmega());
          }
-         sinAvg += Math.sin(particle.getOmega());
-         cosAvg += Math.cos(particle.getOmega());
+         sinAvg += sin(particle.getOmega());
+         cosAvg += cos(particle.getOmega());
 
          sinAvg = sinAvg / (neighbors.size() + 1);
          cosAvg = cosAvg / (neighbors.size() + 1);
 
-         omegaAvg = Math.atan2(sinAvg, cosAvg);
+         omegaAvg = atan2(sinAvg, cosAvg);
          particle.setOmega(omegaAvg + particle.getDeltaOmega());
       }
 
-      double newXposition = particle.getX() + Math.sin(particle.getOmega())*particle.getVelocity();
-      double newYposition = particle.getY() + Math.cos(particle.getOmega())*particle.getVelocity();
+      double newXposition = particle.getX() + particle.getXVelocity();
+      double newYposition = particle.getY() + particle.getYVelocity();
 
 
       //si se va por la derecha
@@ -95,6 +110,10 @@ public class OffLattice {
       else
          particle.setY(newYposition);
 
+      particle.updateOmega(PI);
+
    }
+
+
 
 }

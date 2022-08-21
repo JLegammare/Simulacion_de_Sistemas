@@ -78,6 +78,8 @@ public class Board {
     }
 
     public void addParticlesToBoard(List<Particle> particles) {
+
+        neighborCells.keySet().forEach(cell -> cell.getParticles().clear());
         Set<Cell> cells = neighborCells.keySet();
 
         for (Particle particle : particles) {
@@ -123,7 +125,7 @@ public class Board {
                                 p.getID(),
                                 p.getX() + xTranslation,
                                 p.getY() + yTranslation, p.getRadius(),
-                                p.getProperty(),p.getVelocity(),p.getOmega(),p.getDeltaOmega()))
+                                p.getProperty(),p.getVelocityModule(),p.getOmega(),p.getDeltaOmega()))
                 .collect(Collectors.toList()));
     }
 
