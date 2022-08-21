@@ -83,9 +83,9 @@ public class Parser {
         PrintWriter pw = new PrintWriter(bw);
 
         StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%d\n",tn));
+        sb.append(String.format("%d\na\n",100));
         for (Particle p: particles) {
-            sb.append(String.format("%d %f %f %f %f %f\n",p.getID(), p.getX(),p.getY(),0f,p.getVelocityModule(),p.getOmega()));
+            sb.append(String.format("%d %f %f %f %f %f\n",p.getID(), p.getX(),p.getY(), 0f,p.getVelocityModule(),p.getOmega()));
         }
         pw.print(sb);
 
