@@ -39,7 +39,7 @@ def _parse_static_file(config: Config) -> List[Particle]:
 
     for i in range(n):
         st_p = list(filter(lambda c: len(c) > 0, static_file.readline().split(" ")))
-        particles.append(Particle(i, x=0, y=0, radius=float(st_p[0]), property=float(st_p[1])))
+        particles.append(Particle(i, x=0, y=0, radius=float(st_p[0]), property=float(st_p[1]), speed=0, angle=0))
     static_file.close()
 
     config.L = l

@@ -7,5 +7,6 @@ class Particle:
     x: float
     y: float
     radius: float
+    property: float
     speed: float
     angle: float
