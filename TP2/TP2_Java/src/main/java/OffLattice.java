@@ -13,6 +13,8 @@ public class OffLattice {
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
     private static final int NUMBER_OF_PARTICLES = 400;
+    private static final int DEFAULT_DT = 1;
+
 
 
     public static void main(String[] args) throws IOException {
@@ -24,11 +26,11 @@ public class OffLattice {
         String dynamicFilePath = cmd.getOptionValue("dynamic-file");
         String vaFilePath = cmd.getOptionValue("va-file");
 
-        double n = Double.parseDouble(cmd.getOptionValue("noise"));
+        double eta = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
 
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, n, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
+        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, eta, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
         Board board = new Board(DEFAULT_M, l, PERIODIC_CONDITION,rc);
         board.addParticlesToBoard(particles);
 
@@ -42,7 +44,7 @@ public class OffLattice {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
             double va = calculateOrderParameter(particles, DEFAULT_INITIAL_SPEED);
             orderParameterMap.put(i,va);
-            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,n));
+            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,eta,DEFAULT_DT));
             board.addParticlesToBoard(particles);
             rg.addStateToDynamicFile(particles);
         }
@@ -62,17 +64,16 @@ public class OffLattice {
     }
 
 
-    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n) {
+    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n, int dt) {
         setNewOmega(particle,neighbors);
-        checkPeriodicMovement(particle,m,l);
+        checkPeriodicMovement(particle,m,l,dt);
         particle.updateDeltaOmega(n);
-
     }
 
-    private static void checkPeriodicMovement(Particle particle, int m, double l){
+    private static void checkPeriodicMovement(Particle particle, int m, double l, int dt){
 
-        double newXposition = particle.getX() + particle.getXVelocity();
-        double newYposition = particle.getY() + particle.getYVelocity();
+        double newXposition = particle.getX() + particle.getXVelocity()*dt;
+        double newYposition = particle.getY() + particle.getYVelocity()*dt;
 
         double boardLength = m * l;
         //si se va por la derecha
