@@ -14,11 +14,9 @@ public class OffLattice {
         Parser parser = new Parser();
         CommandLine cmd = parser.parseArguments(args);
 
-        String staticInputFilePath = cmd.getOptionValue("static-input");
-        String dynamicInputFilePath = cmd.getOptionValue("dynamic-input");
-        String outputFilePath = cmd.getOptionValue("output");
+        String dynamicFilePath = cmd.getOptionValue("dynamic-input");
 
-        double n = Double.parseDouble(cmd.getOptionValue("n_particles"));
+        double n = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
         int m = 4;
@@ -27,12 +25,12 @@ public class OffLattice {
 
         boolean periodicCondition = true;
 
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(400, m, l, n, 0.1, 0.03);
+        List<Particle> particles = ParticleGenerator.generateRandomParticles(400, m, l, n, 0.01, 0.03);
         Board board = new Board(m, l, periodicCondition);
         board.addParticlesToBoard(particles);
-        
 
-        parser.addIterationToOutput(0, particles, outputFilePath);
+
+        parser.addIterationToOutput(0, particles, dynamicFilePath);
         List<Double> orderParameterList = new ArrayList<>();
 
         for (int i = 1; i < TOTAL_ITERATIONS; i++) {
@@ -41,7 +39,7 @@ public class OffLattice {
             orderParameterList.add(va);
             particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, m,n));
             board.addParticlesToBoard(particles);
-            parser.addIterationToOutput(i, particles, outputFilePath);
+            parser.addIterationToOutput(i, particles, dynamicFilePath);
 
         }
 
@@ -64,31 +62,18 @@ public class OffLattice {
     }
 
     private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n) {
+        setNewOmega(particle,neighbors);
+        checkPeriodicMovement(particle,m,l);
+        particle.updateDeltaOmega(n);
 
-        double sinAvg = 0;
-        double cosAvg = 0;
-        double omegaAvg;
-        double boardLength = m * l;
+    }
 
-        if (!neighbors.isEmpty()) {
-            for (Particle p : neighbors) {
-                sinAvg += sin(p.getOmega());
-                cosAvg += cos(p.getOmega());
-            }
-            sinAvg += sin(particle.getOmega());
-            cosAvg += cos(particle.getOmega());
-
-            sinAvg = sinAvg / (neighbors.size() + 1);
-            cosAvg = cosAvg / (neighbors.size() + 1);
-
-            omegaAvg = atan2(sinAvg, cosAvg);
-            particle.setOmega(omegaAvg + particle.getDeltaOmega());
-        }
+    private static void checkPeriodicMovement(Particle particle, int m, double l){
 
         double newXposition = particle.getX() + particle.getXVelocity();
         double newYposition = particle.getY() + particle.getYVelocity();
 
-
+        double boardLength = m * l;
         //si se va por la derecha
         if (newXposition > boardLength) {
             particle.setX(newXposition - boardLength);
@@ -105,9 +90,27 @@ public class OffLattice {
             particle.setY(boardLength + newYposition);
         else
             particle.setY(newYposition);
+    }
 
-        particle.updateDeltaOmega(n);
+    private static void setNewOmega(Particle particle,Set<Particle> neighbors ){
+        double sinAvg = 0;
+        double cosAvg = 0;
+        double omegaAvg;
 
+        if (!neighbors.isEmpty()) {
+            for (Particle p : neighbors) {
+                sinAvg += sin(p.getOmega());
+                cosAvg += cos(p.getOmega());
+            }
+            sinAvg += sin(particle.getOmega());
+            cosAvg += cos(particle.getOmega());
+
+            sinAvg = sinAvg / (neighbors.size() + 1);
+            cosAvg = cosAvg / (neighbors.size() + 1);
+
+            omegaAvg = atan2(sinAvg, cosAvg);
+            particle.setOmega(omegaAvg + particle.getDeltaOmega());
+        }
     }
 
 

@@ -164,12 +164,5 @@ public class Board {
         return neighborhoods;
     }
 
-    private List<Particle> getAllBoardParticles() {
-        List<Particle> particleList = new LinkedList<>();
-        neighborCells.keySet().stream().map(Cell::getParticles).forEach(particleList::addAll);
-        particleList.sort(Comparator.comparingInt(Particle::getID));
-        return particleList;
-    }
-
 
 }

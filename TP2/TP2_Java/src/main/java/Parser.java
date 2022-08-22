@@ -9,67 +9,6 @@ public class Parser {
 
     private final double n = Math.PI;
 
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath,String outputFile) throws IOException {
-
-        File staticFile = new File(staticFilePath);
-        File dynamicFile = new File(dynamicFilePath);
-
-        Scanner staticScanner = new Scanner(staticFile);
-        Scanner dynamicScanner = new Scanner(dynamicFile);
-
-        int N = Integer.parseInt(staticScanner.next());
-        int L = Integer.parseInt(staticScanner.next());
-
-        //skipping t0
-        dynamicScanner.nextInt();
-
-        List<Particle> particles = new ArrayList<>();
-
-        for (int j = 0; staticScanner.hasNextLine() && dynamicScanner.hasNextLine(); j++) {
-            double radius = staticScanner.nextDouble();
-            double property = staticScanner.nextDouble();
-            double posX = dynamicScanner.nextDouble();
-            double posY = dynamicScanner.nextDouble();
-            double velocity = dynamicScanner.nextDouble();
-            double omega = dynamicScanner.nextDouble();
-            omega = Math.random()*2*Math.PI;
-            double deltaOmega = Math.random()*n-n/2;
-
-            if(radius > maxRadius)
-                maxRadius = radius;
-            particles.add(new Particle(j,posX,posY,radius,property,velocity,omega,deltaOmega));
-        }
-
-        File file = new File(outputFile);
-        if(file.exists()){
-            file.delete();
-        }
-
-        return particles;
-    }
-
-    public void generateOutput(Map<Particle,Set<Particle>> neighborhoods, String path) throws IOException {
-
-        File file = new File(path);
-        if(!file.exists()){
-            file.createNewFile();
-        }
-
-        FileWriter fw = new FileWriter(file,false);
-        BufferedWriter bw = new BufferedWriter(fw);
-        PrintWriter pw = new PrintWriter(bw);
-
-
-        neighborhoods.forEach((k,v)->{
-            StringBuilder sb = new StringBuilder();
-            sb.append(k.getID());
-            for (Particle p:v) {
-                sb.append(String.format(" %d",p.getID()));
-            }
-            pw.println(sb);
-        });
-        pw.close();
-    }
 
     public void addIterationToOutput(int tn, List<Particle> particles, String path) throws IOException {
 
@@ -99,15 +38,7 @@ public class Parser {
         dynamicInput.setRequired(true);
         options.addOption(dynamicInput);
 
-        Option staticInput = new Option("s", "static-input", true, "static input file path");
-        staticInput.setRequired(true);
-        options.addOption(staticInput);
-
-        Option output = new Option("o", "output", true, "output file path");
-        output.setRequired(true);
-        options.addOption(output);
-
-        Option n = new Option("n", "n_particles", true, "number of particles");
+        Option n = new Option("n", "noise", true, "noise parameter of the simulation");
         n.setRequired(true);
         options.addOption(n);
 
@@ -130,6 +61,11 @@ public class Parser {
             System.out.println(e.getMessage());
             formatter.printHelp("utility-name",options);
             throw new RuntimeException(e);
+        }
+        String dynamicFilePath = cmd.getOptionValue("dynamic-input");
+        File file = new File(dynamicFilePath);
+        if(file.exists()){
+            file.delete();
         }
 
         return cmd;
