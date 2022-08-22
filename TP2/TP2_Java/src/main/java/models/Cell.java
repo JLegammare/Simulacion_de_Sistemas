@@ -1,3 +1,5 @@
+package models;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +29,7 @@ public class Cell implements Comparable<Cell> {
 
     @Override
     public String toString() {
-        return "Cell{" +
+        return "models.Cell{" +
                 "cordinates=" + cellCoordinates +
                 ", particles=" + particles +
                 '}';

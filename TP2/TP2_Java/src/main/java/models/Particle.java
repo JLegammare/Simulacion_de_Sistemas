@@ -1,3 +1,5 @@
+package models;
+
 import java.util.Objects;
 
 import static java.lang.Math.cos;
@@ -62,7 +64,7 @@ public class Particle implements Comparable<Particle> {
 
     @Override
     public String toString() {
-        return "Particle{" +
+        return "models.Particle{" +
                 "id=" + ID +
                 ", coordinates=" + coordinates +
                 ", radius=" + radius +

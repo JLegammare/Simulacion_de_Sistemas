@@ -1,3 +1,7 @@
+package utils;
+
+import models.Particle;
+
 import java.io.*;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +31,7 @@ public class ResultsGenerator {
 
     }
 
-    public void fillStaticFile(List<Particle> particles,double l) throws IOException {
+    public void fillStaticFile(List<Particle> particles, double l) throws IOException {
 
         FileWriter fw = new FileWriter(staticFile,false);
         BufferedWriter bw = new BufferedWriter(fw);

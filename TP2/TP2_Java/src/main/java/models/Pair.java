@@ -1,3 +1,5 @@
+package models;
+
 import java.util.Objects;
 
 public class Pair<X extends Comparable<X>,Y extends Comparable<Y> > implements Comparable<Pair<X,Y>>{
@@ -11,7 +13,7 @@ public class Pair<X extends Comparable<X>,Y extends Comparable<Y> > implements C
 
     @Override
     public String toString() {
-        return "Pair{" +
+        return "models.Pair{" +
                 "x_value=" + x_value +
                 ", y_value=" + y_value +
                 '}';

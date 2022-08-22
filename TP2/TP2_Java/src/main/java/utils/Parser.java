@@ -1,3 +1,5 @@
+package utils;
+
 import org.apache.commons.cli.*;
 
 import java.io.*;

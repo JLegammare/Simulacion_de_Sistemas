@@ -1,4 +1,9 @@
+import models.Board;
+import models.Particle;
 import org.apache.commons.cli.CommandLine;
+import utils.Parser;
+import utils.ParticleGenerator;
+import utils.ResultsGenerator;
 
 import java.io.IOException;
 import java.util.*;
@@ -8,7 +13,7 @@ import static java.lang.Math.*;
 public class OffLattice {
 
     private static int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 25000;
+    private static final int TOTAL_ITERATIONS = 2500;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -104,16 +109,16 @@ public class OffLattice {
                 sinAvg += sin(p.getOmega());
                 cosAvg += cos(p.getOmega());
             }
-            sinAvg += sin(particle.getOmega());
-            cosAvg += cos(particle.getOmega());
-
-            sinAvg = sinAvg / (neighbors.size() + 1);
-            cosAvg = cosAvg / (neighbors.size() + 1);
-
-            omegaAvg = atan2(sinAvg, cosAvg);
-            particle.setOmega(omegaAvg + particle.getDeltaOmega());
         }
-    }
 
+        sinAvg += sin(particle.getOmega());
+        cosAvg += cos(particle.getOmega());
+
+        sinAvg = sinAvg / (neighbors.size() + 1);
+        cosAvg = cosAvg / (neighbors.size() + 1);
+
+        omegaAvg = atan2(sinAvg, cosAvg);
+        particle.setOmega(omegaAvg + particle.getDeltaOmega());
+    }
 
 }
