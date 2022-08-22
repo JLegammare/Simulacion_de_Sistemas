@@ -7,39 +7,46 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-   private static int DEFAULT_M = 4;
-   private static final int TOTAL_ITERATIONS = 25000;
+    private static int DEFAULT_M = 4;
+    private static final int TOTAL_ITERATIONS = 250;
+    private static final Boolean PERIODIC_CONDITION = true;
+    private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
+    private static final double DEFAULT_INITIAL_SPEED = 0.03;
+    private static final int NUMBER_OF_PARTICLES = 400;
+
 
     public static void main(String[] args) throws IOException {
+
         Parser parser = new Parser();
         CommandLine cmd = parser.parseArguments(args);
 
-        String dynamicFilePath = cmd.getOptionValue("dynamic-input");
+        String staticFilePath = cmd.getOptionValue("static-file");
+        String dynamicFilePath = cmd.getOptionValue("dynamic-file");
+        String vaFilePath = cmd.getOptionValue("va-file");
 
         double n = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
-        int m = 4;
 
-        validateParams(m,l,rc);
+        validateParams(DEFAULT_M,l,rc);
 
-        boolean periodicCondition = true;
-
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(400, m, l, n, 0.01, 0.03);
-        Board board = new Board(m, l, periodicCondition);
+        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, n, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
+        Board board = new Board(DEFAULT_M, l, PERIODIC_CONDITION);
         board.addParticlesToBoard(particles);
 
+        ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath);
+        rg.fillStaticFile(particles,l);
+        rg.addStateToDynamicFile(particles);
 
-        parser.addIterationToOutput(0, particles, dynamicFilePath);
         List<Double> orderParameterList = new ArrayList<>();
 
         for (int i = 1; i < TOTAL_ITERATIONS; i++) {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
-            double va = calculateOrderParameter(particles, 0.03);
+            double va = calculateOrderParameter(particles, DEFAULT_INITIAL_SPEED);
             orderParameterList.add(va);
-            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, m,n));
+            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,n));
             board.addParticlesToBoard(particles);
-            parser.addIterationToOutput(i, particles, dynamicFilePath);
+            rg.addStateToDynamicFile(particles);
 
         }
 
