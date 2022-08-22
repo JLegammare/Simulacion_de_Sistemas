@@ -1,5 +1,6 @@
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 public class ResultsGenerator {
 
@@ -41,6 +42,7 @@ public class ResultsGenerator {
         pw.close();
     }
 
+
     public void addStateToDynamicFile(List<Particle> particles) throws IOException {
 
         FileWriter fw = new FileWriter(dynamicFile,true);
@@ -53,7 +55,19 @@ public class ResultsGenerator {
             sb.append(String.format("%d %f %f %f %f %f\n",p.getID(), p.getX(),p.getY(), 0f,p.getVelocityModule(),p.getOmega()));
         }
         pw.print(sb);
+        pw.close();
+    }
+      public void generateVaTimeFile(Map<Integer,Double> orderParametersMap) throws IOException {
 
+        FileWriter fw = new FileWriter(vaTimeFile,false);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%d\n",orderParametersMap.size()));
+        orderParametersMap.forEach((key, value) -> sb.append(String.format("%d %f\n", key, value)));
+
+        pw.print(sb);
         pw.close();
     }
 

@@ -8,7 +8,7 @@ import static java.lang.Math.*;
 public class OffLattice {
 
     private static int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 250;
+    private static final int TOTAL_ITERATIONS = 25000;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -28,27 +28,26 @@ public class OffLattice {
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
 
-        validateParams(DEFAULT_M,l,rc);
-
         List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, n, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
-        Board board = new Board(DEFAULT_M, l, PERIODIC_CONDITION);
+        Board board = new Board(DEFAULT_M, l, PERIODIC_CONDITION,rc);
         board.addParticlesToBoard(particles);
 
         ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath);
         rg.fillStaticFile(particles,l);
         rg.addStateToDynamicFile(particles);
 
-        List<Double> orderParameterList = new ArrayList<>();
+        Map<Integer,Double> orderParameterMap= new TreeMap<>();
 
         for (int i = 1; i < TOTAL_ITERATIONS; i++) {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
             double va = calculateOrderParameter(particles, DEFAULT_INITIAL_SPEED);
-            orderParameterList.add(va);
+            orderParameterMap.put(i,va);
             particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,n));
             board.addParticlesToBoard(particles);
             rg.addStateToDynamicFile(particles);
-
         }
+
+        rg.generateVaTimeFile(orderParameterMap);
 
     }
 
@@ -62,11 +61,6 @@ public class OffLattice {
 
     }
 
-    private static void validateParams(int m,double l, double rc ) {
-        if (l / m <= rc) {
-            throw new RuntimeException("CONDITION IS NOT SATISFIED!");
-        }
-    }
 
     private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n) {
         setNewOmega(particle,neighbors);
