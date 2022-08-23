@@ -2,25 +2,10 @@ package utils;
 
 import org.apache.commons.cli.*;
 
-import java.io.*;
-import java.util.*;
-
 public class Parser {
 
     public CommandLine parseArguments(String[] args){
         Options options = new Options();
-
-        Option dynamicInput = new Option("d", "dynamic-file", true, "dynamic file path");
-        dynamicInput.setRequired(true);
-        options.addOption(dynamicInput);
-
-        Option staticInput = new Option("s", "static-file", true, "static file path");
-        dynamicInput.setRequired(true);
-        options.addOption(staticInput);
-
-        Option vaInput = new Option("va", "va-file", true, "va-time file path");
-        dynamicInput.setRequired(true);
-        options.addOption(vaInput);
 
         Option n = new Option("n", "noise", true, "noise parameter of the simulation");
         n.setRequired(true);

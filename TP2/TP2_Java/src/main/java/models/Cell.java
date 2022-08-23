@@ -30,7 +30,7 @@ public class Cell implements Comparable<Cell> {
     @Override
     public String toString() {
         return "models.Cell{" +
-                "cordinates=" + cellCoordinates +
+                "coordinates=" + cellCoordinates +
                 ", particles=" + particles +
                 '}';
     }

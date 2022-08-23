@@ -9,10 +9,13 @@ import java.util.Map;
 public class ResultsGenerator {
 
     private final File dynamicFile;
-    private File vaTimeFile;
+    private final File vaTimeFile;
     private final File staticFile;
 
-    public ResultsGenerator(String dynamicFilePath,String vaFilePath, String staticFilePath) {
+    public ResultsGenerator(String dynamicFilePath,String vaFilePath, String staticFilePath, String resultsDirectory) {
+
+        File directory = new File(resultsDirectory);
+        directory.mkdir();
 
         File dymFile = new File(dynamicFilePath);
         if(dymFile.exists())

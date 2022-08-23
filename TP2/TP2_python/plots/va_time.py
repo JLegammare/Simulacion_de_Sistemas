@@ -4,7 +4,6 @@ import pandas as pd
 from models.config import Config
 from utils.parser import parse_arguments
 
-
 def main(config: Config):
 
     dfp = pd.read_csv(config.va_time_file, skiprows=1, sep=" ", names=["times","order_parameters"])
