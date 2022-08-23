@@ -43,7 +43,7 @@ public class ResultsGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\n%f\n",particles.size(),l));
         for (Particle p: particles) {
-            sb.append(String.format("%f %f\n",p.getRadius(), p.getRadius()));
+            sb.append(String.format("%f %f\n",p.getRadius(), p.getProperty()));
         }
         pw.println(sb);
         pw.close();
