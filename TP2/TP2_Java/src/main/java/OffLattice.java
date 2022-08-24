@@ -16,7 +16,7 @@ import static java.lang.Math.*;
 public class OffLattice {
 
     private static final int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 10000;
+    private static final int TOTAL_ITERATIONS = 1000;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -98,7 +98,7 @@ public class OffLattice {
         double newXposition = particle.getX() + particle.getXVelocity()*dt;
         double newYposition = particle.getY() + particle.getYVelocity()*dt;
 
-        double boardLength = m * l;
+        double boardLength = l;
         //si se va por la derecha
         if (newXposition > boardLength) {
             particle.setX(newXposition - boardLength);

@@ -19,7 +19,7 @@ public class Board {
         this.periodicCondition = periodicCondition;
         this.m = m;
         this.l = l;
-        this.boardSideLength = m * l;
+        this.boardSideLength = l;
         createCells(periodicCondition);
     }
 

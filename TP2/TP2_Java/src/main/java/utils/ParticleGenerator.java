@@ -15,7 +15,7 @@ public class ParticleGenerator {
                                                          double particleRadius,
                                                          double initialSpeed
     ) {
-        double boardSideLength = m * l;
+        double boardSideLength = l;
         List<Particle> particles = new ArrayList<>();
         for (int i = 0; i < numberOfParticles; i++) {
             double x = Math.random() * boardSideLength;
