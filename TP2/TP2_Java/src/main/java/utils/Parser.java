@@ -15,9 +15,37 @@ public class Parser {
         l.setRequired(true);
         options.addOption(l);
 
-        Option rc = new Option("rc", "i_radius", true, "particle interaction radius");
+        Option rc = new Option(
+                "rc",
+                "i_radius",
+                false,
+                "particle interaction radius");
         rc.setRequired(true);
         options.addOption(rc);
+
+        Option np = new Option(
+                "np",
+                "particles_number",
+                true,
+                "number of particles to be created");
+        rc.setRequired(true);
+        options.addOption(np);
+
+        Option v = new Option(
+                "v",
+                "initial_speed",
+                true,
+                "uniform initial speed for all particles");
+        rc.setRequired(true);
+        options.addOption(v);
+
+        Option r = new Option(
+                "r",
+                "particle_radius",
+                false,
+                "particle radius for all particles");
+        rc.setRequired(true);
+        options.addOption(r);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();

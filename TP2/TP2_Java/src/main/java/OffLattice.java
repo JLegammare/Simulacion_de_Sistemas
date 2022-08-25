@@ -16,7 +16,7 @@ import static java.lang.Math.*;
 public class OffLattice {
 
     private static final int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 1000;
+    private static final int TOTAL_ITERATIONS = 10;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -25,8 +25,7 @@ public class OffLattice {
     private static final int RUNS = 1;
 
     private static final String RESULTS_DIRECTORY =  "TP2/simulation_results";
-
-
+    private static final String INPUTS_DIRECTORY =  "TP2/simulation_input_files";
 
     public static void main(String[] args) throws IOException {
 
@@ -35,14 +34,24 @@ public class OffLattice {
 
         double eta = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
-        double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
+//        TODO: fix NullPointerException
+//        double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
+        double rc = 1f;
+
+         List<Particle> particles = ParticleGenerator.generateRandomParticles(
+                 NUMBER_OF_PARTICLES,
+                 DEFAULT_M,
+                 l,
+                 eta,
+                 DEFAULT_PARTICLE_RADIUS,
+                 DEFAULT_INITIAL_SPEED);
 
 
         for (int i = 1; i <= RUNS ; i++) {
             String staticFilePath = String.format("%s/Static%d.txt",RESULTS_DIRECTORY,i) ;
             String dynamicFilePath = String.format("%s/Dynamic%d.xyz",RESULTS_DIRECTORY,i) ;
             String vaFilePath = String.format("%s/VaTime%d.txt",RESULTS_DIRECTORY,i) ;
-            OffLatticeMethod(eta,l,rc,staticFilePath,dynamicFilePath,vaFilePath);
+            OffLatticeMethod(eta,l,rc,staticFilePath,dynamicFilePath,vaFilePath,particles);
         }
     }
 
@@ -51,16 +60,16 @@ public class OffLattice {
                                          double rc,
                                          String staticFilePath,
                                          String dynamicFilePath,
-                                         String vaFilePath) throws IOException {
+                                         String vaFilePath,
+                                         List<Particle> particles) throws IOException {
 
-            List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, eta, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
             int m = (int) (l / rc + 2 * DEFAULT_PARTICLE_RADIUS);
             Board board = new Board(m, l, PERIODIC_CONDITION,rc);
             board.addParticlesToBoard(particles);
 
             ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,RESULTS_DIRECTORY);
             rg.fillStaticFile(particles,l);
-            rg.addStateToDynamicFile(particles);
+            rg.addStateToDynamicFile(particles,0);
 
             Map<Integer,Double> orderParameterMap= new TreeMap<>();
 
@@ -70,7 +79,7 @@ public class OffLattice {
                 orderParameterMap.put(i,va);
                 particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,eta,DEFAULT_DT));
                 board.addParticlesToBoard(particles);
-                rg.addStateToDynamicFile(particles);
+                rg.addStateToDynamicFile(particles,i);
             }
 
             rg.generateVaTimeFile(orderParameterMap);

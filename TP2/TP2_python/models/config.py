@@ -7,3 +7,5 @@ class Config:
     dynamic_file: str
     va_time_file: str
     run_times: int
+    N: int
+    L: float

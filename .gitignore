@@ -126,3 +126,4 @@ venv.bak/
 .mypy_cache/
 
 /TP2/simulation_results/
+/TP2/simulation_input_files/
