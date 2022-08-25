@@ -54,7 +54,8 @@ public class OffLattice {
                                          String vaFilePath) throws IOException {
 
             List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, DEFAULT_M, l, eta, DEFAULT_PARTICLE_RADIUS, DEFAULT_INITIAL_SPEED);
-            Board board = new Board(DEFAULT_M, l, PERIODIC_CONDITION,rc);
+            int m = (int) (l / rc + 2 * DEFAULT_PARTICLE_RADIUS);
+            Board board = new Board(m, l, PERIODIC_CONDITION,rc);
             board.addParticlesToBoard(particles);
 
             ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,RESULTS_DIRECTORY);

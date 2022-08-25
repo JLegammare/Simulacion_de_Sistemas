@@ -23,10 +23,11 @@ public class Board {
         createCells(periodicCondition);
     }
 
+    //todo: check if necessary
     private void validateParams(int m,double l, double rc ) {
-        if (l / m <= rc) {
-            throw new RuntimeException("CONDITION IS NOT SATISFIED!");
-        }
+        //if (l / m <= rc+2*0.01) {
+        //    throw new RuntimeException("CONDITION IS NOT SATISFIED!");
+        //}
     }
 
     private void createCells(boolean periodicCondition) {
