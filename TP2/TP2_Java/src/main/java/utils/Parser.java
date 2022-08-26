@@ -1,6 +1,15 @@
 package utils;
 
+import models.Particle;
 import org.apache.commons.cli.*;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
+
+import static java.lang.Math.asin;
 
 public class Parser {
 
@@ -61,6 +70,47 @@ public class Parser {
         }
 
         return cmd;
+    }
+
+
+    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath, double eta) throws IOException {
+
+        File staticFile = new File(staticFilePath);
+        File dynamicFile = new File(dynamicFilePath);
+
+        Scanner staticScanner = new Scanner(staticFile);
+        Scanner dynamicScanner = new Scanner(dynamicFile);
+
+        int n = Integer.parseInt(staticScanner.next());
+        int t0 = Integer.parseInt(dynamicScanner.next());
+
+        List<Particle> particles = new ArrayList<>();
+
+        for (int i = 0; i < n ; i++) {
+
+            if( staticScanner.hasNextLine() && dynamicScanner.hasNextLine()){
+                double radius = staticScanner.nextDouble();
+                double property = staticScanner.nextDouble();
+                int id = dynamicScanner.nextInt();
+                double posX = dynamicScanner.nextDouble();
+                double posY = dynamicScanner.nextDouble();
+                double posZ = dynamicScanner.nextDouble();
+                double speed = dynamicScanner.nextDouble();
+                double vX = dynamicScanner.nextDouble();
+                double vY = dynamicScanner.nextDouble();
+
+                double omega = calculateOmega(vX,speed);
+                double noise = Math.random()*eta-eta/2;
+                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise));
+            }
+
+        }
+            return particles;
+    }
+
+
+    private double calculateOmega(double vx,double speed){
+        return asin(vx/speed);
     }
 
 }

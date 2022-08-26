@@ -66,11 +66,11 @@ public class ParticleGenerator {
         if (stcFile.exists())
             stcFile.delete();
 
-        FileWriter fwd = new FileWriter(stcFile, false);
+        FileWriter fwd = new FileWriter(dymFile, false);
         BufferedWriter bwd = new BufferedWriter(fwd);
         PrintWriter pwd = new PrintWriter(bwd);
 
-        FileWriter fws = new FileWriter(dymFile, false);
+        FileWriter fws = new FileWriter(stcFile, false);
         BufferedWriter bws = new BufferedWriter(fws);
         PrintWriter pws = new PrintWriter(bws);
 
