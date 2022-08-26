@@ -96,6 +96,7 @@ public class OffLattice {
         particle.updateDeltaOmega(n);
     }
 
+    //TODO: move checkPeriodicMovement to Board.java
     private static void checkPeriodicMovement(Particle particle, int m, double l, int dt){
 
         double newXposition = particle.getX() + particle.getXVelocity()*dt;
