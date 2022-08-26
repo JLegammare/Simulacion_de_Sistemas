@@ -35,9 +35,7 @@ public class OffLattice {
 
         double eta = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
-//        TODO: fix NullPointerException
-//        double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
-        double rc = 1f;
+        double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
 
         String staticFilePath = String.format("%s/%s",INPUTS_DIRECTORY,STATIC_FILE);
         String dynamicFilePath = String.format("%s/%s",INPUTS_DIRECTORY,DYNAMIC_FILE);

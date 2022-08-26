@@ -24,20 +24,12 @@ public class Parser {
         l.setRequired(true);
         options.addOption(l);
 
-        Option rc = new Option(
-                "rc",
-                "i_radius",
-                false,
-                "particle interaction radius");
-        rc.setRequired(true);
-        options.addOption(rc);
-
         Option np = new Option(
                 "np",
                 "particles_number",
                 true,
                 "number of particles to be created");
-        rc.setRequired(true);
+        np.setRequired(false);
         options.addOption(np);
 
         Option v = new Option(
@@ -45,7 +37,7 @@ public class Parser {
                 "initial_speed",
                 true,
                 "uniform initial speed for all particles");
-        rc.setRequired(true);
+        v.setRequired(false);
         options.addOption(v);
 
         Option r = new Option(
@@ -53,8 +45,12 @@ public class Parser {
                 "particle_radius",
                 false,
                 "particle radius for all particles");
-        rc.setRequired(true);
+        r.setRequired(false);
         options.addOption(r);
+
+        Option rc = new Option("rc", "i_radius", true, "particle interaction radius");
+        rc.setRequired(true);
+        options.addOption(rc);
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -101,6 +97,7 @@ public class Parser {
 
                 double omega = calculateOmega(vX,speed);
                 double noise = Math.random()*eta-eta/2;
+
                 particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise));
             }
 
