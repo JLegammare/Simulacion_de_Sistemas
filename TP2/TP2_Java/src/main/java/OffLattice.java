@@ -42,13 +42,16 @@ public class OffLattice {
         String staticFilePath = String.format("%s/%s",INPUTS_DIRECTORY,STATIC_FILE);
         String dynamicFilePath = String.format("%s/%s",INPUTS_DIRECTORY,DYNAMIC_FILE);
 
-        String vaOutputFilePath = String.format("%s/%s",RESULTS_DIRECTORY,VA_TIME_FILE);
-        String dynamicResultsFilePath = String.format("%s/%s",RESULTS_DIRECTORY,DYNAMIC_FILE);
-        String staticResultsFilePath = String.format("%s/%s",RESULTS_DIRECTORY,STATIC_FILE);
-
         List<Particle> particles = parser.parseParticles(staticFilePath,dynamicFilePath,eta);
 
-        OffLatticeMethod(eta,l,rc,staticResultsFilePath,dynamicResultsFilePath,vaOutputFilePath,particles);
+        for (int i = 0 ; i < 8 ; i++) {
+            double eta_it = i * PI/4;
+            String vaOutputFilePath = String.format("%s/VaTime%d.txt",RESULTS_DIRECTORY,i);
+            String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt",RESULTS_DIRECTORY,i);
+            String staticResultsFilePath = String.format("%s/Static%d.txt",RESULTS_DIRECTORY,i);
+            OffLatticeMethod(eta_it, l, rc, staticResultsFilePath, dynamicResultsFilePath, vaOutputFilePath, particles);
+            i++;
+        }
     }
 
     private static void OffLatticeMethod(double eta,
