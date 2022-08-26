@@ -2,7 +2,6 @@ import models.Board;
 import models.Particle;
 import org.apache.commons.cli.CommandLine;
 import utils.Parser;
-import utils.ParticleGenerator;
 import utils.ResultsGenerator;
 
 import java.io.IOException;
@@ -16,7 +15,7 @@ import static java.lang.Math.*;
 public class OffLattice {
 
     private static final int DEFAULT_M = 4;
-    private static final int TOTAL_ITERATIONS = 1000;
+    private static final int TOTAL_ITERATIONS = 10;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -37,34 +36,31 @@ public class OffLattice {
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
 
-        String staticFilePath = String.format("%s/%s",INPUTS_DIRECTORY,STATIC_FILE);
-        String dynamicFilePath = String.format("%s/%s",INPUTS_DIRECTORY,DYNAMIC_FILE);
+        String staticFilePath = String.format("%s/%s", INPUTS_DIRECTORY, STATIC_FILE);
+        String dynamicFilePath = String.format("%s/%s", INPUTS_DIRECTORY, DYNAMIC_FILE);
+        List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
 
-        List<Particle> particles = parser.parseParticles(staticFilePath,dynamicFilePath,eta);
+        String vaOutputFilePath = String.format("%s/%s", RESULTS_DIRECTORY, VA_TIME_FILE);
+        String dynamicResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, DYNAMIC_FILE);
+        String staticResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, STATIC_FILE);
 
-        for (int i = 0 ; i < 8 ; i++) {
-            double eta_it = i * PI/4;
-            String vaOutputFilePath = String.format("%s/VaTime%d.txt",RESULTS_DIRECTORY,i);
-            String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt",RESULTS_DIRECTORY,i);
-            String staticResultsFilePath = String.format("%s/Static%d.txt",RESULTS_DIRECTORY,i);
-            OffLatticeMethod(eta_it, l, rc, staticResultsFilePath, dynamicResultsFilePath, vaOutputFilePath, particles);
-            i++;
-        }
+        OffLatticeMethod(eta, l, rc,RESULTS_DIRECTORY, staticResultsFilePath, dynamicResultsFilePath, vaOutputFilePath, particles);
     }
 
-    private static void OffLatticeMethod(double eta,
-                                         double l,
-                                         double rc,
-                                         String staticFilePath,
-                                         String dynamicFilePath,
-                                         String vaFilePath,
-                                         List<Particle> particles) throws IOException {
+    public static void OffLatticeMethod(double eta,
+                                        double l,
+                                        double rc,
+                                        String resultsDirectoryPath,
+                                        String staticFilePath,
+                                        String dynamicFilePath,
+                                        String vaFilePath,
+                                        List<Particle> particles) throws IOException {
 
         int m = (int) (l / rc + 2 * DEFAULT_PARTICLE_RADIUS);
         Board board = new Board(m, l, PERIODIC_CONDITION,rc);
         board.addParticlesToBoard(particles);
 
-        ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,RESULTS_DIRECTORY);
+        ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,resultsDirectoryPath);
         rg.fillStaticFile(particles,l);
         rg.addStateToDynamicFile(particles,0);
 
