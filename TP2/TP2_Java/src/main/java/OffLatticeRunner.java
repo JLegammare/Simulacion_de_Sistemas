@@ -27,9 +27,9 @@ public class OffLatticeRunner {
         String staticFilePath = String.format("%s/%s", INPUTS_DIRECTORY, STATIC_FILE);
         String dynamicFilePath = String.format("%s/%s", INPUTS_DIRECTORY, DYNAMIC_FILE);
 
-        List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
 
         for (int i = 0; i < 8; i++) {
+            List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
             double eta_it = i * STEP;
             String vaOutputFilePath = String.format("%s/VaTime%d.txt", RESULTS_DIRECTORY, i);
             String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt", RESULTS_DIRECTORY, i);
