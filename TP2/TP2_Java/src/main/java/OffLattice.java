@@ -56,8 +56,7 @@ public class OffLattice {
                                         String vaFilePath,
                                         List<Particle> particles) throws IOException {
 
-        int m = (int) (l / rc + 2 * DEFAULT_PARTICLE_RADIUS);
-        Board board = new Board(m, l, PERIODIC_CONDITION,rc);
+        Board board = new Board(l, PERIODIC_CONDITION,rc,DEFAULT_PARTICLE_RADIUS);
         board.addParticlesToBoard(particles);
 
         ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,resultsDirectoryPath);
@@ -70,7 +69,7 @@ public class OffLattice {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
             double va = calculateOrderParameter(particles, DEFAULT_INITIAL_SPEED);
             orderParameterMap.put(i,va);
-            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l, DEFAULT_M,eta,DEFAULT_DT));
+            particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l,eta,DEFAULT_DT));
             board.addParticlesToBoard(particles);
             rg.addStateToDynamicFile(particles,i);
         }
@@ -90,33 +89,32 @@ public class OffLattice {
     }
 
 
-    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, int m, double n, int dt) {
+    private static void tempEvolution(Particle particle, Set<Particle> neighbors, double l, double n, int dt) {
         setNewOmega(particle,neighbors);
-        checkPeriodicMovement(particle,m,l,dt);
+        checkPeriodicMovement(particle,l,dt);
         particle.updateDeltaOmega(n);
     }
 
     //TODO: move checkPeriodicMovement to Board.java
-    private static void checkPeriodicMovement(Particle particle, int m, double l, int dt){
+    private static void checkPeriodicMovement(Particle particle,double l, int dt){
 
         double newXposition = particle.getX() + particle.getXVelocity()*dt;
         double newYposition = particle.getY() + particle.getYVelocity()*dt;
 
-        double boardLength = l;
         //si se va por la derecha
-        if (newXposition > boardLength) {
-            particle.setX(newXposition - boardLength);
+        if (newXposition > l) {
+            particle.setX(newXposition - l);
         }//si se va por izquierda
         else if (newXposition < 0)
-            particle.setX(boardLength + newXposition);
+            particle.setX(l + newXposition);
         else
             particle.setX(newXposition);
         //si se va por arriba
-        if (newYposition > boardLength) {
-            particle.setY(newYposition - boardLength);
+        if (newYposition > l) {
+            particle.setY(newYposition - l);
         }//si se va por abajo
         else if (newYposition < 0)
-            particle.setY(boardLength + newYposition);
+            particle.setY(l + newYposition);
         else
             particle.setY(newYposition);
     }

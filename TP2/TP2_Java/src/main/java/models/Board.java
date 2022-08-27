@@ -14,20 +14,18 @@ public class Board {
 
     private final double boardSideLength;
 
-    public Board(int m, double l, boolean periodicCondition,double rc) {
-        validateParams(m,l,rc);
+    public Board(double l, boolean periodicCondition,double rc,double defaultParticleRadius) {
+        this.m = (int) (l / rc + 2 * defaultParticleRadius);
         this.periodicCondition = periodicCondition;
-        this.m = m;
         this.l = l;
         this.boardSideLength = l;
         createCells(periodicCondition);
     }
 
-    //todo: check if necessary
-    private void validateParams(int m,double l, double rc ) {
-        //if (l / m <= rc+2*0.01) {
-        //    throw new RuntimeException("CONDITION IS NOT SATISFIED!");
-        //}
+    private void validateParams(int m,double l, double rc , double defaultParticleRadius) {
+        if (l / m <= rc+2*defaultParticleRadius) {
+            throw new RuntimeException("CONDITION IS NOT SATISFIED!");
+        }
     }
 
     private void createCells(boolean periodicCondition) {
