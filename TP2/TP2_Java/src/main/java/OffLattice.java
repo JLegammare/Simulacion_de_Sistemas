@@ -14,7 +14,6 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-    private static final int DEFAULT_M = 4;
     private static final int TOTAL_ITERATIONS = 10;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
@@ -95,28 +94,13 @@ public class OffLattice {
         particle.updateDeltaOmega(n);
     }
 
-    //TODO: move checkPeriodicMovement to Board.java
     private static void checkPeriodicMovement(Particle particle,double l, int dt){
 
-        double newXposition = particle.getX() + particle.getXVelocity()*dt;
-        double newYposition = particle.getY() + particle.getYVelocity()*dt;
+        double newXvalue = particle.getX() + particle.getXVelocity()*dt;
+        double newYvalue = particle.getY() + particle.getYVelocity()*dt;
 
-        //si se va por la derecha
-        if (newXposition > l) {
-            particle.setX(newXposition - l);
-        }//si se va por izquierda
-        else if (newXposition < 0)
-            particle.setX(l + newXposition);
-        else
-            particle.setX(newXposition);
-        //si se va por arriba
-        if (newYposition > l) {
-            particle.setY(newYposition - l);
-        }//si se va por abajo
-        else if (newYposition < 0)
-            particle.setY(l + newYposition);
-        else
-            particle.setY(newYposition);
+        particle.updatePosition(newXvalue,newYvalue,l);
+
     }
 
     private static void setNewOmega(Particle particle,Set<Particle> neighbors ){
