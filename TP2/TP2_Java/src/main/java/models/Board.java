@@ -22,11 +22,6 @@ public class Board {
         createCells(periodicCondition);
     }
 
-    private void validateParams(int m,double l, double rc , double defaultParticleRadius) {
-        if (l / m <= rc+2*defaultParticleRadius) {
-            throw new RuntimeException("CONDITION IS NOT SATISFIED!");
-        }
-    }
 
     private void createCells(boolean periodicCondition) {
 
@@ -146,6 +141,12 @@ public class Board {
 
         return new Pair<>(row, col);
 
+    }
+
+    private void validateParams(int m,double l, double rc , double defaultParticleRadius) {
+        if (l / m <= rc+2*defaultParticleRadius) {
+            throw new RuntimeException("CONDITION IS NOT SATISFIED!");
+        }
     }
 
     public Map<Particle, Set<Particle>> getAllNeighbors(double rc) {
