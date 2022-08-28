@@ -14,10 +14,10 @@ public class OffLatticeRunner {
     private static final String INPUTS_DIRECTORY = "simulation_input_files";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
-    private static final double STEP = PI / 4;
+    private static final double STEP = 0.1;
     private static final int PARTICLE_RADIUS = 0;
     private static final double DEFAULT_PROPERTY = 1;
-    public static final int NOISE_ITERATIONS = 8;
+    public static final int LAST_ETA_VALUE = 5;
 
     public static void main(String[] args) throws IOException {
 
@@ -39,10 +39,11 @@ public class OffLatticeRunner {
         String dynamicFilePath = String.format("%s/%s", INPUTS_DIRECTORY, DYNAMIC_FILE);
         List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
 
-
-        for (int i = 0; i < NOISE_ITERATIONS; i++) {
-            double eta_it = i * STEP;
-            particles.forEach(p->p.updateDeltaOmega(eta_it));
+        double eta_it = 0;
+        for (int i = 0; eta_it < 5 ; i++) {
+            eta_it = i * STEP;
+            double finalEta_it = eta_it;
+            particles.forEach(p->p.updateDeltaOmega(finalEta_it));
             String vaOutputFilePath = String.format("%s/VaTime%d.txt", RESULTS_DIRECTORY, i);
             String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt", RESULTS_DIRECTORY, i);
             String staticResultsFilePath = String.format("%s/Static%d.txt", RESULTS_DIRECTORY, i);
