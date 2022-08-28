@@ -32,11 +32,11 @@ public class Particle implements Comparable<Particle> {
     }
 
     public double getXVelocity(){
-        return sin(omega)*velocity;
+        return cos(omega)*velocity;
     }
 
     public double getYVelocity(){
-        return cos(omega)*velocity;
+        return sin(omega)*velocity;
     }
 
     public void updatePosition(double newXValue, double newYValue, double boardLength){
