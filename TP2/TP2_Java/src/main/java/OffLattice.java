@@ -58,8 +58,8 @@ public class OffLattice {
         board.addParticlesToBoard(particles);
 
         ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,resultsDirectoryPath);
-        rg.fillStaticFile(particles,l);
-        rg.addStateToDynamicFile(particles,0);
+        //rg.fillStaticFile(particles,l);
+        //rg.addStateToDynamicFile(particles,0);
 
         Map<Integer,Double> orderParameterMap= new TreeMap<>();
 
@@ -71,7 +71,7 @@ public class OffLattice {
             orderParameterMap.put(i,va);
             particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l,eta,DEFAULT_DT));
             board.addParticlesToBoard(particles);
-            rg.addStateToDynamicFile(particles,i);
+            //rg.addStateToDynamicFile(particles,i);
         }
 
         rg.generateVaTimeFile(orderParameterMap);
