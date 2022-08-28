@@ -80,14 +80,12 @@ public class ParticleGenerator {
         dynamicSB.append("0\n");
         staticSB.append(String.format("%d\n",particles.size()));
         for (Particle p : particles) {
-            dynamicSB.append(String.format("%d %f %f %f %f %f %f\n",
+            dynamicSB.append(String.format("%d %f %f %f %f\n",
                     p.getID(),
                     p.getX(),
                     p.getY(),
-                    0f,
                     p.getVelocityModule(),
-                    p.getXVelocity(),
-                    p.getYVelocity()));
+                    p.getOmega()));
             staticSB.append(String.format("%f %f\n", p.getRadius(), p.getProperty()));
         }
         pwd.print(dynamicSB);

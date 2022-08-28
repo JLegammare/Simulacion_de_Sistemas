@@ -14,12 +14,11 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-    private static final int TOTAL_ITERATIONS = 10;
+    private static final int TOTAL_ITERATIONS = 10000;
     private static final Boolean PERIODIC_CONDITION = true;
-    private static final double DEFAULT_PARTICLE_RADIUS = 0.01;
+    private static final double DEFAULT_PARTICLE_RADIUS = 0;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
     private static final int DEFAULT_DT = 1;
-
     private static final String RESULTS_DIRECTORY =  "simulation_results";
     private static final String INPUTS_DIRECTORY =  "simulation_input_files";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
@@ -64,7 +63,7 @@ public class OffLattice {
 
         Map<Integer,Double> orderParameterMap= new TreeMap<>();
 
-        for (int i = 1; i < TOTAL_ITERATIONS; i++) {
+        for (int i = 1; exitCondition(i); i++) {
             Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(rc);
             double va = calculateOrderParameter(particles, DEFAULT_INITIAL_SPEED);
             orderParameterMap.put(i,va);
@@ -74,6 +73,15 @@ public class OffLattice {
         }
 
         rg.generateVaTimeFile(orderParameterMap);
+
+    }
+
+    private static boolean exitCondition(int i) {
+
+        if(i < TOTAL_ITERATIONS)  {
+            return true;
+        }
+        return false;
 
     }
 

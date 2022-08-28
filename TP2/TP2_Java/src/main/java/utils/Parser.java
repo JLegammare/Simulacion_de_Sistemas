@@ -90,12 +90,9 @@ public class Parser {
                 int id = dynamicScanner.nextInt();
                 double posX = dynamicScanner.nextDouble();
                 double posY = dynamicScanner.nextDouble();
-                double posZ = dynamicScanner.nextDouble();
                 double speed = dynamicScanner.nextDouble();
-                double vX = dynamicScanner.nextDouble();
-                double vY = dynamicScanner.nextDouble();
+                double omega = dynamicScanner.nextDouble();
 
-                double omega = calculateOmega(vX,speed);
                 double noise = Math.random()*eta-eta/2;
 
                 particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise));
@@ -103,11 +100,6 @@ public class Parser {
 
         }
             return particles;
-    }
-
-
-    private double calculateOmega(double vx,double speed){
-        return asin(vx/speed);
     }
 
 }

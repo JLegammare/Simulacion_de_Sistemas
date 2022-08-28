@@ -35,7 +35,15 @@ public class OffLatticeRunner {
             String vaOutputFilePath = String.format("%s/VaTime%d.txt", RESULTS_DIRECTORY, i);
             String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt", RESULTS_DIRECTORY, i);
             String staticResultsFilePath = String.format("%s/Static%d.txt", RESULTS_DIRECTORY, i);
-            OffLattice.OffLatticeMethod(eta_it, l, rc, RESULTS_DIRECTORY,staticResultsFilePath, dynamicResultsFilePath, vaOutputFilePath, particles);
+            OffLattice.OffLatticeMethod(
+                    eta_it,
+                    l,
+                    rc,
+                    RESULTS_DIRECTORY,
+                    staticResultsFilePath,
+                    dynamicResultsFilePath,
+                    vaOutputFilePath,
+                    particles);
         }
 
 
