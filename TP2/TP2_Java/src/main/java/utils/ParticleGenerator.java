@@ -9,9 +9,6 @@ import java.util.List;
 public class ParticleGenerator {
 
 
-
-
-
 //    public static void main(String[] args) throws IOException {
 //
 //        Parser parser = new Parser();

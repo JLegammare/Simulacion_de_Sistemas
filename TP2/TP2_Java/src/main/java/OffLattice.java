@@ -14,7 +14,7 @@ import static java.lang.Math.*;
 
 public class OffLattice {
 
-    private static final int TOTAL_ITERATIONS = 20;
+    private static final int TOTAL_ITERATIONS = 20000;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
@@ -80,7 +80,7 @@ public class OffLattice {
 
     private static boolean exitCondition(int i) {
 
-        if(i < TOTAL_ITERATIONS)  {
+        if(i < TOTAL_ITERATIONS){
             return true;
         }
         return false;

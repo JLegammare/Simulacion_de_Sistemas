@@ -10,7 +10,7 @@ import static java.lang.Math.PI;
 
 public class OffLatticeRunner {
 
-    private static final String RESULTS_DIRECTORY = "simulation_results/noise_simulations";
+    private static final String RESULTS_DIRECTORY = "simulation_results/density_simulations";
     private static final String INPUTS_DIRECTORY = "simulation_input_files";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
@@ -24,40 +24,36 @@ public class OffLatticeRunner {
         Parser parser = new Parser();
         CommandLine cmd = parser.parseArguments(args);
 
-        double l = Double.parseDouble(cmd.getOptionValue("length"));
-        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
-        double eta = Double.parseDouble(cmd.getOptionValue("noise"));
+        double l = 20;
+//        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
+        double eta = 1;
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
         double v = Double.parseDouble(cmd.getOptionValue("initial_speed"));
 
 
-        ParticleGenerator.generateInputParticlesFiles(np,l,eta,PARTICLE_RADIUS,v,
-                DEFAULT_PROPERTY,DYNAMIC_FILE,STATIC_FILE,INPUTS_DIRECTORY);
-
-
         String staticFilePath = String.format("%s/%s", INPUTS_DIRECTORY, STATIC_FILE);
         String dynamicFilePath = String.format("%s/%s", INPUTS_DIRECTORY, DYNAMIC_FILE);
-        List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
+        for (int i = 100; i < 1600 ; i+=100) {
 
-        double eta_it = 0;
-        for (int i = 0; eta_it < 5 ; i++) {
-            eta_it = i * STEP;
-            double finalEta_it = eta_it;
-            particles.forEach(p->p.updateDeltaOmega(finalEta_it));
-            String vaOutputFilePath = String.format("%s/VaTime%d.txt", RESULTS_DIRECTORY, i);
-            String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt", RESULTS_DIRECTORY, i);
-            String staticResultsFilePath = String.format("%s/Static%d.txt", RESULTS_DIRECTORY, i);
-            OffLattice.OffLatticeMethod(
-                    eta_it,
-                    l,
-                    rc,
-                    RESULTS_DIRECTORY,
-                    staticResultsFilePath,
-                    dynamicResultsFilePath,
-                    vaOutputFilePath,
-                    particles);
+            if(i!=200 && i!=400){
+
+                ParticleGenerator.generateInputParticlesFiles(i,l,eta,PARTICLE_RADIUS,v,
+                        DEFAULT_PROPERTY,DYNAMIC_FILE,STATIC_FILE,INPUTS_DIRECTORY);
+                List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
+                String vaOutputFilePath = String.format("%s/VaTime%d.txt", RESULTS_DIRECTORY, i);
+                String dynamicResultsFilePath = String.format("%s/Dynamic%d.txt", RESULTS_DIRECTORY, i);
+                String staticResultsFilePath = String.format("%s/Static%d.txt", RESULTS_DIRECTORY, i);
+                OffLattice.OffLatticeMethod(
+                        eta,
+                        l,
+                        rc,
+                        RESULTS_DIRECTORY,
+                        staticResultsFilePath,
+                        dynamicResultsFilePath,
+                        vaOutputFilePath,
+                        particles);
+            }
         }
-
 
     }
 
