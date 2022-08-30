@@ -30,7 +30,7 @@ def main(config: Config):
             family="Arial",
             size=40,
             ),
-        yaxis_range = [0,1]
+        yaxis_range = [0,1.2]
     )
     fig.show()
 def format_tick(n: int):

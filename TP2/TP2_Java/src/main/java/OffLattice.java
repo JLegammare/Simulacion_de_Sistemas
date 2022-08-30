@@ -2,6 +2,7 @@ import models.Board;
 import models.Particle;
 import org.apache.commons.cli.CommandLine;
 import utils.Parser;
+import utils.ParticleGenerator;
 import utils.ResultsGenerator;
 
 import java.io.IOException;
@@ -17,6 +18,7 @@ public class OffLattice {
     private static final int TOTAL_ITERATIONS = 20000;
     private static final Boolean PERIODIC_CONDITION = true;
     private static final double DEFAULT_PARTICLE_RADIUS = 0;
+    private static final double DEFAULT_PARTICLE_PROPERTY = 1;
     private static final double DEFAULT_INITIAL_SPEED = 0.03;
     private static final int DEFAULT_DT = 1;
     private static final String RESULTS_DIRECTORY =  "simulation_results";
@@ -33,9 +35,12 @@ public class OffLattice {
         double eta = Double.parseDouble(cmd.getOptionValue("noise"));
         double l = Double.parseDouble(cmd.getOptionValue("length"));
         double rc = Double.parseDouble(cmd.getOptionValue("i_radius"));
+        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
 
         String staticFilePath = String.format("%s/%s", INPUTS_DIRECTORY, STATIC_FILE);
         String dynamicFilePath = String.format("%s/%s", INPUTS_DIRECTORY, DYNAMIC_FILE);
+
+        ParticleGenerator.generateInputParticlesFiles(np,l,eta,DEFAULT_PARTICLE_RADIUS,DEFAULT_INITIAL_SPEED,DEFAULT_PARTICLE_PROPERTY,DYNAMIC_FILE,STATIC_FILE,INPUTS_DIRECTORY);
         List<Particle> particles = parser.parseParticles(staticFilePath, dynamicFilePath, eta);
 
         String vaOutputFilePath = String.format("%s/%s", RESULTS_DIRECTORY, VA_TIME_FILE);
@@ -58,8 +63,8 @@ public class OffLattice {
         board.addParticlesToBoard(particles);
 
         ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,vaFilePath,staticFilePath,resultsDirectoryPath);
-        //rg.fillStaticFile(particles,l);
-        //rg.addStateToDynamicFile(particles,0);
+        rg.fillStaticFile(particles,l);
+        rg.addStateToDynamicFile(particles,0);
 
         Map<Integer,Double> orderParameterMap= new TreeMap<>();
 
@@ -71,7 +76,7 @@ public class OffLattice {
             orderParameterMap.put(i,va);
             particles.forEach(p -> tempEvolution(p, neighborhoods.get(p), l,eta,DEFAULT_DT));
             board.addParticlesToBoard(particles);
-            //rg.addStateToDynamicFile(particles,i);
+            rg.addStateToDynamicFile(particles,i);
         }
 
         rg.generateVaTimeFile(orderParameterMap);
@@ -80,10 +85,7 @@ public class OffLattice {
 
     private static boolean exitCondition(int i) {
 
-        if(i < TOTAL_ITERATIONS){
-            return true;
-        }
-        return false;
+        return i < TOTAL_ITERATIONS;
 
     }
 
