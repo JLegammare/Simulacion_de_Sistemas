@@ -1,7 +1,6 @@
+import models.Board;
 import models.Pair;
 import models.Particle;
-import org.apache.commons.cli.CommandLine;
-import utils.Parser;
 import utils.ParticleGenerator;
 
 import java.io.IOException;
@@ -66,11 +65,12 @@ public class BrownianMotion {
         String dynamicResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, DYNAMIC_FILE);
         String staticResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, STATIC_FILE);
 
-        BrownianMotionMethod();
+        BrownianMotionMethod(particles);
     }
 
-    private static void BrownianMotionMethod(){
-
+    private static void BrownianMotionMethod(List<Particle> particles){
+        Board board = new Board(BrownianMotion.BOARD_LENGTH, 0, SMALL_PARTICLE_RADIUS);
+        board.addParticlesToBoard(particles);
     }
 
 }

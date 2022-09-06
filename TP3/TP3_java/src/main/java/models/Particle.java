@@ -27,8 +27,6 @@ public class Particle implements Comparable<Particle> {
         this.mass = mass;
     }
 
-
-
     public double getVelocityModule() {
         return velocity;
     }
