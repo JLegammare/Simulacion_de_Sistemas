@@ -57,7 +57,6 @@ public class BrownianMotion {
                     DEFAULT_PARTICLE_PROPERTY,
                     BIG_PARTICLE_VELOCITY,
                     0,
-                    0,
                     BIG_PARTICLE_MASS);
             particles.add(bigParticle);
         }

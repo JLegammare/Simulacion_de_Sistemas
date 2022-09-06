@@ -37,20 +37,29 @@ public class ParticleGenerator {
                                                          double mass
     ) {
         List<Particle> particles = new ArrayList<>();
-        for (int i = 0; i < numberOfParticles; i++) {
-
+        int particleId = 0;
+        while (particles.size() < numberOfParticles){
             double x = Math.random() * l;
             double y = Math.random() * l;
             double initialSpeed = Math.random()*2;
             double omega = Math.random() * 2* Math.PI;
-            double deltaOmega = Math.random()*n-n/2;
-
-            particles.add(new Particle(i, x, y, particleRadius,property,initialSpeed,omega,deltaOmega,mass));
-
+            if(particleSeparated(x, y, particleRadius, particles)) {
+                particles.add(new Particle(particleId++, x, y, particleRadius,property,initialSpeed,omega,mass));
+            }
         }
 
         return particles;
 
+    }
+
+    private static boolean particleSeparated(double x, double y, double particleRadius, List<Particle> particles) {
+        for (Particle particle: particles) {
+            if(Math.pow(x - particle.getX(), 2) + Math.pow(y - particle.getY(), 2) <=
+                    Math.pow(particleRadius + particle.getRadius(), 2)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static void generateFiles(List<Particle> particles,

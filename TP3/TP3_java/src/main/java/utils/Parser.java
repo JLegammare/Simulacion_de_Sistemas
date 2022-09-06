@@ -76,7 +76,7 @@ public class Parser {
     }
 
 
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath, double eta) throws IOException {
+    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath) throws IOException {
 
         File staticFile = new File(staticFilePath);
         File dynamicFile = new File(dynamicFilePath);
@@ -100,9 +100,7 @@ public class Parser {
                 double speed = dynamicScanner.nextDouble();
                 double omega = dynamicScanner.nextDouble();
 
-                double noise = Math.random()*eta-eta/2;
-
-                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise,0));
+                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,0));
             }
 
         }
