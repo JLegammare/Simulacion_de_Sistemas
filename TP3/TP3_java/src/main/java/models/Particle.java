@@ -10,12 +10,13 @@ public class Particle implements Comparable<Particle> {
     private final Pair<Double, Double> coordinates;
     private final double radius;
     private final double property;
+    private final double mass;
     private final double velocity;
     private double omega;
     private double deltaOmega;
 
 
-    public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double deltaOmega) {
+    public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double deltaOmega, double mass) {
         this.ID = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
@@ -23,6 +24,7 @@ public class Particle implements Comparable<Particle> {
         this.velocity = velocity;
         this.omega = omega;
         this.deltaOmega = deltaOmega;
+        this.mass = mass;
     }
 
 
@@ -76,6 +78,10 @@ public class Particle implements Comparable<Particle> {
 
     public double getProperty() {
         return property;
+    }
+
+    public double getMass() {
+        return mass;
     }
 
     @Override

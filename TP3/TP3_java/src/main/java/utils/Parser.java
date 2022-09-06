@@ -9,16 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-import static java.lang.Math.asin;
-
 public class Parser {
 
     public CommandLine parseArguments(String[] args){
         Options options = new Options();
-
-        Option n = new Option("n", "noise", true, "noise parameter of the simulation");
-        n.setRequired(true);
-        options.addOption(n);
 
         Option l = new Option("l", "length", true, "length of the cells");
         l.setRequired(true);
@@ -29,28 +23,41 @@ public class Parser {
                 "particles_number",
                 true,
                 "number of particles to be created");
-        np.setRequired(false);
+        np.setRequired(true);
         options.addOption(np);
 
-        Option v = new Option(
-                "v",
-                "initial_speed",
-                true,
-                "uniform initial speed for all particles");
-        v.setRequired(false);
-        options.addOption(v);
-
-        Option r = new Option(
-                "r",
-                "particle_radius",
+        Option r1 = new Option(
+                "rs",
+                "small_particle_radius",
                 false,
-                "particle radius for all particles");
-        r.setRequired(false);
-        options.addOption(r);
+                "small particles radius");
+        r1.setRequired(true);
+        options.addOption(r1);
 
-        Option rc = new Option("rc", "i_radius", true, "particle interaction radius");
-        rc.setRequired(true);
-        options.addOption(rc);
+        Option r2 = new Option(
+                "rb",
+                "particle_radius_2",
+                false,
+                "big particle radius");
+        r2.setRequired(true);
+        options.addOption(r2);
+
+        Option m2 = new Option(
+                "mb",
+                "particle_mass_2",
+                false,
+                "big particle mass");
+        m2.setRequired(true);
+        options.addOption(m2);
+
+        Option m1 = new Option(
+                "ms",
+                "particle_mass_2",
+                false,
+                "small particle mass");
+        m1.setRequired(true);
+        options.addOption(m1);
+
 
         CommandLineParser parser = new DefaultParser();
         HelpFormatter formatter = new HelpFormatter();
@@ -95,11 +102,11 @@ public class Parser {
 
                 double noise = Math.random()*eta-eta/2;
 
-                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise));
+                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,noise,0));
             }
 
         }
-            return particles;
+        return particles;
     }
 
 }

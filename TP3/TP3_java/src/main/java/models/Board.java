@@ -127,7 +127,7 @@ public class Board {
                                 p.getID(),
                                 p.getX() + xTranslation,
                                 p.getY() + yTranslation, p.getRadius(),
-                                p.getProperty(),p.getVelocityModule(),p.getOmega(),p.getDeltaOmega()))
+                                p.getProperty(),p.getVelocityModule(),p.getOmega(),p.getDeltaOmega(),0))
                 .collect(Collectors.toList()));
     }
 

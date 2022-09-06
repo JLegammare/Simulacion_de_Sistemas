@@ -9,27 +9,12 @@ import java.util.List;
 public class ParticleGenerator {
 
 
-//    public static void main(String[] args) throws IOException {
-//
-//        Parser parser = new Parser();
-//        CommandLine cmd = parser.parseArguments(args);
-//
-//        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
-//        double l = Double.parseDouble(cmd.getOptionValue("length"));
-//        double eta = Double.parseDouble(cmd.getOptionValue("noise"));
-//        double v = Double.parseDouble(cmd.getOptionValue("initial_speed"));
-//
-//        List<Particle> particles = generateRandomParticles(np,l,eta,PARTICLE_RADIUS,v,DEFAULT_PROPERTY);
-//        generateFiles(particles);
-//
-//    }
-
     public static void generateInputParticlesFiles(int numberOfParticles,
                                                    double l,
                                                    double n,
                                                    double particleRadius,
-                                                   double initialSpeed,
                                                    double property,
+                                                   double mass,
                                                    String dynamicFileName,
                                                    String staticFileName,
                                                    String directoryPath) throws IOException {
@@ -39,8 +24,7 @@ public class ParticleGenerator {
                 l,
                 n,
                 particleRadius,
-                initialSpeed,
-                property);
+                property,mass);
 
         generateFiles(particles,dynamicFileName,staticFileName,directoryPath);
     }
@@ -49,18 +33,19 @@ public class ParticleGenerator {
                                                          double l,
                                                          double n,
                                                          double particleRadius,
-                                                         double initialSpeed,
-                                                         double property
+                                                         double property,
+                                                         double mass
     ) {
         List<Particle> particles = new ArrayList<>();
         for (int i = 0; i < numberOfParticles; i++) {
 
             double x = Math.random() * l;
             double y = Math.random() * l;
+            double initialSpeed = Math.random()*2;
             double omega = Math.random() * 2* Math.PI;
             double deltaOmega = Math.random()*n-n/2;
 
-            particles.add(new Particle(i, x, y, particleRadius,property,initialSpeed,omega,deltaOmega));
+            particles.add(new Particle(i, x, y, particleRadius,property,initialSpeed,omega,deltaOmega,mass));
 
         }
 
