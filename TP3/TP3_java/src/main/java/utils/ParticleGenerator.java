@@ -9,41 +9,23 @@ import java.util.List;
 public class ParticleGenerator {
 
 
-    public static void generateInputParticlesFiles(int numberOfParticles,
-                                                   double l,
-                                                   double n,
-                                                   double particleRadius,
-                                                   double property,
-                                                   double mass,
-                                                   String dynamicFileName,
-                                                   String staticFileName,
-                                                   String directoryPath) throws IOException {
-
-        List<Particle> particles= generateRandomParticles(
-                numberOfParticles,
-                l,
-                n,
-                particleRadius,
-                property,mass);
-
-        generateFiles(particles,dynamicFileName,staticFileName,directoryPath);
-    }
-
     public static List<Particle> generateRandomParticles(int numberOfParticles,
                                                          double l,
                                                          double n,
                                                          double particleRadius,
                                                          double property,
-                                                         double mass
+                                                         double mass,
+                                                         Particle bigParticle
     ) {
         List<Particle> particles = new ArrayList<>();
-        int particleId = 0;
+        particles.add(bigParticle);
+        int particleId = 1;
         while (particles.size() < numberOfParticles){
             double x = Math.random() * l;
             double y = Math.random() * l;
             double initialSpeed = Math.random()*2;
             double omega = Math.random() * 2* Math.PI;
-            if(particleSeparated(x, y, particleRadius, particles)) {
+            if(particleSeparated(x, y, particleRadius, l,particles)) {
                 particles.add(new Particle(particleId++, x, y, particleRadius,property,initialSpeed,omega,mass));
             }
         }
@@ -52,14 +34,25 @@ public class ParticleGenerator {
 
     }
 
-    private static boolean particleSeparated(double x, double y, double particleRadius, List<Particle> particles) {
+    private static boolean particleSeparated(
+            double x,
+            double y,
+            double particleRadius,
+            double boardLength,
+            List<Particle> particles) {
+
         for (Particle particle: particles) {
             if(Math.pow(x - particle.getX(), 2) + Math.pow(y - particle.getY(), 2) <=
-                    Math.pow(particleRadius + particle.getRadius(), 2)) {
+                    Math.pow(particleRadius + particle.getRadius(), 2) || wallCollision(x,y,particleRadius, boardLength)) {
                 return false;
             }
         }
         return true;
+    }
+
+    private static boolean wallCollision(double x, double y, double particleRadius, double boardLength){
+        return x - particleRadius <= 0 || x + particleRadius >= boardLength || y - particleRadius <= 0
+                || y + particleRadius >= boardLength;
     }
 
     public static void generateFiles(List<Particle> particles,

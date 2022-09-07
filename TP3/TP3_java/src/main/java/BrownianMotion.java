@@ -2,6 +2,7 @@ import models.Board;
 import models.Pair;
 import models.Particle;
 import utils.ParticleGenerator;
+import utils.ResultsGenerator;
 
 import java.io.IOException;
 import java.util.Comparator;
@@ -36,40 +37,44 @@ public class BrownianMotion {
 //        double m1 = Double.parseDouble(cmd.getOptionValue("particle_mass_1"));
 //        double l = Double.parseDouble(cmd.getOptionValue("length"));
 
+        Pair<Double,Double> centerPosition = new Pair<>(BOARD_LENGTH/2,BOARD_LENGTH/2);
+        Particle bigParticle = new Particle(
+                0,
+                centerPosition.getX_value(),
+                centerPosition.getY_value(),
+                BIG_PARTICLE_RADIUS,
+                DEFAULT_PARTICLE_PROPERTY,
+                BIG_PARTICLE_VELOCITY,
+                0,
+                BIG_PARTICLE_MASS);
+
+
+
         List<Particle> particles = ParticleGenerator.generateRandomParticles(
                 NUMBER_OF_SMALL_PARTICLES,
                 BOARD_LENGTH,
                 0,
                 SMALL_PARTICLE_RADIUS,
                 DEFAULT_PARTICLE_PROPERTY,
-                SMALL_PARTICLE_MASS
-        );
-
-        Optional<Integer> maxIdOp = particles.stream().map(Particle::getID).max(Comparator.comparingInt(a -> a));
-        Pair<Double,Double> centerPosition = new Pair<>(BOARD_LENGTH/2,BOARD_LENGTH/2);
-
-        if(maxIdOp.isPresent()){
-            Particle bigParticle = new Particle(
-                    maxIdOp.get()+1,
-                    centerPosition.getX_value(),
-                    centerPosition.getY_value(),
-                    BIG_PARTICLE_RADIUS,
-                    DEFAULT_PARTICLE_PROPERTY,
-                    BIG_PARTICLE_VELOCITY,
-                    0,
-                    BIG_PARTICLE_MASS);
-            particles.add(bigParticle);
-        }
-
-        String dynamicResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, DYNAMIC_FILE);
-        String staticResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, STATIC_FILE);
+                SMALL_PARTICLE_MASS,
+                bigParticle
+                );
 
         BrownianMotionMethod(particles);
     }
 
-    private static void BrownianMotionMethod(List<Particle> particles){
+    private static void BrownianMotionMethod(List<Particle> particles) throws IOException {
+
+        String dynamicResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, DYNAMIC_FILE);
+        String staticResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, STATIC_FILE);
+
+        ResultsGenerator rg = new ResultsGenerator(dynamicResultsFilePath,staticResultsFilePath,RESULTS_DIRECTORY);
+
         Board board = new Board(BrownianMotion.BOARD_LENGTH, 0, SMALL_PARTICLE_RADIUS);
+
         board.addParticlesToBoard(particles);
+        rg.fillStaticFile(particles,BOARD_LENGTH);
+        rg.addStateToDynamicFile(particles,0);
     }
 
 }
