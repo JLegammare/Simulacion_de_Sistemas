@@ -37,23 +37,9 @@ public class Particle implements Comparable<Particle> {
         return sin(omega)*velocity;
     }
 
-    public void updatePosition(double newXValue, double newYValue, double boardLength){
-          //si se va por la derecha
-        if (newXValue > boardLength) {
-            setX(newXValue - boardLength);
-        }//si se va por izquierda
-        else if (newXValue < 0)
-            setX(boardLength + newXValue);
-        else
-            setX(newXValue);
-        //si se va por arriba
-        if (newYValue > boardLength) {
-            setY(newYValue - boardLength);
-        }//si se va por abajo
-        else if (newYValue < 0)
-            setY(boardLength + newYValue);
-        else
-            setY(newYValue);
+    public void updatePosition(double newXValue, double newYValue){
+        setX(newXValue);
+        setY(newYValue);
     }
 
     public double getOmega() {
