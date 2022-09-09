@@ -1,7 +1,4 @@
-import models.Board;
-import models.Pair;
-import models.Particle;
-import models.Wall;
+import models.*;
 import utils.ParticleGenerator;
 import utils.ResultsGenerator;
 
@@ -75,117 +72,144 @@ public class BrownianMotion {
         board.addParticlesToBoard(particles);
         rg.fillStaticFile(particles,BOARD_LENGTH);
         rg.addStateToDynamicFile(particles,0);
-        double nextCollision = calculateNextCollision(particles,board);
+        Collision firtCollition = calculateNextCollision(particles,board);
+        particlesEvolution(particles,nextCollision);
+        colision(particles,)
 //        particles.forEach(p->tempEvolution(p));
 
         System.out.println(nextCollision);
     }
 
-    private static double calculateNextCollision(List<Particle> particles,Board board) {
+    private static void particlesEvolution(List<Particle> particles, double nextCollision) {
+        particles.forEach((p)-> {
 
-        //TODO: adapt cellIndexMethod
-//        Map<Particle, Set<Particle>> neighborhoods = board.getAllNeighbors(RC);
-        List<Double> collisionsTimes = new ArrayList<>();
+            double newXvalue = p.getX() + p.getXVelocity()*nextCollision;
+            double newYvalue = p.getY() + p.getYVelocity()*nextCollision;
+
+            p.updatePosition(newXvalue,newYvalue);
+
+        });
+
+    }
+
+    private static List<Collision> calculateNextCollision(List<Particle> particles, Board board) {
+
+        Map<Double, List<Collision>> collisions = new TreeMap<>();
 
         particles.forEach((p)->{
 
-            if (p.getVelocityModule()!=0){
+            if (p.getVelocityModule() != 0){
 
-                Map<Double,Pair<Particle,Particle>> particleCollisions =particlesCollisionTime(p,particles);
-                Optional<Double> minTcOpt = particleCollisions.keySet().stream().min(Double::compareTo);
+                Collision nextParticleCollision = particlesCollisionTime(p,particles);
+                addCollision(collisions,nextParticleCollision);
 
-                minTcOpt.ifPresent(collisionsTimes::add);
-                double wallCollisionTime = wallCollisionTime(p);
+                List<Collision> wallCollisions = wallCollisions(p);
+                wallCollisions.forEach(collision -> addCollision(collisions,collision));
 
-                collisionsTimes.add(wallCollisionTime);
             }
         });
 
-        return collisionsTimes.stream().min(Double::compareTo).get();
+        return collisions.get(collisions.keySet().stream().min(Double::compareTo).get());
 
     }
 
-    private static double wallCollisionTime(Particle p){
+    private static void addCollision(Map<Double, List<Collision>> collisions, Collision collision){
+
+        double collisionTime = collision.getCollisionTime();
+        if(collisions.containsKey(collisionTime))
+            collisions.get(collisionTime).add(collision);
+        else {
+            collisions.put(collisionTime,new ArrayList<>());
+            collisions.get(collisionTime).add(collision);
+        }
+
+    }
+
+    private static List<Collision> wallCollisions(Particle p){
 
         double tcX, tcY;
+        Wall wallY,wallX;
 
         if(p.getXVelocity() > 0){
             tcX = (BOARD_LENGTH - p.getRadius() - p.getX()) / p.getXVelocity();
-        }else
+            wallX = Wall.RIGHT;
+
+        }else {
             tcX = (0 + p.getRadius() - p.getX()) / p.getXVelocity();
+            wallX = Wall.LEFT;
+        }
 
         if(p.getYVelocity() > 0){
             tcY = (BOARD_LENGTH - p.getRadius() - p.getY()) / p.getYVelocity();
-        }else
+            wallY = Wall.TOP;
+        }else{
             tcY = (0 + p.getRadius() - p.getY()) / p.getYVelocity();
+            wallY = Wall.BOTTOM;
+        }
 
-        return Math.min(tcX, tcY);
+        List<Collision> cList = new ArrayList<>();
 
+        CollisionType cType;
+
+
+        if (tcX <= tcY){
+            if(wallX.equals(Wall.LEFT))
+                cList.add(new Collision(CollisionType.LEFT_BORDER_COLLISION,p,tcX));
+            else
+                cList.add(new Collision(CollisionType.RIGHT_BORDER_COLLISION,p,tcX));
+        }
+        else if ( tcX >= tcY ){
+            if(wallY.equals(Wall.TOP))
+                cList.add(new Collision(CollisionType.TOP_BORDER_COLLISION,p,tcX));
+            else
+                cList.add(new Collision(CollisionType.BOTTOM_BORDER_COLLISION,p,tcX));
+        }
+
+        return cList;
 
     }
 
 
-    private static Map<Double,Pair<Particle,Particle>> particlesCollisionTime(Particle selectedParticle, List<Particle> particles){
+    private static Collision particlesCollisionTime(Particle selectedParticle, List<Particle> particles){
 
-        Map<Double,Pair<Particle,Particle>> timesMap = new TreeMap<>();
+        final Collision[] collision = {new Collision(
+                CollisionType.PARTICLE_COLLISION,
+                selectedParticle,
+                Double.POSITIVE_INFINITY)};
 
-        particles.forEach(p-> {
+        particles.forEach( p-> {
 
-            double o = selectedParticle.getRadius() + p.getRadius();
+            if(!p.equals(selectedParticle)){
 
-            Pair<Double,Double> deltaR = new Pair<>(p.getX()-selectedParticle.getX(), p.getY()-selectedParticle.getY());
-            Pair<Double,Double> deltaV = new Pair<>(p.getXVelocity()-selectedParticle.getXVelocity(),p.getYVelocity()-selectedParticle.getYVelocity());
 
-            double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
-            double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
-            double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value();
+                double o = selectedParticle.getRadius() + p.getRadius();
 
-            double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
-            if (d>=0 && deltaRXdeltaV< 0){
-                double tc = -(deltaRXdeltaV + Math.sqrt(d)) / deltaVXdeltaV;
-                timesMap.put(tc,new Pair<>(selectedParticle,p));
+                Pair<Double,Double> deltaR = new Pair<>(
+                        p.getX()-selectedParticle.getX(),
+                        p.getY()-selectedParticle.getY());
+
+                Pair<Double,Double> deltaV = new Pair<>(
+                        p.getXVelocity()-selectedParticle.getXVelocity(),
+                        p.getYVelocity()-selectedParticle.getYVelocity());
+
+                double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
+                double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
+                double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value();
+
+                double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
+
+                if (d>=0 && deltaRXdeltaV< 0){
+
+                    double tc = -(deltaRXdeltaV + Math.sqrt(d)) / deltaVXdeltaV;
+
+                    if(tc < collision[0].getCollisionTime())
+                        collision[0] = new Collision(CollisionType.PARTICLE_COLLISION,selectedParticle,tc);
+                }
             }
         });
 
-        return timesMap;
+        return collision[0];
     }
 
-//    private static void tempEvolution(Particle particle) {
-//        setNewOmega(particle,neighbors);
-//        checkPeriodicMovement(particle,l,dt);
-//        particle.updateDeltaOmega(n);
-//    }
-//
-//    private static void checkPeriodicMovement(Particle particle,double l, int dt){
-//
-//        double newXvalue = particle.getX() + particle.getXVelocity()*dt;
-//        double newYvalue = particle.getY() + particle.getYVelocity()*dt;
-//
-//        particle.updatePosition(newXvalue,newYvalue,l);
-//
-//    }
-//
-//    private static void setNewOmega(Particle particle,Set<Particle> neighbors ){
-//        double sinAvg = 0;
-//        double cosAvg = 0;
-//        double omegaAvg;
-//
-//        if (!neighbors.isEmpty()) {
-//            for (Particle p : neighbors) {
-//                sinAvg += sin(p.getOmega());
-//                cosAvg += cos(p.getOmega());
-//            }
-//        }
-//
-//        sinAvg += sin(particle.getOmega());
-//        cosAvg += cos(particle.getOmega());
-//
-//        sinAvg = sinAvg / (neighbors.size() + 1);
-//        cosAvg = cosAvg / (neighbors.size() + 1);
-//
-//        omegaAvg = atan2(sinAvg, cosAvg);
-//        particle.setOmega(omegaAvg + particle.getDeltaOmega());
-//    }
-//
 
 }
