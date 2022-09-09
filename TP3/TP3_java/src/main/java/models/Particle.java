@@ -11,9 +11,13 @@ public class Particle implements Comparable<Particle> {
     private final double radius;
     private final double property;
     private final double mass;
-    private final double velocity;
+    private double velocity;
     private double omega;
 
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
+    }
 
     public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double mass) {
         this.ID = id;
@@ -96,6 +100,7 @@ public class Particle implements Comparable<Particle> {
     public void setY(double y) {
         coordinates.setY_value(y);
     }
+
 
     public double getRadius() {
         return radius;

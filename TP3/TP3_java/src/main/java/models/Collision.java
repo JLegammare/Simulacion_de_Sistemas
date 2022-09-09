@@ -12,6 +12,14 @@ public class Collision implements Comparable<Collision>{
         return collisionTime;
     }
 
+    public CollisionType getCollisionType() {
+        return cType;
+    }
+
+    public Particle getParticle() {
+        return particle;
+    }
+
     public Collision(CollisionType cType, Particle particle, double collisionTime) {
         this.cType = cType;
         this.particle = particle;

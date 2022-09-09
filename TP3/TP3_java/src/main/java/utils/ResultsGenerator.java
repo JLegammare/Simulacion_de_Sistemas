@@ -43,7 +43,7 @@ public class ResultsGenerator {
     }
 
 
-    public void addStateToDynamicFile(List<Particle> particles,int time ) throws IOException {
+    public void addStateToDynamicFile(List<Particle> particles,double time ) throws IOException {
 
         FileWriter fw = new FileWriter(dynamicFile,true);
         BufferedWriter bw = new BufferedWriter(fw);

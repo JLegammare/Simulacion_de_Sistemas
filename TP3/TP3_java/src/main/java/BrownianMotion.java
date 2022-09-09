@@ -15,9 +15,8 @@ public class BrownianMotion {
     private static final int BIG_PARTICLE_VELOCITY = 0;
     private static final double BIG_PARTICLE_MASS = 0.9;
     private static final double BIG_PARTICLE_RADIUS = 0.7;
-    private static final int NUMBER_OF_SMALL_PARTICLES = 120;
+    private static final int NUMBER_OF_SMALL_PARTICLES = 20;
     private static final double RC = 1.0;
-
     private static final Double BOARD_LENGTH = 6.0;
     private static final double SMALL_PARTICLE_RADIUS = 0.2;
     private static final double SMALL_PARTICLE_MASS = 0.9;
@@ -71,10 +70,72 @@ public class BrownianMotion {
 
         board.addParticlesToBoard(particles);
         rg.fillStaticFile(particles,BOARD_LENGTH);
-        rg.addStateToDynamicFile(particles,0);
-        List<Collision> firtCollitions = calculateNextCollision(particles,board);
-        double collisionTime = firtCollitions.get(0).getCollisionTime();
-        particlesEvolution(particles,collisionTime);
+        rg.addStateToDynamicFile(particles,0.0);
+        boolean bigPwithWallCollision = false;
+
+        while(!bigPwithWallCollision){
+            List<Collision> firstCollisions = calculateNextCollision(particles,board);
+            double collisionTime = firstCollisions.get(0).getCollisionTime();
+            particlesEvolution(particles,collisionTime);
+            rg.addStateToDynamicFile(particles,collisionTime);
+            bigPwithWallCollision = collisionOperation(firstCollisions,particles.get(0));
+        }
+
+    }
+
+    private static boolean collisionOperation(List<Collision> firstCollisions,Particle bigParticle) {
+
+        if(firstCollisions.size() == 1){
+            if(firstCollisions.get(0).getParticle().equals(bigParticle))
+                return true;
+
+            CollisionType ct = firstCollisions.get(0).getCollisionType();
+            if(ct == CollisionType.BORDER_X_COLLISION){
+                Particle p = firstCollisions.get(0).getParticle();
+                p.setOmega(Math.atan2(p.getYVelocity(),-p.getXVelocity()));
+
+            }
+            else{
+                Particle p = firstCollisions.get(0).getParticle();
+                p.setOmega(Math.atan2(-p.getYVelocity(),p.getXVelocity()));
+            }
+        }
+        else {
+
+            Particle firstParticle = firstCollisions.get(0).getParticle();
+            Particle secondParticle = firstCollisions.get(1).getParticle();
+
+            double o = firstParticle.getRadius() + secondParticle.getRadius();
+
+            Pair<Double,Double> deltaR = new Pair<>(
+                    firstParticle.getX()-secondParticle.getX(),
+                    firstParticle.getY()-secondParticle.getY());
+
+            Pair<Double,Double> deltaV = new Pair<>(
+                    firstParticle.getXVelocity()-secondParticle.getXVelocity(),
+                    firstParticle.getYVelocity()-secondParticle.getYVelocity());
+
+            double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value()*deltaV.getY_value();
+
+            double j = (2 * firstParticle.getMass() * secondParticle.getMass() * deltaRXdeltaV)/
+                    (o * (firstParticle.getMass() + secondParticle.getMass()));
+            double jx = j * deltaR.getX_value()/o;
+            double jy = j * deltaR.getY_value()/o;
+
+            double vxdFirstParticle = firstParticle.getXVelocity() + jx/firstParticle.getMass();
+            double vydFirstParticle = firstParticle.getYVelocity() + jy/firstParticle.getMass();
+            double vxdSecondParticle = secondParticle.getXVelocity() - jx/secondParticle.getMass();
+            double vydSecondParticle = secondParticle.getYVelocity() - jy/secondParticle.getMass();
+
+            firstParticle.setOmega(Math.atan2(vydFirstParticle,vxdFirstParticle));
+            firstParticle.setVelocity(Math.sqrt(Math.pow(vydFirstParticle,2)+Math.pow(vxdFirstParticle,2)));
+
+            secondParticle.setOmega(Math.atan2(vydSecondParticle, vxdSecondParticle));
+            secondParticle.setVelocity(Math.sqrt(Math.pow(vydSecondParticle, 2) + Math.pow(vxdSecondParticle, 2)));
+
+        }
+
+        return false;
 
     }
 
@@ -126,42 +187,26 @@ public class BrownianMotion {
     private static List<Collision> wallCollisions(Particle p){
 
         double tcX, tcY;
-        Wall wallY,wallX;
 
         if(p.getXVelocity() > 0){
             tcX = (BOARD_LENGTH - p.getRadius() - p.getX()) / p.getXVelocity();
-            wallX = Wall.RIGHT;
 
         }else {
             tcX = (0 + p.getRadius() - p.getX()) / p.getXVelocity();
-            wallX = Wall.LEFT;
         }
 
         if(p.getYVelocity() > 0){
             tcY = (BOARD_LENGTH - p.getRadius() - p.getY()) / p.getYVelocity();
-            wallY = Wall.TOP;
         }else{
             tcY = (0 + p.getRadius() - p.getY()) / p.getYVelocity();
-            wallY = Wall.BOTTOM;
         }
 
         List<Collision> cList = new ArrayList<>();
 
-        CollisionType cType;
-
-
-        if (tcX <= tcY){
-            if(wallX.equals(Wall.LEFT))
-                cList.add(new Collision(CollisionType.LEFT_BORDER_COLLISION,p,tcX));
-            else
-                cList.add(new Collision(CollisionType.RIGHT_BORDER_COLLISION,p,tcX));
-        }
-        else if ( tcX >= tcY ){
-            if(wallY.equals(Wall.TOP))
-                cList.add(new Collision(CollisionType.TOP_BORDER_COLLISION,p,tcX));
-            else
-                cList.add(new Collision(CollisionType.BOTTOM_BORDER_COLLISION,p,tcX));
-        }
+        if (tcX <= tcY)
+            cList.add(new Collision(CollisionType.BORDER_X_COLLISION,p,tcX));
+        else if ( tcX >= tcY )
+            cList.add(new Collision(CollisionType.BORDER_Y_COLLISION,p,tcX));
 
         return cList;
 
@@ -178,7 +223,6 @@ public class BrownianMotion {
         particles.forEach( p-> {
 
             if(!p.equals(selectedParticle)){
-
 
                 double o = selectedParticle.getRadius() + p.getRadius();
 
