@@ -72,12 +72,10 @@ public class BrownianMotion {
         board.addParticlesToBoard(particles);
         rg.fillStaticFile(particles,BOARD_LENGTH);
         rg.addStateToDynamicFile(particles,0);
-        Collision firtCollition = calculateNextCollision(particles,board);
-        particlesEvolution(particles,nextCollision);
-        colision(particles,)
-//        particles.forEach(p->tempEvolution(p));
+        List<Collision> firtCollitions = calculateNextCollision(particles,board);
+        double collisionTime = firtCollitions.get(0).getCollisionTime();
+        particlesEvolution(particles,collisionTime);
 
-        System.out.println(nextCollision);
     }
 
     private static void particlesEvolution(List<Particle> particles, double nextCollision) {
@@ -194,7 +192,7 @@ public class BrownianMotion {
 
                 double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
                 double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
-                double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value();
+                double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value()*deltaV.getY_value();
 
                 double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
 
@@ -202,7 +200,7 @@ public class BrownianMotion {
 
                     double tc = -(deltaRXdeltaV + Math.sqrt(d)) / deltaVXdeltaV;
 
-                    if(tc < collision[0].getCollisionTime())
+                    if(tc <= collision[0].getCollisionTime())
                         collision[0] = new Collision(CollisionType.PARTICLE_COLLISION,selectedParticle,tc);
                 }
             }
