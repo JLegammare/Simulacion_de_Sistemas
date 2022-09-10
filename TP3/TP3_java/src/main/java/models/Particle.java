@@ -14,6 +14,8 @@ public class Particle implements Comparable<Particle> {
     private double velocity;
     private double omega;
 
+    private double vx;
+    private double vy;
 
     public void setVelocity(double velocity) {
         this.velocity = velocity;
@@ -27,17 +29,27 @@ public class Particle implements Comparable<Particle> {
         this.velocity = velocity;
         this.omega = omega;
         this.mass = mass;
+        this.vx = getXVelocity();
+        this.vy = getYVelocity();
+    }
+
+    public double getVx() {
+        return vx;
+    }
+
+    public double getVy() {
+        return vy;
     }
 
     public double getVelocityModule() {
         return velocity;
     }
 
-    public double getXVelocity(){
+    private double getXVelocity(){
         return cos(omega)*velocity;
     }
 
-    public double getYVelocity(){
+    private double getYVelocity(){
         return sin(omega)*velocity;
     }
 
@@ -101,6 +113,13 @@ public class Particle implements Comparable<Particle> {
         coordinates.setY_value(y);
     }
 
+    public void setVx(double vx) {
+        this.vx = vx;
+    }
+
+    public void setVy(double vy) {
+        this.vy = vy;
+    }
 
     public double getRadius() {
         return radius;

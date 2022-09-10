@@ -74,7 +74,7 @@ public class BrownianMotion {
         boolean bigPwithWallCollision = false;
 
         while(!bigPwithWallCollision){
-            List<Collision> firstCollisions = calculateNextCollision(particles,board);
+            List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();
             particlesEvolution(particles,collisionTime);
             rg.addStateToDynamicFile(particles,collisionTime);
@@ -84,20 +84,23 @@ public class BrownianMotion {
     }
 
     private static boolean collisionOperation(List<Collision> firstCollisions,Particle bigParticle) {
+        firstCollisions.forEach(collision -> System.out.printf("%f %s %d\n",collision.getCollisionTime(),
+                collision.getCollisionType(),collision.getParticle().getID()));
 
         if(firstCollisions.size() == 1){
+
             if(firstCollisions.get(0).getParticle().equals(bigParticle))
                 return true;
 
             CollisionType ct = firstCollisions.get(0).getCollisionType();
-            if(ct == CollisionType.BORDER_X_COLLISION){
-                Particle p = firstCollisions.get(0).getParticle();
-                p.setOmega(Math.atan2(p.getYVelocity(),-p.getXVelocity()));
+            Particle p = firstCollisions.get(0).getParticle();
 
+            if(ct == CollisionType.BORDER_X_COLLISION){
+
+                p.setVy(-p.getVy());
             }
             else{
-                Particle p = firstCollisions.get(0).getParticle();
-                p.setOmega(Math.atan2(-p.getYVelocity(),p.getXVelocity()));
+                p.setVx(-p.getVx());
             }
         }
         else {
@@ -112,25 +115,27 @@ public class BrownianMotion {
                     firstParticle.getY()-secondParticle.getY());
 
             Pair<Double,Double> deltaV = new Pair<>(
-                    firstParticle.getXVelocity()-secondParticle.getXVelocity(),
-                    firstParticle.getYVelocity()-secondParticle.getYVelocity());
+                    firstParticle.getVx()-secondParticle.getVx(),
+                    firstParticle.getVy()-secondParticle.getVy());
 
-            double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value()*deltaV.getY_value();
+            double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+ deltaR.getY_value()*deltaV.getY_value();
 
             double j = (2 * firstParticle.getMass() * secondParticle.getMass() * deltaRXdeltaV)/
                     (o * (firstParticle.getMass() + secondParticle.getMass()));
             double jx = j * deltaR.getX_value()/o;
             double jy = j * deltaR.getY_value()/o;
 
-            double vxdFirstParticle = firstParticle.getXVelocity() + jx/firstParticle.getMass();
-            double vydFirstParticle = firstParticle.getYVelocity() + jy/firstParticle.getMass();
-            double vxdSecondParticle = secondParticle.getXVelocity() - jx/secondParticle.getMass();
-            double vydSecondParticle = secondParticle.getYVelocity() - jy/secondParticle.getMass();
+            double vxdFirstParticle = firstParticle.getVx() + jx/firstParticle.getMass();
+            double vydFirstParticle = firstParticle.getVy() + jy/firstParticle.getMass();
+            double vxdSecondParticle = secondParticle.getVx() - jx/secondParticle.getMass();
+            double vydSecondParticle = secondParticle.getVy() - jy/secondParticle.getMass();
 
-            firstParticle.setOmega(Math.atan2(vydFirstParticle,vxdFirstParticle));
+            firstParticle.setVy(vydFirstParticle);
+            firstParticle.setVx(vxdFirstParticle);
             firstParticle.setVelocity(Math.sqrt(Math.pow(vydFirstParticle,2)+Math.pow(vxdFirstParticle,2)));
 
-            secondParticle.setOmega(Math.atan2(vydSecondParticle, vxdSecondParticle));
+            secondParticle.setVy(vydSecondParticle);
+            secondParticle.setVx(vxdSecondParticle);
             secondParticle.setVelocity(Math.sqrt(Math.pow(vydSecondParticle, 2) + Math.pow(vxdSecondParticle, 2)));
 
         }
@@ -142,8 +147,8 @@ public class BrownianMotion {
     private static void particlesEvolution(List<Particle> particles, double nextCollision) {
         particles.forEach((p)-> {
 
-            double newXvalue = p.getX() + p.getXVelocity()*nextCollision;
-            double newYvalue = p.getY() + p.getYVelocity()*nextCollision;
+            double newXvalue = p.getX() + p.getVx()*nextCollision;
+            double newYvalue = p.getY() + p.getVy()*nextCollision;
 
             p.updatePosition(newXvalue,newYvalue);
 
@@ -151,7 +156,7 @@ public class BrownianMotion {
 
     }
 
-    private static List<Collision> calculateNextCollision(List<Particle> particles, Board board) {
+    private static List<Collision> calculateNextCollision(List<Particle> particles) {
 
         Map<Double, List<Collision>> collisions = new TreeMap<>();
 
@@ -168,7 +173,9 @@ public class BrownianMotion {
             }
         });
 
-        return collisions.get(collisions.keySet().stream().min(Double::compareTo).get());
+        Double minKey = collisions.keySet().stream().filter(d->d>00000000000000000000000000000000000000000000000000000.1).min(Double::compareTo).get();
+
+        return collisions.get(minKey);
 
     }
 
@@ -188,17 +195,17 @@ public class BrownianMotion {
 
         double tcX, tcY;
 
-        if(p.getXVelocity() > 0){
-            tcX = (BOARD_LENGTH - p.getRadius() - p.getX()) / p.getXVelocity();
+        if(p.getVx() > 0){
+            tcX = (BOARD_LENGTH - p.getRadius() - p.getX()) / p.getVx();
 
         }else {
-            tcX = (0 + p.getRadius() - p.getX()) / p.getXVelocity();
+            tcX = (0 + p.getRadius() - p.getX()) / p.getVx();
         }
 
-        if(p.getYVelocity() > 0){
-            tcY = (BOARD_LENGTH - p.getRadius() - p.getY()) / p.getYVelocity();
+        if(p.getVy() > 0){
+            tcY = (BOARD_LENGTH - p.getRadius() - p.getY()) / p.getVy();
         }else{
-            tcY = (0 + p.getRadius() - p.getY()) / p.getYVelocity();
+            tcY = (0 + p.getRadius() - p.getY()) / p.getVy();
         }
 
         List<Collision> cList = new ArrayList<>();
@@ -231,12 +238,12 @@ public class BrownianMotion {
                         p.getY()-selectedParticle.getY());
 
                 Pair<Double,Double> deltaV = new Pair<>(
-                        p.getXVelocity()-selectedParticle.getXVelocity(),
-                        p.getYVelocity()-selectedParticle.getYVelocity());
+                        p.getVx()-selectedParticle.getVx(),
+                        p.getVy()-selectedParticle.getVy());
 
                 double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
                 double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
-                double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value()+deltaR.getY_value()*deltaV.getY_value();
+                double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value() + deltaR.getY_value()*deltaV.getY_value();
 
                 double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
 
