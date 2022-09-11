@@ -2,6 +2,7 @@ package utils;
 
 import models.Particle;
 
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,11 +12,11 @@ public class ParticleGenerator {
 
     public static List<Particle> generateRandomParticles(int numberOfParticles,
                                                          double l,
-                                                         double n,
                                                          double particleRadius,
                                                          double property,
                                                          double mass,
-                                                         Particle bigParticle
+                                                         Particle bigParticle,
+                                                         Color particlesColor
     ) {
         List<Particle> particles = new ArrayList<>();
         particles.add(bigParticle);
@@ -26,7 +27,7 @@ public class ParticleGenerator {
             double initialSpeed = Math.random()*2;
             double omega = Math.random() * 2* Math.PI;
             if(particleSeparated(x, y, particleRadius, l,particles)) {
-                particles.add(new Particle(particleId++, x, y, particleRadius,property,initialSpeed,omega,mass));
+                particles.add(new Particle(particleId++, x, y, particleRadius,property,initialSpeed,omega,mass,particlesColor));
             }
         }
 

@@ -2,6 +2,7 @@ package utils;
 
 import models.Particle;
 
+import java.awt.*;
 import java.io.*;
 import java.util.List;
 
@@ -49,11 +50,23 @@ public class ResultsGenerator {
         BufferedWriter bw = new BufferedWriter(fw);
         PrintWriter pw = new PrintWriter(bw);
 
-       
+
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\na\n",particles.size()));
         for (Particle p: particles) {
-            sb.append(String.format("%d %f %f %f %f %f %f\n",p.getID(), p.getX(),p.getY(), 0f,p.getVelocityModule(),p.getVx(), p.getVy()));
+            Color particleColor = p.getParticleColor();
+            sb.append(String.format("%d %f %f %f %f %f %f %f %d %d %d \n",p.getID(),
+                    p.getX(),
+                    p.getY(),
+                    0f,
+                    p.getVelocityModule(),
+                    p.getVx(),
+                    p.getVy(),
+                    p.getRadius(),
+                    particleColor.getRed(),
+                    particleColor.getGreen(),
+                    particleColor.getBlue()
+                    ));
         }
         pw.print(sb);
         pw.close();

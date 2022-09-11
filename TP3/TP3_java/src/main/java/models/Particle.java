@@ -1,5 +1,6 @@
 package models;
 
+import java.awt.*;
 import java.util.Objects;
 
 import static java.lang.Math.cos;
@@ -8,6 +9,8 @@ import static java.lang.Math.sin;
 public class Particle implements Comparable<Particle> {
     private final int ID;
     private final Pair<Double, Double> coordinates;
+
+    private final Color particleColor;
     private final double radius;
     private final double property;
     private final double mass;
@@ -17,11 +20,8 @@ public class Particle implements Comparable<Particle> {
     private double vx;
     private double vy;
 
-    public void setVelocity(double velocity) {
-        this.velocity = velocity;
-    }
 
-    public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double mass) {
+    public Particle(int id, double x, double y, double radius, double property, double velocity, double omega, double mass, Color particleColor) {
         this.ID = id;
         this.coordinates = new Pair<>(x, y);
         this.radius = radius;
@@ -31,10 +31,15 @@ public class Particle implements Comparable<Particle> {
         this.mass = mass;
         this.vx = getXVelocity();
         this.vy = getYVelocity();
+        this.particleColor = particleColor;
     }
 
     public double getVx() {
         return vx;
+    }
+
+    public Color getParticleColor() {
+        return particleColor;
     }
 
     public double getVy() {
@@ -62,9 +67,6 @@ public class Particle implements Comparable<Particle> {
         return omega;
     }
 
-    public void setOmega(double omega){
-        this.omega = omega;
-    }
 
     public double getProperty() {
         return property;
