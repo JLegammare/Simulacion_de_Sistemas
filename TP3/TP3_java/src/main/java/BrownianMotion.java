@@ -6,12 +6,15 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class BrownianMotion {
 
     private static final double DEFAULT_PARTICLE_PROPERTY = 1;
     private static final String RESULTS_DIRECTORY =  "simulation_results";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
+    private static final String PARTICLE_FILE = "BigParticlePosition.txt";
+    private static final String COLLISION_FILE = "CollisionsTime.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final int NUMBER_OF_SMALL_PARTICLES = 110;
     private static final Double BOARD_LENGTH = 6.0;
@@ -59,13 +62,23 @@ public class BrownianMotion {
 
         String dynamicResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, DYNAMIC_FILE);
         String staticResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, STATIC_FILE);
-        BrownianMotionMethod(particles,dynamicResultsFilePath,staticResultsFilePath);
+        String particleResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, PARTICLE_FILE);
+        String collisionResultsFilePath = String.format("%s/%s", RESULTS_DIRECTORY, COLLISION_FILE);
+
+        ResultsGenerator rg = new ResultsGenerator(
+                dynamicResultsFilePath,
+                staticResultsFilePath,
+                particleResultsFilePath,
+                collisionResultsFilePath,
+                RESULTS_DIRECTORY);
+
+        BrownianMotionMethod(particles,rg);
+
 
     }
 
-    private static void BrownianMotionMethod(List<Particle> particles, String dynamicFilePath, String staticFilePath) throws IOException {
+    private static void BrownianMotionMethod(List<Particle> particles, ResultsGenerator rg) throws IOException {
 
-        ResultsGenerator rg = new ResultsGenerator(dynamicFilePath,staticFilePath,RESULTS_DIRECTORY);
 
         Board board = new Board(BrownianMotion.BOARD_LENGTH, 0, SMALL_PARTICLE_RADIUS);
 
@@ -79,14 +92,18 @@ public class BrownianMotion {
             double collisionTime = firstCollisions.get(0).getCollisionTime();
             particlesEvolution(particles,collisionTime);
             rg.addStateToDynamicFile(particles,collisionTime);
-            bigParticleWallCollision = collisionOperation(firstCollisions,particles.get(0));
+            bigParticleWallCollision = collisionOperation(firstCollisions,particles.get(0),rg);
         }
 
-        rg.addStateToDynamicFile(particles,Double.POSITIVE_INFINITY);
 
     }
 
-    private static boolean collisionOperation(List<Collision> firstCollisions,Particle bigParticle) {
+    private static boolean collisionOperation(List<Collision> firstCollisions,Particle bigParticle, ResultsGenerator rg) throws IOException {
+        List <Collision> bigCollision = firstCollisions.stream()
+                .filter(c-> c.getParticle().equals(bigParticle))
+                .collect(Collectors.toList());
+        if(!bigCollision.isEmpty())
+            rg.addBigParticleMovement(bigParticle,bigCollision.get(0).getCollisionTime());
 
         if(firstCollisions.size() == 1){
 
@@ -171,7 +188,7 @@ public class BrownianMotion {
         });
 
         Double minKey = collisions.keySet().stream()
-                .filter(d->d!=Double.NEGATIVE_INFINITY && d!=Double.POSITIVE_INFINITY)
+                .filter(Double::isFinite)
                 .min(Double::compareTo).get();
 
         return collisions.get(minKey);
@@ -215,7 +232,7 @@ public class BrownianMotion {
         else if ( tcX >= tcY )
             cList.add(new Collision(CollisionType.BORDER_Y_COLLISION,p,tcY));
 
-        return cList;
+        return cList.stream().filter(c->Double.isFinite(c.getCollisionTime())).collect(Collectors.toList());
 
     }
 

@@ -4,6 +4,9 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+numpy = "*"
+ovito = "*"
+pandas = "*"
 plotly = "*"
 
 [dev-packages]
