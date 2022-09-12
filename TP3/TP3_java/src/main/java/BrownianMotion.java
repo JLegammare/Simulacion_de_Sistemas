@@ -16,10 +16,10 @@ public class BrownianMotion {
     private static final String PARTICLE_FILE = "BigParticlePosition.txt";
     private static final String COLLISION_FILE = "CollisionsTime.txt";
     private static final String STATIC_FILE = "Static.txt";
-    private static final int NUMBER_OF_SMALL_PARTICLES = 110;
+    private static final int NUMBER_OF_SMALL_PARTICLES = 125;
     private static final Double BOARD_LENGTH = 6.0;
     private static final int BIG_PARTICLE_VELOCITY = 0;
-    private static final double BIG_PARTICLE_MASS = 0.9;
+    private static final double BIG_PARTICLE_MASS = 2; //todo volver a correr
     private static final double BIG_PARTICLE_RADIUS = 0.7;
     private static final Color bigParticleColor = Color.RED;
     private static final Color smallParticlesColor = Color.BLUE;

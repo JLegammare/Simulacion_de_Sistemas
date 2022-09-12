@@ -10,3 +10,5 @@ class Particle:
     property: float
     vx: float
     vy: float
+    mass: float
+    particleColor: int
