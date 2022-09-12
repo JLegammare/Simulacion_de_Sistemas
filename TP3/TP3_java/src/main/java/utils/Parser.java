@@ -3,12 +3,6 @@ package utils;
 import models.Particle;
 import org.apache.commons.cli.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
-
 public class Parser {
 
     public CommandLine parseArguments(String[] args){
@@ -75,36 +69,5 @@ public class Parser {
         return cmd;
     }
 
-
-    public List<Particle> parseParticles(String staticFilePath, String dynamicFilePath) throws IOException {
-
-        File staticFile = new File(staticFilePath);
-        File dynamicFile = new File(dynamicFilePath);
-
-        Scanner staticScanner = new Scanner(staticFile);
-        Scanner dynamicScanner = new Scanner(dynamicFile);
-
-        int n = Integer.parseInt(staticScanner.next());
-        int t0 = Integer.parseInt(dynamicScanner.next());
-
-        List<Particle> particles = new ArrayList<>();
-
-        for (int i = 0; i < n ; i++) {
-
-            if( staticScanner.hasNextLine() && dynamicScanner.hasNextLine()){
-                double radius = staticScanner.nextDouble();
-                double property = staticScanner.nextDouble();
-                int id = dynamicScanner.nextInt();
-                double posX = dynamicScanner.nextDouble();
-                double posY = dynamicScanner.nextDouble();
-                double speed = dynamicScanner.nextDouble();
-                double omega = dynamicScanner.nextDouble();
-
-                particles.add(new Particle(id,posX,posY,radius,property,speed,omega,0));
-            }
-
-        }
-        return particles;
-    }
 
 }
