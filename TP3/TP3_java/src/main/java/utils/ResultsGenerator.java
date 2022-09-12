@@ -30,12 +30,12 @@ public class ResultsGenerator {
         this.staticFile= stcFile;
 
         File partFile = new File(particlePathFile);
-        if(stcFile.exists())
+        if(partFile.exists())
             partFile.delete();
         this.particleFile = partFile;
 
         File colFile = new File(collisionFile);
-        if(stcFile.exists())
+        if(colFile.exists())
             colFile.delete();
         this.collisionFile = colFile;
 
