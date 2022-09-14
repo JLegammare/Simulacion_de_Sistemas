@@ -1,6 +1,5 @@
 package utils;
 
-import models.Particle;
 import org.apache.commons.cli.*;
 
 public class Parser {

@@ -4,8 +4,10 @@ import utils.ResultsGenerator;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
 public class BrownianMotion {
@@ -16,7 +18,7 @@ public class BrownianMotion {
     private static final String PARTICLE_FILE = "BigParticlePosition.txt";
     private static final String COLLISION_FILE = "CollisionsTime.txt";
     private static final String STATIC_FILE = "Static.txt";
-    private static final int NUMBER_OF_SMALL_PARTICLES = 140;
+    private static final int NUMBER_OF_SMALL_PARTICLES = 110;
     private static final Double BOARD_LENGTH = 6.0;
     private static final int BIG_PARTICLE_VELOCITY = 0;
     private static final double BIG_PARTICLE_MASS = 2; //todo volver a correr

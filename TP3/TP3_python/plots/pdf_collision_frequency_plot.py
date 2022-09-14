@@ -4,17 +4,15 @@ import plotly.graph_objects as go
 def pdf_collision_frequency(collisions_time_path: str):
     collisions_time = open(collisions_time_path)
     lines = collisions_time.readlines()
-    count = 0
     total_time = 0
     collisions = []
     avg_cols_times = []
 
     for line in lines:
-        count += 1
         total_time += float(line)
         collisions.append(float(line))  #
 
-    avg = count / total_time
+    avg = (len(lines)-1)/ total_time
     avg_cols_time = np.mean(collisions)
     standard_deviation = np.std(collisions)
 

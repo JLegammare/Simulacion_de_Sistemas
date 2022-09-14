@@ -1,6 +1,5 @@
 package utils;
 
-import models.Collision;
 import models.Particle;
 
 import java.awt.*;
