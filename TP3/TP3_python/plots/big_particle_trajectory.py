@@ -59,7 +59,7 @@ def big_particle_trajectory(big_particle_v1: str, big_particle_v2: str, big_part
             yaxis=dict(title='Y', range=[0, 6]),
             font=dict(
                 family="Arial",
-                size=22,
+                size=23,
             )
         )
     )
@@ -74,3 +74,27 @@ if __name__ == "__main__":
     big_particle_v2 = '../../../simulation_results/BigParticlePositionV2.txt'
     big_particle_v3 = '../../../simulation_results/BigParticlePositionV3.txt'
     big_particle_trajectory(big_particle_v1, big_particle_v2, big_particle_v3)
+
+#
+#
+# 0 0s
+# 1 2s
+# 2 3s
+# 3 5s
+# 4 6s
+#
+#
+# 3s |
+# 2s ||
+# 1s |||
+#
+#
+#
+# I
+# I   I
+# I   I  I
+# ---------------->
+#
+# CollisionTime.txt
+
+

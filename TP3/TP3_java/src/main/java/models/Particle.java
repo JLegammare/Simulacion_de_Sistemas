@@ -47,7 +47,7 @@ public class Particle implements Comparable<Particle> {
     }
 
     public double getVelocityModule() {
-        return velocity;
+        return Math.sqrt(Math.pow(vx,2)+Math.pow(vy,2));
     }
 
     private double getXVelocity(){
