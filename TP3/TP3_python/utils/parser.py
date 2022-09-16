@@ -1,6 +1,6 @@
 import argparse
+from copy import copy
 from typing import List
-
 
 from models.config import Config
 from models.particle import Particle
@@ -27,7 +27,7 @@ def parse_particles(config: Config):
 
 
 def _parse_static_file(config: Config):
-    static_file = open("."+config.static_file)
+    static_file = open("." + config.static_file)
     n = int(static_file.readline())
     l = float(static_file.readline())
     particles = []
@@ -73,3 +73,24 @@ def parse_output_file(config: Config) -> List[List[int]]:
         neighbours.append(list(map(lambda id: int(id), n_p)))
 
     return neighbours
+
+
+def getEvents(file_path: str):
+    dynamic_file = open("." + file_path)
+
+    lines = dynamic_file.readlines()
+    events = []
+    new_event = []
+    for line in lines:
+        if line == lines[0]:
+            events.append(new_event.copy())
+            new_event = []
+        elif line == "a\n":
+            pass
+        else:
+            st_p = list(filter(lambda c: len(c) > 0 and c != '\n', line.split(" ")))
+            new_event.append(copy(st_p))
+
+    events.pop(0)
+
+    return events
