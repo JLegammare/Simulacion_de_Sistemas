@@ -21,7 +21,7 @@ public class ParticleGenerator {
         List<Particle> particles = new ArrayList<>();
         particles.add(bigParticle);
         int particleId = 1;
-        while (particles.size() < numberOfParticles){
+        while (particles.size() <= numberOfParticles){
             double x = Math.random() * l;
             double y = Math.random() * l;
             double initialSpeed = Math.random()*2;
