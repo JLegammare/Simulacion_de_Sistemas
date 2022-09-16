@@ -74,12 +74,12 @@ public class BrownianMotion {
                 collisionResultsFilePath,
                 RESULTS_DIRECTORY);
 
-        BrownianMotionMethod(particles,rg);
+        brownianMotionMethod(particles,rg);
 
 
     }
 
-    private static void BrownianMotionMethod(List<Particle> particles, ResultsGenerator rg) throws IOException {
+    public static void brownianMotionMethod(List<Particle> particles, ResultsGenerator rg) throws IOException {
 
 
         Board board = new Board(BrownianMotion.BOARD_LENGTH, 0, SMALL_PARTICLE_RADIUS);
