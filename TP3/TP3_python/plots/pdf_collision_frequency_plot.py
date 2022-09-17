@@ -37,7 +37,7 @@ def pdf_collision_frequency(collisions_time_path1: str, collisions_time_path2: s
         data=data,
         layout=go.Layout(
             xaxis=dict(title='Tiempo (s)', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
-            yaxis=dict(title='PDF', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
+            yaxis=dict(title='PDF', exponentformat='power', showgrid=False, linecolor='black', ticks='inside', type="log"),
             font=dict(
                 family="Arial",
                 size=22,
