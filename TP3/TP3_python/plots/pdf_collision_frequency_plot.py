@@ -19,8 +19,11 @@ def pdf_collision_frequency(collisions_time_path1: str, collisions_time_path2: s
             collisions.append(float(line))
 
         avg = (len(lines) - 1) / total_time
+
+        print("N=" + str(j) + "\n" + "Promedio de frecuencia de colisiones: " + str(avg))
         avg_cols_time = np.mean(collisions)
         standard_deviation = np.std(collisions)
+        print("Tiempo promedio de colision: " + str(avg_cols_time))
 
         hist, bin_edges = np.histogram(collisions, bins=40, density=True)
         bin_centres = (bin_edges[:-1] + bin_edges[1:]) / 2.

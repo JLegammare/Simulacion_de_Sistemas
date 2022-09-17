@@ -2,8 +2,8 @@ import argparse
 from copy import copy
 from typing import List
 
-from models.config import Config
-from models.particle import Particle
+from TP3.TP3_python.models.config import Config
+from TP3.TP3_python.models.particle import Particle
 
 
 def parse_arguments() -> Config:
@@ -86,6 +86,27 @@ def getEvents(file_path: str):
             events.append(new_event.copy())
             new_event = []
         elif line == "a\n":
+            pass
+        else:
+            st_p = list(filter(lambda c: len(c) > 0 and c != '\n', line.split(" ")))
+            new_event.append(copy(st_p))
+
+    events.pop(0)
+
+    return events
+
+
+def get_events_small_particles(file_path: str):
+    dynamic_file = open("." + file_path)
+
+    lines = dynamic_file.readlines()
+    events = []
+    new_event = []
+    for line in lines:
+        if line == lines[0]:
+            events.append(new_event.copy())
+            new_event = []
+        elif line == "a\n" or line[0] == "0":
             pass
         else:
             st_p = list(filter(lambda c: len(c) > 0 and c != '\n', line.split(" ")))
