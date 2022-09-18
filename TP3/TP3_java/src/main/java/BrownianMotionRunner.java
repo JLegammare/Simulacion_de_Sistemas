@@ -32,14 +32,14 @@ public class BrownianMotionRunner {
 
 
 
-        for(int i = 1; i < 5;i++){
+        for(int i = 8; i < 11;i++){
 
-            int nParts = NUMBER_OF_SMALL_PARTICLES + i*10;
-            String staticFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,nParts, STATIC_FILE);
-            String dynamicFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,nParts, DYNAMIC_FILE);
-            String particleResultsFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,nParts, PARTICLE_FILE);
-            String collisionResultsFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,nParts, COLLISION_FILE);
-            String resultsDirectory = String.format("%s/%d", RESULTS_DIRECTORY,nParts);
+            //int nParts = NUMBER_OF_SMALL_PARTICLES + i*10;
+            String staticFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,i, STATIC_FILE);
+            String dynamicFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,i, DYNAMIC_FILE);
+            String particleResultsFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,i, PARTICLE_FILE);
+            String collisionResultsFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,i, COLLISION_FILE);
+            String resultsDirectory = String.format("%s/%d", RESULTS_DIRECTORY,i);
 
             Particle bigParticle = new Particle(
                     0,
@@ -54,7 +54,7 @@ public class BrownianMotionRunner {
 
 
             List<Particle> particles = ParticleGenerator.generateRandomParticles(
-                    nParts,
+                    NUMBER_OF_SMALL_PARTICLES,
                     BOARD_LENGTH,
                     SMALL_PARTICLE_RADIUS,
                     DEFAULT_PARTICLE_PROPERTY,
