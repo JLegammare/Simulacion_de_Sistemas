@@ -1,5 +1,6 @@
+from copy import copy
 from math import sqrt
-from utils import parser
+from TP3.TP3_python.utils import parser
 
 
 def DCM_plot():
@@ -10,35 +11,35 @@ def DCM_plot():
     events = []
     times = []
 
-    for i in range(0, 2):
+    for i in range(1, 10):
         file_path = file_path_fmt.format(it=i)
         time_path = time_path_fmt.format(it=i)
         events.append(parser.getEvents(file_path))
         times.append(_get_times(time_path))
 
-    z = []
 
     step = 0.1
     clock_dfs = []
 
-    for dfs in events:
+    for j in range(0,len(events)):
         current_time = 0
         clock_df = []
-        for df in dfs:
-            if current_time <= df.time:
-                clock_df.append(df)
+        for i in range(0,len(events[j])):
+            if current_time <= times[j][i]:
+                clock_df.append(events[j][i][0])
                 current_time += step
-        clock_dfs.append(clock_df)
+        clock_dfs.append(copy(clock_df))
 
 
 
+    z = []
     for i in range(0, len(events)):
         z.append(_get_z(events[i]))
 
 
 
 def _get_times(file_path: str):
-    collisions_time = open(file_path)
+    collisions_time = open("." + file_path)
     lines = collisions_time.readlines()
     total_time = 0
     collisions = []
