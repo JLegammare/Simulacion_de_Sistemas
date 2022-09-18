@@ -8,6 +8,8 @@ numpy = "*"
 ovito = "*"
 pandas = "*"
 plotly = "*"
+config = "*"
+particle = "*"
 
 [dev-packages]
 

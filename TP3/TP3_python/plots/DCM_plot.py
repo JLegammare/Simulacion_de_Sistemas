@@ -1,16 +1,40 @@
 from math import sqrt
-import plotly.graph_objects as go
 from utils import parser
-import plotly.express as px
 
 
-def DCM_plot(events: list):
-    z_1 = _get_z(events)
-    t_1 = _get_times('./simulation_results/CollisionsTime.txt')
+def DCM_plot():
 
-    fig = px.scatter(x=t_1, y=z_1)
+    file_path_fmt = "/simulation_results/{it}/Dynamic.txt"
+    time_path_fmt = "/simulation_results/{it}/CollisionsTime.txt"
 
-    fig.show()
+    events = []
+    times = []
+
+    for i in range(0, 2):
+        file_path = file_path_fmt.format(it=i)
+        time_path = time_path_fmt.format(it=i)
+        events.append(parser.getEvents(file_path))
+        times.append(_get_times(time_path))
+
+    z = []
+
+    step = 0.1
+    clock_dfs = []
+
+    for dfs in events:
+        current_time = 0
+        clock_df = []
+        for df in dfs:
+            if current_time <= df.time:
+                clock_df.append(df)
+                current_time += step
+        clock_dfs.append(clock_df)
+
+
+
+    for i in range(0, len(events)):
+        z.append(_get_z(events[i]))
+
 
 
 def _get_times(file_path: str):
@@ -52,9 +76,7 @@ def _get_z(events: list):
 
 
 if __name__ == "__main__":
-    file_path = "/simulation_results/Dynamic.txt"
-    events = parser.getEvents(file_path)
-    DCM_plot(events)
+    DCM_plot()
 
 # EJ 4:
 
