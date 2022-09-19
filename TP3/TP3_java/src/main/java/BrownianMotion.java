@@ -86,15 +86,17 @@ public class BrownianMotion {
 
         board.addParticlesToBoard(particles);
         rg.fillStaticFile(particles,BOARD_LENGTH);
-        rg.addStateToDynamicFile(particles,0.0);
+        double tot = 0.0;
+        rg.addStateToDynamicFile(particles,tot);
         boolean bigParticleWallCollision = false;
 
 
         while(!bigParticleWallCollision){
             List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();
+            tot += collisionTime;
             particlesEvolution(particles, collisionTime);
-            rg.addStateToDynamicFile(particles, collisionTime);
+            rg.addStateToDynamicFile(particles, tot);
             bigParticleWallCollision = collisionOperation(firstCollisions, particles.get(0), rg);
 
         }

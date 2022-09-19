@@ -79,7 +79,7 @@ public class ResultsGenerator {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("%d\na\n",particles.size()));
+        sb.append(String.format("%f\n",time));
 
         for (Particle p: particles) {
             Color particleColor = p.getParticleColor();
