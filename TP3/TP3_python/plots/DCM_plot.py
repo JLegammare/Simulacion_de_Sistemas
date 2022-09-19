@@ -1,7 +1,8 @@
 from copy import copy
 from math import sqrt
+import numpy as np
+import plotly.graph_objects as go
 from TP3.TP3_python.utils import parser
-
 
 def DCM_plot():
 
@@ -11,12 +12,11 @@ def DCM_plot():
     events = []
     times = []
 
-    for i in range(1, 10):
+    for i in range(0, 3):
         file_path = file_path_fmt.format(it=i)
         time_path = time_path_fmt.format(it=i)
         events.append(parser.getEvents(file_path))
         times.append(_get_times(time_path))
-
 
     step = 0.1
     clock_dfs = []
@@ -26,15 +26,81 @@ def DCM_plot():
         clock_df = []
         for i in range(0,len(events[j])):
             if current_time <= times[j][i]:
-                clock_df.append(events[j][i][0])
+                clock_df.append(events[j][i])
                 current_time += step
         clock_dfs.append(copy(clock_df))
 
+    # me quedo con la simulacion de menor tiempo
+    min_time = len(times[0])
+    min_time_idx = 0
+    for i in range(1, len(times)):
+        new_min_time = len(times[i])
+        if new_min_time < min_time:
+            min_time = new_min_time
+            min_time_idx = i
+
+    len_min = len(clock_dfs[0])
+    clock_dfs_index = 0
+    for i in range(1, len(clock_dfs)):
+        new_len = len(clock_dfs[i])
+        if(new_len < len_min):
+            len_min = new_len
+            clock_dfs_index = i
 
 
-    z = []
-    for i in range(0, len(events)):
-        z.append(_get_z(events[i]))
+    dcs = []
+    for i in range(0, len(clock_dfs)):
+        dcs.append(_get_z(clock_dfs[i]))
+
+
+    DCM = np.mean(list(map(lambda l: l[0:len_min],dcs)),axis=0)
+    x_values = np.arange(0, min_time, step)
+    error = np.std(list(map(lambda l: l[0:len_min],dcs)), axis=0)
+    start_time = 2
+    start_index = int(start_time / step)
+
+    fig = go.Figure(
+        data=[
+            go.Scatter(
+                x=x_values,
+                y=DCM,
+                mode='lines',
+                showlegend=False
+            ),
+            go.Scatter(
+                x=np.concatenate((x_values, x_values[::-1])),
+                y=np.concatenate((DCM + error, (DCM - error)[::-1])),
+                fill='toself',
+                fillcolor='rgba(0,100,80,0.2)',
+                line=dict(color='rgba(255,255,255,0)'),
+                hoverinfo="skip",
+                showlegend=False
+            ),
+        ],
+        # layout=go(
+        #     xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$', dtick=2, tick0=0,
+        #                linecolor="#000000", ticks="outside",
+        #                tickwidth=2, tickcolor='black', ticklen=10),
+        #     yaxis=dict(title=r'$\Large{\text{DCM }(\text{m}^{\text{2}})}$',
+        #                linecolor="#000000", ticks="outside",
+        #                tickwidth=2, tickcolor='black', ticklen=10),
+        #      font=dict(
+        #         family="Arial",
+        #         size=22,
+        #     ),
+        #     plot_bgcolor='white',
+        # )
+    )
+
+
+    fig.show()
+
+
+
+    # step = 0.00005
+    # offset = 0.01
+    # m_values = np.arange(initial_m - offset, initial_m + offset + step, step)
+
 
 
 

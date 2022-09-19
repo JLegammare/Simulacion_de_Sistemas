@@ -2,8 +2,8 @@ import argparse
 from copy import copy
 from typing import List
 
-from models.config import Config
-from models.particle import Particle
+from TP3.TP3_python.models.config import Config
+from TP3.TP3_python.models.particle import Particle
 
 
 def parse_arguments() -> Config:

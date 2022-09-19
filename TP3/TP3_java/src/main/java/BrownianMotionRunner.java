@@ -32,7 +32,7 @@ public class BrownianMotionRunner {
 
 
 
-        for(int i = 0; i < 10;i++){
+        for(int i = 3; i < 10;i++){
 
             //int nParts = NUMBER_OF_SMALL_PARTICLES + i*10;
             String staticFilePath = String.format("%s/%d/%s", RESULTS_DIRECTORY,i, STATIC_FILE);
