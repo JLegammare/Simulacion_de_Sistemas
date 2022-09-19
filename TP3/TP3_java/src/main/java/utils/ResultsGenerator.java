@@ -83,9 +83,11 @@ public class ResultsGenerator {
 
         for (Particle p: particles) {
             Color particleColor = p.getParticleColor();
-            sb.append(String.format("%d %f %f\n",p.getID(),
+            sb.append(String.format("%d %f %f %f %f\n",p.getID(),
                     p.getX(),
-                    p.getY()
+                    p.getY(),
+                    p.getVx(),
+                    p.getVy()
                     ));
 
         }
