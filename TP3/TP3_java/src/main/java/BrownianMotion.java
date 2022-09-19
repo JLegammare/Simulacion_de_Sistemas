@@ -18,7 +18,7 @@ public class BrownianMotion {
     private static final String PARTICLE_FILE = "BigParticlePosition.txt";
     private static final String COLLISION_FILE = "CollisionsTime.txt";
     private static final String STATIC_FILE = "Static.txt";
-    private static final int NUMBER_OF_SMALL_PARTICLES = 110;
+    private static final int NUMBER_OF_SMALL_PARTICLES = 140;
     private static final Double BOARD_LENGTH = 6.0;
     private static final int BIG_PARTICLE_VELOCITY = 0;
     private static final double BIG_PARTICLE_MASS = 2;
@@ -89,26 +89,14 @@ public class BrownianMotion {
         rg.addStateToDynamicFile(particles,0.0);
         boolean bigParticleWallCollision = false;
 
-        List<Collision> firstCollisionsAux = calculateNextCollision(particles);
-        double collisionTimeAux = firstCollisionsAux.get(0).getCollisionTime();
-        particlesEvolution(particles,collisionTimeAux);
-        rg.addStateToDynamicFile(particles,collisionTimeAux);
-        bigParticleWallCollision = collisionOperation(firstCollisionsAux,particles.get(0),rg);
-        int i = 1;
+
         while(!bigParticleWallCollision){
             List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();
             particlesEvolution(particles, collisionTime);
-            if(i == 10) {
-                rg.addStateToDynamicFile(particles, collisionTime);
-
-                i = 0;
-            }else
-                i++;
+            rg.addStateToDynamicFile(particles, collisionTime);
             bigParticleWallCollision = collisionOperation(firstCollisions, particles.get(0), rg);
-            if(bigParticleWallCollision && (i - 1) != 9){
-                rg.addStateToDynamicFile(particles, collisionTime);
-            }
+
         }
 
 
