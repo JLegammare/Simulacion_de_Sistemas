@@ -90,11 +90,13 @@ public class BrownianMotion {
         rg.addStateToDynamicFile(particles,tot);
         boolean bigParticleWallCollision = false;
 
-
-        while(!bigParticleWallCollision){
+        boolean excededtime = false;
+        while(!bigParticleWallCollision && !excededtime){
             List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();
             tot += collisionTime;
+            if(tot>65.5)
+                excededtime= true;
             particlesEvolution(particles, collisionTime);
             rg.addStateToDynamicFile(particles, tot);
             bigParticleWallCollision = collisionOperation(firstCollisions, particles.get(0), rg);
@@ -108,8 +110,8 @@ public class BrownianMotion {
         List <Collision> bigCollision = firstCollisions.stream()
                 .filter(c-> c.getParticle().equals(bigParticle))
                 .collect(Collectors.toList());
-        if(!bigCollision.isEmpty())
-            rg.addBigParticleMovement(bigParticle,bigCollision.get(0).getCollisionTime());
+//        if(!bigCollision.isEmpty()
+////            rg.addBigParticleMovement(bigParticle,bigCollision.get(0).getCollisionTime());
 
         if(firstCollisions.size() == 1){
 

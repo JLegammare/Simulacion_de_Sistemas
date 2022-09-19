@@ -10,8 +10,6 @@ public class ResultsGenerator {
 
     private final File dynamicFile;
     private final File staticFile;
-    private final File particleFile;
-    private final File collisionFile;
 
     public ResultsGenerator(String dynamicFilePath, String staticFilePath, String particlePathFile, String collisionFile,String resultsDirectory) {
 
@@ -28,15 +26,6 @@ public class ResultsGenerator {
             stcFile.delete();
         this.staticFile= stcFile;
 
-        File partFile = new File(particlePathFile);
-        if(partFile.exists())
-            partFile.delete();
-        this.particleFile = partFile;
-
-        File colFile = new File(collisionFile);
-        if(colFile.exists())
-            colFile.delete();
-        this.collisionFile = colFile;
 
     }
 
@@ -49,22 +38,22 @@ public class ResultsGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\n%f\n",particles.size(),l));
         for (Particle p: particles) {
-            sb.append(String.format("%f %f\n",p.getRadius(), p.getProperty()));
+            sb.append(String.format("%f %f\n",p.getRadius(), p.getMass()));
         }
         pw.println(sb);
         pw.close();
     }
 
-    public void addBigParticleMovement(Particle bigParticle, double time) throws IOException {
-
-        FileWriter fwParticle = new FileWriter(particleFile,true);
-        BufferedWriter bwParticle = new BufferedWriter(fwParticle);
-        PrintWriter pwParticle = new PrintWriter(bwParticle);
-
-        pwParticle.println(String.format("%f %f %f ",time, bigParticle.getX(),bigParticle.getY()));
-        pwParticle.close();
-
-    }
+//    public void addBigParticleMovement(Particle bigParticle, double time) throws IOException {
+//
+//        FileWriter fwParticle = new FileWriter(particleFile,true);
+//        BufferedWriter bwParticle = new BufferedWriter(fwParticle);
+//        PrintWriter pwParticle = new PrintWriter(bwParticle);
+//
+//        pwParticle.println(String.format("%f %f %f ",time, bigParticle.getX(),bigParticle.getY()));
+//        pwParticle.close();
+//
+//    }
 
 
     public void addStateToDynamicFile(List<Particle> particles,double time ) throws IOException {
@@ -73,17 +62,13 @@ public class ResultsGenerator {
         BufferedWriter bwDynamic = new BufferedWriter(fwDynamic);
         PrintWriter pwDynamic = new PrintWriter(bwDynamic);
 
-        FileWriter fwCollision = new FileWriter(collisionFile,true);
-        BufferedWriter bwCollision = new BufferedWriter(fwCollision);
-        PrintWriter pwCollision = new PrintWriter(bwCollision);
 
         StringBuilder sb = new StringBuilder();
 
         sb.append(String.format("%f\n",time));
 
         for (Particle p: particles) {
-            Color particleColor = p.getParticleColor();
-            sb.append(String.format("%d %f %f %f %f\n",p.getID(),
+            sb.append(String.format("%d %f %f %f %f \n",p.getID(),
                     p.getX(),
                     p.getY(),
                     p.getVx(),
@@ -94,8 +79,6 @@ public class ResultsGenerator {
 
         pwDynamic.print(sb);
         pwDynamic.close();
-        pwCollision.println(String.format("%f",time));
-        pwCollision.close();
     }
 
 
