@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -10,31 +10,21 @@ public class Board {
 
     private final double l;
     private final int m;
-    private final boolean periodicCondition;
-
     private final double boardSideLength;
 
-    public Board(double l, boolean periodicCondition,double rc,double defaultParticleRadius) {
+    public Board(double l, double rc,double defaultParticleRadius) {
         this.m = (int) (l / rc + 2 * defaultParticleRadius);
-        this.periodicCondition = periodicCondition;
         this.l = l;
         this.boardSideLength = l;
-        createCells(periodicCondition);
+        createCells();
     }
 
 
-    private void createCells(boolean periodicCondition) {
+    private void createCells() {
 
-        int lastIndex;
-        int initialIndex;
+        int lastIndex = 0;
+        int initialIndex = m -1;
 
-        if (periodicCondition) {
-            initialIndex = -1;
-            lastIndex = m;
-        } else {
-            initialIndex = 0;
-            lastIndex = m - 1;
-        }
         for (int i = initialIndex; i <= lastIndex; i++) {
             for (int j = initialIndex; j <= lastIndex; j++) {
                 Cell cell = new Cell(i, j);
@@ -44,7 +34,6 @@ public class Board {
         }
 
         neighborCells.keySet().forEach(cell -> addHalfNeighborsCells(cell, neighborCells));
-
     }
 
     private void addHalfNeighborsCells(Cell cell, Map<Cell, List<Cell>> cellsBoard) {
@@ -91,46 +80,7 @@ public class Board {
                 }
             }
         }
-
-        if (periodicCondition) {
-
-            int lastIndex = m - 1;
-
-            for (int i = 0; i <= lastIndex; i++) {
-
-                //bottom side
-                addPeriodicParticles(new Pair<>(i, -1), new Pair<>(i, lastIndex), 0, -boardSideLength);
-                //top side
-                addPeriodicParticles(new Pair<>(i, m), new Pair<>(i, 0), 0, boardSideLength);
-                //left side
-                addPeriodicParticles(new Pair<>(-1, i), new Pair<>(lastIndex, i), -boardSideLength, 0);
-                // right side
-                addPeriodicParticles(new Pair<>(m, i), new Pair<>(0, i), boardSideLength, 0);
-
-            }
-
-            //corners
-            addPeriodicParticles(new Pair<>(-1, -1), new Pair<>(lastIndex, lastIndex), -boardSideLength, -boardSideLength);
-            addPeriodicParticles(new Pair<>(m, m), new Pair<>(0, 0), boardSideLength, boardSideLength);
-            addPeriodicParticles(new Pair<>(-1, m), new Pair<>(lastIndex, m), -boardSideLength, boardSideLength);
-            addPeriodicParticles(new Pair<>(m, -1), new Pair<>(0, lastIndex), boardSideLength, -boardSideLength);
-
-        }
     }
-
-    private void addPeriodicParticles(Pair<Integer, Integer> borderCoordinates, Pair<Integer, Integer> cellCoordinates, double xTranslation, double yTranslation) {
-
-        Cell cell = cellMap.get(cellCoordinates);
-        Cell borderCell = cellMap.get(borderCoordinates);
-        borderCell.addParticles(cell.getParticles().stream().map(
-                        p -> new Particle(
-                                p.getID(),
-                                p.getX() + xTranslation,
-                                p.getY() + yTranslation, p.getRadius(),
-                                p.getProperty(),p.getVelocityModule(),p.getOmega(),p.getDeltaOmega()))
-                .collect(Collectors.toList()));
-    }
-
 
     private static Pair<Integer, Integer> getParticleCell(Particle p, double l) {
         double x = p.getX();
@@ -170,6 +120,5 @@ public class Board {
 
         return neighborhoods;
     }
-
 
 }

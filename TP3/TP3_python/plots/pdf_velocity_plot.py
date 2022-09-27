@@ -3,7 +3,7 @@ import numpy as np
 
 import plotly.graph_objects as go
 
-from TP3.TP3_python.utils import parser
+from TP3.TP3_python.ar.edu.itba.simulacion.models.utils import parser
 
 
 def pdf_velocity_plot():

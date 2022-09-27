@@ -1,6 +1,6 @@
-package utils;
+package ar.edu.itba.simulacion.models.utils;
 
-import models.Particle;
+import ar.edu.itba.simulacion.models.Particle;
 import org.apache.commons.cli.*;
 
 import java.io.File;
@@ -8,8 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-
-import static java.lang.Math.asin;
 
 public class Parser {
 

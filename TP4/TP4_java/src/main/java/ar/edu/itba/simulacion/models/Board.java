@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 import java.util.*;
 import java.util.stream.Collectors;

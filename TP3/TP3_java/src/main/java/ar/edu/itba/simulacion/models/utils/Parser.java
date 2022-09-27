@@ -1,4 +1,4 @@
-package utils;
+package ar.edu.itba.simulacion.models.utils;
 
 import org.apache.commons.cli.*;
 

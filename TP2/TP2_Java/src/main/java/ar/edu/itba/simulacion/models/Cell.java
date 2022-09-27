@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +29,7 @@ public class Cell implements Comparable<Cell> {
 
     @Override
     public String toString() {
-        return "models.Cell{" +
+        return "ar.edu.itba.simulacion.models.Cell{" +
                 "coordinates=" + cellCoordinates +
                 ", particles=" + particles +
                 '}';

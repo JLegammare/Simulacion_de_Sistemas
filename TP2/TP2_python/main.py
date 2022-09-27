@@ -1,5 +1,5 @@
-from models.config import Config
-from utils.parser import parse_arguments, parse_particles
+from ar.edu.itba.simulacion.models.config import Config
+from ar.edu.itba.simulacion.models.utils.parser import parse_arguments, parse_particles
 
 
 def main(config: Config):

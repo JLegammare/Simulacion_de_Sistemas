@@ -2,8 +2,8 @@ import numpy as np
 import plotly.express as px
 import pandas as pd
 
-from models.config import Config
-from utils.parser import parse_arguments
+from ar.edu.itba.simulacion.models.config import Config
+from ar.edu.itba.simulacion.models.utils.parser import parse_arguments
 
 def main(config: Config):
 

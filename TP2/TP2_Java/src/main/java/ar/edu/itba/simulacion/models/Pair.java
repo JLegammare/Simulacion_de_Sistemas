@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 import java.util.Objects;
 
@@ -13,7 +13,7 @@ public class Pair<X extends Comparable<X>,Y extends Comparable<Y> > implements C
 
     @Override
     public String toString() {
-        return "models.Pair{" +
+        return "ar.edu.itba.simulacion.models.Pair{" +
                 "x_value=" + x_value +
                 ", y_value=" + y_value +
                 '}';

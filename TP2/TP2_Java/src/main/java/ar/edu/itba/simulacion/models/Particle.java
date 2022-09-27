@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 import java.util.Objects;
 
@@ -80,7 +80,7 @@ public class Particle implements Comparable<Particle> {
 
     @Override
     public String toString() {
-        return "models.Particle{" +
+        return "ar.edu.itba.simulacion.models.Particle{" +
                 "id=" + ID +
                 ", coordinates=" + coordinates +
                 ", radius=" + radius +

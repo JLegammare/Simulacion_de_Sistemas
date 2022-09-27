@@ -1,8 +1,7 @@
-package utils;
+package ar.edu.itba.simulacion.models.utils;
 
-import models.Particle;
+import ar.edu.itba.simulacion.models.Particle;
 
-import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -10,50 +9,63 @@ import java.util.List;
 public class ParticleGenerator {
 
 
+//    public static void main(String[] args) throws IOException {
+//
+//        Parser parser = new Parser();
+//        CommandLine cmd = parser.parseArguments(args);
+//
+//        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
+//        double l = Double.parseDouble(cmd.getOptionValue("length"));
+//        double eta = Double.parseDouble(cmd.getOptionValue("noise"));
+//        double v = Double.parseDouble(cmd.getOptionValue("initial_speed"));
+//
+//        List<Particle> particles = generateRandomParticles(np,l,eta,PARTICLE_RADIUS,v,DEFAULT_PROPERTY);
+//        generateFiles(particles);
+//
+//    }
+
+    public static void generateInputParticlesFiles(int numberOfParticles,
+                                                   double l,
+                                                   double n,
+                                                   double particleRadius,
+                                                   double initialSpeed,
+                                                   double property,
+                                                   String dynamicFileName,
+                                                   String staticFileName,
+                                                   String directoryPath) throws IOException {
+
+        List<Particle> particles= generateRandomParticles(
+                numberOfParticles,
+                l,
+                n,
+                particleRadius,
+                initialSpeed,
+                property);
+
+        generateFiles(particles,dynamicFileName,staticFileName,directoryPath);
+    }
+
     public static List<Particle> generateRandomParticles(int numberOfParticles,
                                                          double l,
+                                                         double n,
                                                          double particleRadius,
-                                                         double property,
-                                                         double mass,
-                                                         Particle bigParticle,
-                                                         Color particlesColor
+                                                         double initialSpeed,
+                                                         double property
     ) {
         List<Particle> particles = new ArrayList<>();
-        particles.add(bigParticle);
-        int particleId = 1;
-        while (particles.size() <= numberOfParticles){
+        for (int i = 0; i < numberOfParticles; i++) {
+
             double x = Math.random() * l;
             double y = Math.random() * l;
-            double initialSpeed = Math.random()*2;
             double omega = Math.random() * 2* Math.PI;
-            if(particleSeparated(x, y, particleRadius, l,particles)) {
-                particles.add(new Particle(particleId++, x, y, particleRadius,property,initialSpeed,omega,mass,particlesColor));
-            }
+            double deltaOmega = Math.random()*n-n/2;
+
+            particles.add(new Particle(i, x, y, particleRadius,property,initialSpeed,omega,deltaOmega));
+
         }
 
         return particles;
 
-    }
-
-    private static boolean particleSeparated(
-            double x,
-            double y,
-            double particleRadius,
-            double boardLength,
-            List<Particle> particles) {
-
-        for (Particle particle: particles) {
-            if(Math.pow(x - particle.getX(), 2) + Math.pow(y - particle.getY(), 2) <=
-                    Math.pow(particleRadius + particle.getRadius(), 2) || wallCollision(x,y,particleRadius, boardLength)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private static boolean wallCollision(double x, double y, double particleRadius, double boardLength){
-        return x - particleRadius <= 0 || x + particleRadius >= boardLength || y - particleRadius <= 0
-                || y + particleRadius >= boardLength;
     }
 
     public static void generateFiles(List<Particle> particles,

@@ -1,9 +1,9 @@
-import models.Board;
-import models.Particle;
+import ar.edu.itba.simulacion.models.Board;
+import ar.edu.itba.simulacion.models.Particle;
 import org.apache.commons.cli.CommandLine;
-import utils.Parser;
-import utils.ParticleGenerator;
-import utils.ResultsGenerator;
+import ar.edu.itba.simulacion.models.utils.Parser;
+import ar.edu.itba.simulacion.models.utils.ParticleGenerator;
+import ar.edu.itba.simulacion.models.utils.ResultsGenerator;
 
 import java.io.IOException;
 import java.util.List;

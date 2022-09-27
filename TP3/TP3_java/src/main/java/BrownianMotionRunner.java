@@ -1,7 +1,7 @@
-import models.Pair;
-import models.Particle;
-import utils.ParticleGenerator;
-import utils.ResultsGenerator;
+import ar.edu.itba.simulacion.models.Pair;
+import ar.edu.itba.simulacion.models.Particle;
+import ar.edu.itba.simulacion.models.utils.ParticleGenerator;
+import ar.edu.itba.simulacion.models.utils.ResultsGenerator;
 
 import java.awt.*;
 import java.io.IOException;

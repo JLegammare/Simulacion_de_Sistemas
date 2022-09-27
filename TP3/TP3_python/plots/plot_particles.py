@@ -3,9 +3,9 @@ from typing import List
 
 import plotly.graph_objects as go
 
-from models.config import Config
-from models.particle import Particle
-from utils.parser import parse_arguments, parse_particles
+from ar.edu.itba.simulacion.models.config import Config
+from ar.edu.itba.simulacion.models.particle import Particle
+from ar.edu.itba.simulacion.models.utils.parser import parse_arguments, parse_particles
 
 PLOT_SIZE = 1000
 

@@ -1,8 +1,8 @@
 import argparse
 from typing import List
 
-from models.config import Config
-from models.particle import Particle
+from ar.edu.itba.simulacion.models.config import Config
+from ar.edu.itba.simulacion.models.particle import Particle
 
 
 def parse_arguments() -> Config:

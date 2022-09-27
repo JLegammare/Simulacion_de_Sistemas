@@ -1,6 +1,6 @@
-import models.*;
-import utils.ParticleGenerator;
-import utils.ResultsGenerator;
+import ar.edu.itba.simulacion.models.*;
+import ar.edu.itba.simulacion.models.utils.ParticleGenerator;
+import ar.edu.itba.simulacion.models.utils.ResultsGenerator;
 
 import java.awt.*;
 import java.io.IOException;
@@ -80,7 +80,7 @@ public class BrownianMotion {
         double tot = 0.0;
         rg.addStateToDynamicFile(particles,tot);
         boolean bigParticleWallCollision = false;
-
+        boolean excededtime = false;
         while(!bigParticleWallCollision && !excededtime){
             List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();

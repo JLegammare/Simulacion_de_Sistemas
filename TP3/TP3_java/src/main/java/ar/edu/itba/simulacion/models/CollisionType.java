@@ -1,4 +1,4 @@
-package models;
+package ar.edu.itba.simulacion.models;
 
 public enum CollisionType {
 

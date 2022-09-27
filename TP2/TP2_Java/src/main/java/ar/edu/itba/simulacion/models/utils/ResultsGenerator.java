@@ -1,6 +1,6 @@
-package utils;
+package ar.edu.itba.simulacion.models.utils;
 
-import models.Particle;
+import ar.edu.itba.simulacion.models.Particle;
 
 import java.io.*;
 import java.util.List;

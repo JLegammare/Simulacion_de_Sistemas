@@ -2,7 +2,7 @@ from copy import copy
 from math import sqrt
 import numpy as np
 import plotly.graph_objects as go
-from utils import parser
+from ar.edu.itba.simulacion.models.utils import parser
 
 def DCM_plot():
 

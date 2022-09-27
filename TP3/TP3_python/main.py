@@ -1,6 +1,6 @@
-from models.config import Config
+from ar.edu.itba.simulacion.models.config import Config
 from plots.plot_particles import plot_dots
-from utils.parser import parse_arguments, parse_input_particles, parse_output_file
+from ar.edu.itba.simulacion.models.utils.parser import parse_arguments, parse_input_particles, parse_output_file
 
 
 def main(config: Config):
