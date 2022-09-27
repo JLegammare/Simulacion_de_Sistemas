@@ -5,9 +5,5 @@ public class Beeman {
     private double positionX;
     private double positionY;
 
-    avanzar(tx){
-
-    }
-
 
 }
