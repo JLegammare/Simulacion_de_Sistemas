@@ -12,6 +12,7 @@
         <module>TP1/TP1_java</module>
         <module>TP2/TP2_Java</module>
         <module>TP3/TP3_java</module>
+        <module>TP4/TP4_java</module>
     </modules>
 
     <properties>

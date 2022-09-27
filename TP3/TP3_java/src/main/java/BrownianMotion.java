@@ -30,15 +30,6 @@ public class BrownianMotion {
 
     public static void main(String[] args) throws IOException {
 
-//        TODO: fix Parser
-//        Parser parser = new Parser();
-//        CommandLine cmd = parser.parseArguments(args);
-//        int np = Integer.parseInt(cmd.getOptionValue("particles_number"));
-//        double r1 = Double.parseDouble(cmd.getOptionValue("small_particle_radius"));
-//        double r2 = Double.parseDouble(cmd.getOptionValue("particle_radius_2"));
-//        double m2 = Double.parseDouble(cmd.getOptionValue("particle_mass_2"));
-//        double m1 = Double.parseDouble(cmd.getOptionValue("particle_mass_1"));
-//        double l = Double.parseDouble(cmd.getOptionValue("length"));
 
         Pair<Double,Double> centerPosition = new Pair<>(BOARD_LENGTH/2,BOARD_LENGTH/2);
         Particle bigParticle = new Particle(
@@ -90,13 +81,10 @@ public class BrownianMotion {
         rg.addStateToDynamicFile(particles,tot);
         boolean bigParticleWallCollision = false;
 
-        boolean excededtime = false;
         while(!bigParticleWallCollision && !excededtime){
             List<Collision> firstCollisions = calculateNextCollision(particles);
             double collisionTime = firstCollisions.get(0).getCollisionTime();
             tot += collisionTime;
-            if(tot>65.5)
-                excededtime= true;
             particlesEvolution(particles, collisionTime);
             rg.addStateToDynamicFile(particles, tot);
             bigParticleWallCollision = collisionOperation(firstCollisions, particles.get(0), rg);
@@ -107,11 +95,6 @@ public class BrownianMotion {
     }
 
     private static boolean collisionOperation(List<Collision> firstCollisions,Particle bigParticle, ResultsGenerator rg) throws IOException {
-        List <Collision> bigCollision = firstCollisions.stream()
-                .filter(c-> c.getParticle().equals(bigParticle))
-                .collect(Collectors.toList());
-//        if(!bigCollision.isEmpty()
-////            rg.addBigParticleMovement(bigParticle,bigCollision.get(0).getCollisionTime());
 
         if(firstCollisions.size() == 1){
 

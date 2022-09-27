@@ -2,7 +2,6 @@ package utils;
 
 import models.Particle;
 
-import java.awt.*;
 import java.io.*;
 import java.util.List;
 
@@ -44,16 +43,6 @@ public class ResultsGenerator {
         pw.close();
     }
 
-//    public void addBigParticleMovement(Particle bigParticle, double time) throws IOException {
-//
-//        FileWriter fwParticle = new FileWriter(particleFile,true);
-//        BufferedWriter bwParticle = new BufferedWriter(fwParticle);
-//        PrintWriter pwParticle = new PrintWriter(bwParticle);
-//
-//        pwParticle.println(String.format("%f %f %f ",time, bigParticle.getX(),bigParticle.getY()));
-//        pwParticle.close();
-//
-//    }
 
 
     public void addStateToDynamicFile(List<Particle> particles,double time ) throws IOException {

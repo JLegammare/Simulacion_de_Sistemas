@@ -2,7 +2,7 @@ from copy import copy
 from math import sqrt
 import numpy as np
 import plotly.graph_objects as go
-from TP3.TP3_python.utils import parser
+from utils import parser
 
 def DCM_plot():
 
@@ -12,7 +12,7 @@ def DCM_plot():
     events = []
     times = []
 
-    for i in range(0, 3):
+    for i in range(0, 1):
         file_path = file_path_fmt.format(it=i)
         time_path = time_path_fmt.format(it=i)
         events.append(parser.getEvents(file_path))
@@ -30,7 +30,6 @@ def DCM_plot():
                 current_time += step
         clock_dfs.append(copy(clock_df))
 
-    # me quedo con la simulacion de menor tiempo
     min_time = len(times[0])
     min_time_idx = 0
     for i in range(1, len(times)):
@@ -53,43 +52,37 @@ def DCM_plot():
         dcs.append(_get_z(clock_dfs[i]))
 
 
-    DCM = np.mean(list(map(lambda l: l[0:len_min],dcs)),axis=0)
-    x_values = np.arange(0, min_time, step)
+    dcm_s = np.mean(list(map(lambda l: l[0:len_min],dcs)),axis=0)
+    x_val = np.arange(0, min_time, step)
     error = np.std(list(map(lambda l: l[0:len_min],dcs)), axis=0)
-    start_time = 2
-    start_index = int(start_time / step)
+    start_index = int(2 / step)
 
     fig = go.Figure(
         data=[
             go.Scatter(
-                x=x_values,
-                y=DCM,
-                mode='lines',
-                showlegend=False
+                x=np.arange(0, 2, 0.1),
+                y=dcm_s,
+                mode='lines'
             ),
             go.Scatter(
-                x=np.concatenate((x_values, x_values[::-1])),
-                y=np.concatenate((DCM + error, (DCM - error)[::-1])),
+                x=np.concatenate((x_val, x_val[::-1])),
+                y=np.concatenate((dcm_s + error, (dcm_s - error)[::-1])),
                 fill='toself',
-                fillcolor='rgba(0,100,80,0.2)',
-                line=dict(color='rgba(255,255,255,0)'),
-                hoverinfo="skip",
-                showlegend=False
-            ),
+                opacity=0.15,
+                fillcolor='red'
+
+            )
         ],
-        # layout=go(
-        #     xaxis=dict(title=r'$\Large{\text{Tiempo (s)}}$', dtick=2, tick0=0,
-        #                linecolor="#000000", ticks="outside",
-        #                tickwidth=2, tickcolor='black', ticklen=10),
-        #     yaxis=dict(title=r'$\Large{\text{DCM }(\text{m}^{\text{2}})}$',
-        #                linecolor="#000000", ticks="outside",
-        #                tickwidth=2, tickcolor='black', ticklen=10),
-        #      font=dict(
-        #         family="Arial",
-        #         size=22,
-        #     ),
-        #     plot_bgcolor='white',
-        # )
+        layout=go.Layout(
+            xaxis=dict(title='Tiempo (s)', linecolor='black', ticks='inside'),
+            yaxis=dict(title='DCM', linecolor='black', ticks='inside'),
+            font=dict(
+                family='Arial',
+                size=22,
+            ),
+            plot_bgcolor='white',
+
+        )
     )
 
 
@@ -97,9 +90,6 @@ def DCM_plot():
 
 
 
-    # step = 0.00005
-    # offset = 0.01
-    # m_values = np.arange(initial_m - offset, initial_m + offset + step, step)
 
 
 
@@ -145,20 +135,3 @@ def _get_z(events: list):
 if __name__ == "__main__":
     DCM_plot()
 
-# EJ 4:
-
-# ANOTAR SI SE USA FLOR O CEIL O QUE
-# Elegir la curva que menor error cuadratico tenga del desplazamiento cuadratico medio y mostrar todas las rectas que elgimos Y de esta forma no hacer una regresion lineal (no recomendado por la catedra) y ademas poner las barras de errores
-# para el grafico 10 elevado no e elevado
-# 10 Simulaciones como minimo
-# Usar 4 para usar el DCM
-
-# EJ 3:
-
-# Cortar todos en el mismo tiempo t (primero que se coliciona en la pared)
-# cambiar el ancho del bin y graficar las curvas junto con la distribucion inicial
-# Solo guardar cada 10 eventos
-
-# PPT:
-# formula del promedio no
-# quitar grilla y fondo en blanco en graficos
