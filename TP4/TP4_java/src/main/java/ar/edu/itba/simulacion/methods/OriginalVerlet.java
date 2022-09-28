@@ -48,4 +48,8 @@ public class OriginalVerlet {
         );
     }
 
+    private Double calcVelocity(Double nextPosition, Double previousPosition, double dt) {
+        return  (nextPosition-previousPosition)/(2*dt);
+    }
+
 }
