@@ -1,64 +1,75 @@
 package ar.edu.itba.simulacion.methods;
 
+import ar.edu.itba.simulacion.HarmonicOscillator;
 import ar.edu.itba.simulacion.models.Pair;
 
 public class Beeman {
 
-    public Pair<Double,Double> position(Pair<Double, Double> currentPos,
+    public static Pair<Double, Double> position(Pair<Double, Double> currentPos,
                                         Pair<Double, Double> currentVel,
                                         Pair<Double, Double> currentAcc,
                                         Pair<Double, Double> previousAcc,
                                         double dt
                                         ) {
 
-    return new Pair<>(
-            calcPosition(currentPos.getX_value(),
-                    currentVel.getX_value(),
-                    currentAcc.getX_value(),
-                    previousAcc.getX_value(),
-                    dt),
-            calcPosition(currentPos.getY_value(),
-                    currentVel.getY_value(),
-                    currentAcc.getY_value(),
-                    previousAcc.getY_value(),
-                    dt)
-    );
-    }
-
-    public Pair<Double,Double> velocity(Pair<Double, Double> currentAcc,
-                                        Pair<Double, Double> previousAcc,
-                                        Pair<Double, Double> nextAcc,
-                                        double dt,
-                                        Pair<Double, Double> currentVel) {
-
         return new Pair<>(
-                calcVelocity(
-                        currentAcc.getX_value(),
-                        previousAcc.getX_value(),
-                        nextAcc.getX_value(),
-                        dt,
-                        currentVel.getX_value()
-                ),
-                calcVelocity(
-                        currentAcc.getY_value(),
-                        previousAcc.getY_value(),
-                        nextAcc.getY_value(),
-                        dt,
-                        currentVel.getY_value()
-                )
-        );
+                calcPosition(currentPos.getX_value(),
+                             currentVel.getX_value(),
+                             currentAcc.getX_value(),
+                             previousAcc.getX_value(),
+                             dt),
+                calcPosition(currentPos.getY_value(),
+                             currentVel.getY_value(),
+                             currentAcc.getY_value(),
+                             previousAcc.getY_value(),
+                             dt));
     }
 
-    private Double calcPosition(Double currPos, Double currVel, Double currAcc, Double prevAcc, double dt){
-        return currPos + currVel * dt + 2/3 * currAcc * Math.pow(dt, 2) - 1/6 * prevAcc * Math.pow(dt, 2);
+    public static Pair<Double, Double> velocity(Pair<Double, Double> currentAcc,
+                                        Pair<Double, Double> previousAcc,
+                                        Pair<Double, Double> newPosition,
+                                        double dt,
+                                        Pair<Double, Double> currentVel,
+                                        double m) {
+
+        Pair<Double, Double> predictedVel = new Pair<>(
+                calcPredictedV(currentVel.getX_value(), currentAcc.getX_value(), previousAcc.getX_value(), dt),
+                calcPredictedV(currentVel.getY_value(), currentAcc.getY_value(), previousAcc.getY_value(), dt));
+
+
+        Pair<Double, Double> newForce = new Pair<>(
+                HarmonicOscillator.calcForce(newPosition.getX_value(), predictedVel.getX_value()),
+                HarmonicOscillator.calcForce(newPosition.getY_value(), predictedVel.getY_value()));
+
+        //nextAcc is calculated from newPos and predictedV
+        Pair<Double, Double> correctedV = new Pair<>(
+                calcCorrectedV(currentVel.getX_value(), newForce.getX_value()/m, currentAcc.getX_value(), previousAcc.getX_value(), dt),
+                calcCorrectedV(currentVel.getY_value(), newForce.getY_value()/m, currentAcc.getY_value(), previousAcc.getY_value(), dt));
+
+        return correctedV;
+
     }
 
-    private Double calcVelocity(Double currentAcc,
+    private static Double calcPosition(Double currPos, Double currVel, Double currAcc, Double prevAcc, double dt){
+        return currPos + currVel * dt + (2 * currAcc / 3 - prevAcc / 6) * Math.pow(dt, 2);
+    }
+
+    private static Double calcVelocity(Double currentAcc,
                                 Double previousAcc,
                                 Double nextAcc,
                                 double dt,
                                 Double currentVel) {
-        return currentVel + nextAcc * dt / 3 + 5 * currentAcc * dt / 6 - previousAcc * dt / 6;
+        return currentVel + (nextAcc / 3 + 5 * currentAcc / 6 - previousAcc / 6) * dt;
+    }
+
+    private static Double calcPredictedV(Double v, Double currAcc, Double prevAcc, double dt){
+        return v + 3 * currAcc * dt / 2 - prevAcc * dt / 2;
+
+    }
+
+
+    private static Double calcCorrectedV(Double v, Double nextAcc, Double acc, Double prevAcc, double dt){
+        return v + nextAcc * dt / 3 + 5 * acc * dt / 6 - prevAcc * dt / 6;
     }
 
 }
