@@ -5,7 +5,7 @@ import java.util.List;
 
 public class OriginalVerlet {
 
-    public Pair<Double,Double> position(List<Pair<Double, Double>> positions,
+    public static Pair<Double,Double> position(List<Pair<Double, Double>> positions,
                                         double dt,
                                         double t,
                                         Pair <Double,Double> force,
@@ -30,8 +30,7 @@ public class OriginalVerlet {
                         m));
     }
 
-
-    private Double calcPosition(Double currentT, Double tMinusDt, double dt, double f, double m){
+    private static Double calcPosition(Double currentT, Double tMinusDt, double dt, double f, double m){
         return 2 * currentT - tMinusDt + Math.pow(dt, 2) * f / m;
     }
 
