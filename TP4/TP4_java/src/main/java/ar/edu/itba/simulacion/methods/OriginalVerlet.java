@@ -7,7 +7,6 @@ public class OriginalVerlet {
 
     public static Pair<Double,Double> position(List<Pair<Double, Double>> positions,
                                         double dt,
-                                        double t,
                                         Pair <Double,Double> force,
                                         double m){
 
@@ -36,10 +35,9 @@ public class OriginalVerlet {
 
     public Pair<Double,Double> velocity(List<Pair<Double,Double>>particlePosition,
                                         double dt,
-                                        double t,
                                         Pair <Double,Double> force,
                                         double m){
-        Pair<Double,Double> nextPosition = position( particlePosition,dt,t,force,m);
+        Pair<Double,Double> nextPosition = position( particlePosition,dt,force,m);
         Pair<Double,Double> previousPosition = particlePosition.get(particlePosition.size()-2);
         return new Pair<>(
                 calcVelocity(nextPosition.getX_value(), previousPosition.getX_value(),dt),
