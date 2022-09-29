@@ -12,7 +12,9 @@ public class GearPredictoO5 {
     private static final double k = Math.pow(10.0, 4);
     private static final double[] alpha = {3.0/16, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
 
-    public static Double predict(Pair<Double, Double> position, Pair<Double, Double> vel, Pair<Double, Double> force, double dt, double m){
+    //todo: refactor
+    //devuelvo una lista con pos y  velocidad en x. Lista[0]=posicion, Lista[1]=velocidad
+    public static List<Double> predict(Pair<Double, Double> position, Pair<Double, Double> vel, Pair<Double, Double> force, double dt, double m){
         double r0 = position.getX_value();
         double r1 = vel.getX_value();
         double r2 = force.getX_value()/m;
@@ -20,6 +22,8 @@ public class GearPredictoO5 {
         double r4 = -k*r2/m - gamma*r3/m;
         double r5 = -k*r3/m - gamma*r4/m;
 
+
+        //predict:
         List<Double> predictedRs = new ArrayList<>();
         double rp = 0.0;
         for(int i = 0; i <= order; i++){
@@ -45,6 +49,18 @@ public class GearPredictoO5 {
             }
             predictedRs.add(rp);
         }
+        //evaluate
+        double deltaA = r2 - predictedRs.get(2);
+        double deltaR2 = deltaA*Math.pow(dt,2)/2;
+
+        //correct
+        List<Double> correctedRs = new ArrayList<>();
+        correctedRs.add(predictedRs.get(0) + alpha[0]*deltaR2); //el primero es la posicion corregida y no se divide por dt
+        for(int i = 1; i <= order; i++){
+            double rc = predictedRs.get(i) + alpha[i]*deltaR2/dt; //el 2do es la velocidad corregida. Los demas no se usan creo
+            correctedRs.add(rc);
+        }
+        return correctedRs;
     }
 
     private static Double fact (Double n) {
