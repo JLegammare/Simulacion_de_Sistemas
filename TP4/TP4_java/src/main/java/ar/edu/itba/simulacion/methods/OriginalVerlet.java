@@ -30,22 +30,23 @@ public class OriginalVerlet {
     }
 
     private static Double calcPosition(Double currentT, Double tMinusDt, double dt, double f, double m){
-        return 2 * currentT - tMinusDt + Math.pow(dt, 2) * f / m;
+        return 2.0 * currentT - tMinusDt + Math.pow(dt, 2) * f / m;
     }
 
-    public Pair<Double,Double> velocity(List<Pair<Double,Double>>particlePosition,
+    public static Pair<Double,Double> velocity(List<Pair<Double,Double>>particlePosition,
                                         double dt,
                                         Pair <Double,Double> force,
                                         double m){
-        Pair<Double,Double> nextPosition = position( particlePosition,dt,force,m);
-        Pair<Double,Double> previousPosition = particlePosition.get(particlePosition.size()-2);
+
+        Pair<Double,Double> nextPosition = particlePosition.get(particlePosition.size()-1);
+        Pair<Double,Double> previousPosition = particlePosition.get(particlePosition.size()-3);
         return new Pair<>(
                 calcVelocity(nextPosition.getX_value(), previousPosition.getX_value(),dt),
                 calcVelocity(nextPosition.getY_value(), previousPosition.getY_value(), dt)
         );
     }
 
-    private Double calcVelocity(Double nextPosition, Double previousPosition, double dt) {
+    private static Double calcVelocity(Double nextPosition, Double previousPosition, double dt) {
         return  (nextPosition-previousPosition)/(2*dt);
     }
 

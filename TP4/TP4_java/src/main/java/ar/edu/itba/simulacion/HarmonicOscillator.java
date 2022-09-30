@@ -22,7 +22,7 @@ public class HarmonicOscillator {
     private static final double gamma = 100.0; //kg/s
     private static final double tf = 5.0; //s
     private static final double DT = 0.000001;
-    private static final String Met = "GEAR";
+    private static final String Met = "VERLET";
     private static final double r0 = 1.0; //mts
     private static final double v0 = -gamma / (2 * M); //mts/s
     private static final Pair<Double, Double> initPosition = new Pair<>(r0, 0.0);
@@ -143,18 +143,14 @@ public class HarmonicOscillator {
 
                 velocities.add(initVelocity);
                 positions.add(initPosition);
-               // accelerations.add(initAcceleration);
 
                 for (double t = 0; t <= tf; t += DT) {
 
                     int positionsSize = positions.size();
-                    int accelerationSize = accelerations.size();
                     int velocitiesSize = velocities.size();
 
 
                     Pair<Double, Double> currentPos = positions.get(positionsSize - 1);
-                   // Pair<Double, Double> currentAcc = accelerations.get(accelerationSize - 1);
-                   // Pair<Double, Double> previousAcc = accelerations.get(accelerationSize - 2);
                     Pair<Double, Double> currentVel = velocities.get(velocitiesSize - 1);
 
                     rs = GearPredictoO5.predict(
@@ -162,8 +158,7 @@ public class HarmonicOscillator {
                             currentVel,
                             DT, M);
 
-                    //currentAcc = new Pair<>(rs.get(2), 0.0);
-                   // accelerations.add(currentAcc);
+
                     positions.add(new Pair<>(rs.get(0), 0.0));
                     velocities.add(new Pair<>(rs.get(1), 0.0));
                     times.add(t);
@@ -171,11 +166,13 @@ public class HarmonicOscillator {
 
                 break;
 
-           /* case ("VERLET"):
+            case ("VERLET"):
 
+                positionsResultsFilePath = String.format("%s/Verlet%s", RESULTS_DIRECTORY, POSITION_FILE);
 
-                //DUDA: POSITION ANTERIOR CON EULER ? YES OR NO ?
-
+                rg = new ResultsGenerator(
+                        positionsResultsFilePath,
+                        RESULTS_DIRECTORY);
 
                 prevPos = Euler.prevPosition(initPosition, initVelocity, initForce, -DT, M);
                 prevVel = Euler.prevVel(initVelocity, initForce, -DT, M);
@@ -199,15 +196,21 @@ public class HarmonicOscillator {
 
                     Pair<Double, Double> currentPos = positions.get(positionsSize - 1);
                     Pair<Double, Double> currentVel = velocities.get(velocitiesSize - 1);
-                    Pair<Double, Double> currentAcc = accelerations.get(accelerationSize - 1);
 
-                    Pair<Double, Double> newPos = OriginalVerlet.position(positions, DT, force, M);
 
-//                    positions.add(OriginalVerlet.position(positions, DT, new Pair<>(
-//                            calcForce(initPosition.getX_value(), initVelocity.getX_value()), 0.0), m));
-                }*/
+                    Pair<Double, Double> currForce = new Pair<>(
+                            calcForce(currentPos.getX_value(),
+                                    currentVel.getX_value()), calcForce(currentPos.getY_value(),
+                            currentVel.getY_value()));
 
-               // break;
+                    Pair<Double, Double> newPos = OriginalVerlet.position(positions, DT, currForce, M);
+                    positions.add(newPos);
+                    Pair<Double, Double> newVel = OriginalVerlet.velocity(positions, DT, currForce, M);
+                    velocities.add(newVel);
+                    times.add(t);
+
+                }
+                break;
 
             default:
                 throw new InvalidObjectException("ENUM NOT FOUND");
