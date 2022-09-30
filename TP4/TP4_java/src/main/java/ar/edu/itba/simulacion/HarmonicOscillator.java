@@ -23,7 +23,7 @@ public class HarmonicOscillator {
     private static final double v0 = -gamma/(2*m); //mts/s
     //En realidad v = - A*gamma/(2*m) pero no se que es A
 
-
+//TODO: Euler para el paso anterior
 
     public static void main(String[] args) {
 
@@ -53,33 +53,33 @@ public class HarmonicOscillator {
 
 //        GEAR PREDICT O5
 //
-//        Pair <Double,Double> currentAcc = initAcceleration;
-//
-//        List<Double> rs;
-//
-//        for (int t = 0; t <=tf ; t+=DT) {
+        Pair <Double,Double> currentAcc = initAcceleration;
+
+        List<Double> rs;
+
+//        for (double t = 0; t <=tf ; t+=DT) {
 //            int size = positions.size();
 //            rs = GearPredictoO5.predict(positions.get(size-1),velocities.get(size-1),currentAcc,DT,m);
 //            currentAcc = new Pair<>(rs.get(2),0.0);
 //            positions.add(new Pair<>(rs.get(0),0.0));
 //            velocities.add(new Pair<>(rs.get(1),0.0));
 //        }
-
 //        VERLET
 
         //DUDA: POSITION ANTERIOR CON EULER ? YES OR NO ?
+
+/*
         Pair<Double,Double> prevVel = Euler.prevVel(initVelocity,new Pair<>(
-                calcForce(initPosition.getX_value(),initVelocity.getX_value()),0.0),
+                        calcForce(initPosition.getX_value(),initVelocity.getX_value()),0.0),
                 DT,
                 m
-                );
-
-         Pair<Double,Double> prevPos = Euler.prevPosition(initPosition,initVelocity,new Pair<>(
+        );
+        Pair<Double,Double> prevPos = Euler.prevPosition(initPosition,initVelocity,new Pair<>(
                 calcForce(initPosition.getX_value(),initVelocity.getX_value()),0.0),
                 DT,
                 m);
 
-         positions.add(0,prevPos);
+        positions.add(0,prevPos);
 
         for (int t = 0; t <=tf ; t+=DT) {
             int size = positions.size();
@@ -87,11 +87,16 @@ public class HarmonicOscillator {
                 calcForce(initPosition.getX_value(),initVelocity.getX_value()),0.0),m));
         }
         int a = 0;
+*/
 
        
     }
 
     public static double calcForce(Double pos, Double vel){
         return -k*pos - gamma*vel;
+    }
+
+    private static Double analiticSolution(double dt){
+        return Math.exp(-(gamma/2*m)* dt) * Math.cos(Math.pow(k/m - (Math.pow(gamma,2)/(4*m*m)), 0.5)* dt);
     }
 }
