@@ -21,7 +21,7 @@ public class HarmonicOscillator {
     private static final double k = Math.pow(10.0, 4); //N/mts
     private static final double gamma = 100.0; //kg/s
     private static final double tf = 5.0; //s
-    private static final double DT = 0.002;
+    private static final double DT = 0.000001;
     private static final String Met = "GEAR";
     private static final double r0 = 1.0; //mts
     private static final double v0 = -gamma / (2 * M); //mts/s
@@ -34,7 +34,7 @@ public class HarmonicOscillator {
     private static final Pair<Double, Double> initAcceleration = new Pair<>(
             initForce.getX_value() / M,
             0.0);
-    //En realidad v = - A*gamma/(2*m) pero no se que es A
+
 
 //TODO: Euler para el paso anterior
 
@@ -96,7 +96,7 @@ public class HarmonicOscillator {
                             currentVel,
                             currentAcc,
                             previousAcc,
-                            t
+                            DT
                     );
 
                     Pair<Double, Double> newVel = Beeman.velocity(
@@ -143,7 +143,7 @@ public class HarmonicOscillator {
 
                 velocities.add(initVelocity);
                 positions.add(initPosition);
-                accelerations.add(initAcceleration);
+               // accelerations.add(initAcceleration);
 
                 for (double t = 0; t <= tf; t += DT) {
 
@@ -153,17 +153,17 @@ public class HarmonicOscillator {
 
 
                     Pair<Double, Double> currentPos = positions.get(positionsSize - 1);
-                    Pair<Double, Double> currentAcc = accelerations.get(accelerationSize - 1);
-                    Pair<Double, Double> previousAcc = accelerations.get(accelerationSize - 2);
+                   // Pair<Double, Double> currentAcc = accelerations.get(accelerationSize - 1);
+                   // Pair<Double, Double> previousAcc = accelerations.get(accelerationSize - 2);
                     Pair<Double, Double> currentVel = velocities.get(velocitiesSize - 1);
 
                     rs = GearPredictoO5.predict(
                             currentPos,
                             currentVel,
-                            currentAcc, DT, M);
+                            DT, M);
 
-                    currentAcc = new Pair<>(rs.get(2), 0.0);
-                    accelerations.add(currentAcc);
+                    //currentAcc = new Pair<>(rs.get(2), 0.0);
+                   // accelerations.add(currentAcc);
                     positions.add(new Pair<>(rs.get(0), 0.0));
                     velocities.add(new Pair<>(rs.get(1), 0.0));
                     times.add(t);
@@ -171,31 +171,43 @@ public class HarmonicOscillator {
 
                 break;
 
-            case ("VERLET"):
+           /* case ("VERLET"):
 
 
                 //DUDA: POSITION ANTERIOR CON EULER ? YES OR NO ?
 
 
-//                Pair<Double, Double> prevVel = Euler.prevVel(initVelocity, new Pair<>(
-//                                calcForce(initPosition.getX_value(), initVelocity.getX_value()), 0.0),
-//                        DT,
-//                        M
-//                );
-//                Pair<Double, Double> prevPos = Euler.prevPosition(initPosition, initVelocity, new Pair<>(
-//                                calcForce(initPosition.getX_value(), initVelocity.getX_value()), 0.0),
-//                        DT,
-//                        m);
-//
-//                positions.add(0, prevPos);
-//
-//                for (double t = 0; t <= tf; t += DT) {
-//                    int size = positions.size();
+                prevPos = Euler.prevPosition(initPosition, initVelocity, initForce, -DT, M);
+                prevVel = Euler.prevVel(initVelocity, initForce, -DT, M);
+                prevAcc = new Pair<>(
+                        calcForce(prevPos.getX_value(), prevVel.getX_value()) / M,
+                        0.0);
+
+                positions.add(prevPos);
+                velocities.add(prevVel);
+                accelerations.add(prevAcc);
+
+                velocities.add(initVelocity);
+                positions.add(initPosition);
+                accelerations.add(initAcceleration);
+
+                for (double t = 0; t <= tf; t += DT) {
+
+                    int positionsSize = positions.size();
+                    int accelerationSize = accelerations.size();
+                    int velocitiesSize = velocities.size();
+
+                    Pair<Double, Double> currentPos = positions.get(positionsSize - 1);
+                    Pair<Double, Double> currentVel = velocities.get(velocitiesSize - 1);
+                    Pair<Double, Double> currentAcc = accelerations.get(accelerationSize - 1);
+
+                    Pair<Double, Double> newPos = OriginalVerlet.position(positions, DT, force, M);
+
 //                    positions.add(OriginalVerlet.position(positions, DT, new Pair<>(
 //                            calcForce(initPosition.getX_value(), initVelocity.getX_value()), 0.0), m));
-//                }
+                }*/
 
-                break;
+               // break;
 
             default:
                 throw new InvalidObjectException("ENUM NOT FOUND");

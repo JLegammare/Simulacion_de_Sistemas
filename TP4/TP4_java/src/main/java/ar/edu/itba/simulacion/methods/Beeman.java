@@ -51,25 +51,25 @@ public class Beeman {
     }
 
     private static Double calcPosition(Double currPos, Double currVel, Double currAcc, Double prevAcc, double dt){
-        return currPos + currVel * dt + (2 * currAcc / 3 - prevAcc / 6) * Math.pow(dt, 2);
+        return currPos + currVel * dt + (2.0 * currAcc / 3 - prevAcc / 6) * Math.pow(dt, 2);
     }
 
-    private static Double calcVelocity(Double currentAcc,
+   /* private static Double calcVelocity(Double currentAcc,
                                 Double previousAcc,
                                 Double nextAcc,
                                 double dt,
                                 Double currentVel) {
         return currentVel + (nextAcc / 3 + 5 * currentAcc / 6 - previousAcc / 6) * dt;
-    }
+    }*/
 
     private static Double calcPredictedV(Double v, Double currAcc, Double prevAcc, double dt){
-        return v + 3 * currAcc * dt / 2 - prevAcc * dt / 2;
+        return v + 3.0 * currAcc * dt / 2 - prevAcc * dt / 2;
 
     }
 
 
     private static Double calcCorrectedV(Double v, Double nextAcc, Double acc, Double prevAcc, double dt){
-        return v + nextAcc * dt / 3 + 5 * acc * dt / 6 - prevAcc * dt / 6;
+        return v + 1.0 * nextAcc * dt / 3 + 5.0 * acc * dt / 6 - 1.0 * prevAcc * dt / 6;
     }
 
 }

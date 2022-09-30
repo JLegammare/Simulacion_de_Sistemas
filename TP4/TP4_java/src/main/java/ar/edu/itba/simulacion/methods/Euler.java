@@ -6,8 +6,8 @@ public class Euler {
     //to get the previous positions and velocities we use -dt
 
     public static Pair<Double, Double> prevVel(Pair<Double, Double> vel, Pair<Double, Double> force, double dt, double m){
-        Double vX = vel.getX_value() + (-dt * force.getX_value()/m);
-        Double vY = vel.getY_value() + (-dt * force.getY_value()/m);
+        Double vX = vel.getX_value() + dt * force.getX_value()/m;
+        Double vY = vel.getY_value() + dt * force.getY_value()/m;
         return new Pair<>(vX, vY);
 
     }
