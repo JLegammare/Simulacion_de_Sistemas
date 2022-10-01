@@ -21,12 +21,13 @@ public class HarmonicOscillator {
     private static final double k = Math.pow(10.0, 4); //N/mts
     private static final double gamma = 100.0; //kg/s
     private static final double tf = 5.0; //s
-    private static final double DT = 0.000001;
+    private static final double DT = 0.001;
     private static final String Met = "VERLET";
     private static final double r0 = 1.0; //mts
     private static final double v0 = -gamma / (2 * M); //mts/s
     private static final Pair<Double, Double> initPosition = new Pair<>(r0, 0.0);
     private static final Pair<Double, Double> initVelocity = new Pair<>(v0, 0.0);
+    private static final double STEPS = tf/DT;
 
     private static final Pair<Double, Double> initForce = new Pair<>(
             calcForce(initPosition.getX_value(), initVelocity.getX_value()),
@@ -36,7 +37,6 @@ public class HarmonicOscillator {
             0.0);
 
 
-//TODO: Euler para el paso anterior
 
     public static void main(String[] args) throws IOException {
 
@@ -54,6 +54,7 @@ public class HarmonicOscillator {
         ArrayList<Double> times = new ArrayList<>();
         String positionsResultsFilePath;
         ResultsGenerator rg = null;
+        double ecm = 0.0;
 
         switch (Met) {
 
@@ -115,9 +116,10 @@ public class HarmonicOscillator {
                     positions.add(newPosition);
                     velocities.add(newVel);
                     times.add(t);
+
+                    //TODO: DUDA nose si es currPos o newPosition
+                   ecm += Math.pow(newPosition.getX_value() - analiticSolution(t),2);
                 }
-                positions.remove(0);
-                rg.addStateToPositionFile(times, positions);
 
                 break;
 
@@ -162,6 +164,9 @@ public class HarmonicOscillator {
                     positions.add(new Pair<>(rs.get(0), 0.0));
                     velocities.add(new Pair<>(rs.get(1), 0.0));
                     times.add(t);
+
+                    //TODO: DUDA nose si es currPos o newPosition
+                    ecm += Math.pow(positions.get(positionsSize-1).getX_value() - analiticSolution(t),2);
                 }
 
                 break;
@@ -209,6 +214,8 @@ public class HarmonicOscillator {
                     velocities.add(newVel);
                     times.add(t);
 
+                    //TODO: DUDA nose si es currPos o newPosition
+                    ecm += Math.pow(newPos.getX_value() - analiticSolution(t), 2);
                 }
                 break;
 
@@ -216,15 +223,17 @@ public class HarmonicOscillator {
                 throw new InvalidObjectException("ENUM NOT FOUND");
 
         }
-
+        positions.remove(0);
         rg.addStateToPositionFile(times, positions);
+        System.out.println("error: " + ecm/STEPS);
+
     }
 
     public static Double calcForce(Double pos, Double vel) {
         return -k * pos - gamma * vel;
     }
 
-    private static Double analiticSolution(double dt) {
-        return Math.exp(-(gamma / 2 * M) * dt) * Math.cos(Math.pow(k / M - (Math.pow(gamma, 2) / (4 * M * M)), 0.5) * dt);
+    private static Double analiticSolution(double t) {
+        return Math.exp(-(gamma / (2.0 * M)) * t) * Math.cos(Math.pow(k / M - (Math.pow(gamma, 2) / (4.0 * M * M)), 0.5) * t);
     }
 }
