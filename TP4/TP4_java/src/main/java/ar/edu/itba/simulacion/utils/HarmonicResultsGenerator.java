@@ -5,11 +5,11 @@ import ar.edu.itba.simulacion.models.Pair;
 import java.io.*;
 import java.util.List;
 
-public class ResultsGenerator {
+public class HarmonicResultsGenerator {
 
     private final File positionFile;
 
-    public ResultsGenerator(String positionFilePath, String resultsDirectory) {
+    public HarmonicResultsGenerator(String positionFilePath, String resultsDirectory) {
 
         File directory = new File(resultsDirectory);
         directory.mkdir();
@@ -22,8 +22,6 @@ public class ResultsGenerator {
 
 
     }
-
-
 
     public void addStateToPositionFile(List<Double> times, List<Pair<Double,Double>> positions) throws IOException {
 

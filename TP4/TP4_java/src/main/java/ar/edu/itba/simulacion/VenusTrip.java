@@ -1,0 +1,162 @@
+package ar.edu.itba.simulacion;
+
+import ar.edu.itba.simulacion.models.Body;
+import ar.edu.itba.simulacion.models.Pair;
+import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.*;
+
+public class VenusTrip {
+
+    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
+    private static final String DYNAMIC_FILE = "Dynamic.txt";
+    private static final String STATIC_FILE = "Static.txt";
+    private static final double G = 6.693E-20;
+    private static final double DT = 0.001;
+    private static final double TF = 0.001;
+    //SPACESHIP INPUT VALUES:
+    private static final double SPACESHIP_INIT_DISTANCE_FROM_EARTH = 1500.0;
+    private static final double SPACESHIP_ORBITAL_VELOCITY = 7.12;
+    private static final double SPACESHIP_TAKE_OFF_VELOCITY = 8;
+    private static final double SPACESHIP_MASS = 2E+5;
+    private static final double SPACESHIP_RADIUS = 1;
+    //SUN INPUT VALUES:
+    private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
+    private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
+    //radius in kms
+    private static final double SUN_RADIUS = 696000;
+    //mass in x10^24(kg)
+    private static final double SUN_MASS = 1988500E+24;
+    //EARTH INPUT VALUES:
+    private static final Pair<Double, Double> earthInitPosition = new Pair<>(
+            1.501409394622880E+08,
+            -9.238096308876731E+05);
+    private static final Pair<Double, Double> earthInitVelocity = new Pair<>(
+            -2.949925999285836E-01,
+            -2.949925999285836E-01);
+    private static final double EARTH_RADIUS = 6378.137;
+    private static final double EARTH_MASS = 5.97219E+24;
+    //VENUS INPUT VALUES:
+    private static final Pair<Double, Double> venusInitPosition = new Pair<>(
+            -1.014319519875520E+08,
+            3.525562675248842E+07);
+    private static final Pair<Double, Double> venusInitVelocity = new Pair<>(
+            -1.166353075744313E+01,
+            -3.324015683726970E+01);
+    private static final double VENUS_RADIUS = 6051.84;
+    private static final double VENUS_MASS = 48.685E+23;
+
+    public static void main(String[] args) throws IOException {
+
+        Body sun = new Body(0, sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS);
+        Body venus = new Body(1, venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS);
+        Body earth = new Body(2, earthInitPosition, earthInitVelocity, EARTH_RADIUS, EARTH_MASS);
+
+        double earthSunDistance = distance(sun.getPosition(), earth.getPosition());
+
+        Pair<Double, Double> sunEarthVersor = new Pair<>(
+                (earth.getPosition().getX_value() - sun.getPosition().getX_value()) / earthSunDistance,
+                (earth.getPosition().getY_value() - sun.getPosition().getY_value()) / earthSunDistance);
+
+        Pair<Double, Double> spaceshipInitPosition = new Pair<>(
+                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getX_value()
+                        + EARTH_RADIUS + earth.getPosition().getX_value(),
+                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getY_value()
+                        + EARTH_RADIUS + earth.getPosition().getY_value()
+        );
+
+        Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
+        double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - SPACESHIP_TAKE_OFF_VELOCITY
+                + earth.getVelocity().getX_value() * spaceshipVersor.getX_value()
+                + earth.getVelocity().getY_value() * spaceshipVersor.getY_value();
+
+        Pair<Double, Double> spaceshipInitVelocity = new Pair<>(
+                earthTangentialVelocity * spaceshipVersor.getX_value(),
+                earthTangentialVelocity * spaceshipVersor.getY_value()
+        );
+        Body spaceship = new Body(3, spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS);
+
+        List<Body> bodies = new ArrayList<>();
+        bodies.add(sun);
+        bodies.add(venus);
+        bodies.add(earth);
+        bodies.add(spaceship);
+
+        PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
+        rg.fillStaticFile(bodies);
+
+        venusTripMethod(rg, bodies, DT);
+
+    }
+
+
+    private static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt) throws IOException {
+
+        int i = 0;
+
+        //Aceleraciones en t=0
+        Map<Body, Pair<Double, Double>> accelerations = new HashMap<>();
+        bodies.forEach(b -> {
+            accelerations.put(b, calcAcceleration(b, bodies));
+        });
+
+        for (double t = dt; t <= TF; t += dt, i += 1) {
+            //TODO: IMPLEMENTAR EL GEAR PREDICT O5 PARA CALCULAR LAS POSICIONES
+            rg.addStateToDynamicFile(bodies, t);
+        }
+
+    }
+
+    private static Pair<Double, Double> calcAcceleration(Body bodySelected, List<Body> bodies) {
+
+        List<Pair<Double, Double>> forces = bodies.stream().filter(b -> !b.equals(bodySelected))
+                .map(body -> gravityForce(bodySelected, body))
+                .collect(Collectors.toList());
+
+        Pair<Double, Double> result = new Pair<>(0.0, 0.0);
+
+        forces.forEach(f -> {
+            result.setX_value(result.getX_value() + f.getY_value());
+            result.setY_value(result.getY_value() + f.getY_value());
+        });
+
+        return new Pair<>(result.getX_value() / bodySelected.getMass(),
+                result.getY_value() / bodySelected.getMass());
+    }
+
+    private static double distance(Pair<Double, Double> firstPosition, Pair<Double, Double> secondPosition) {
+        return sqrt(
+                pow(firstPosition.getX_value() - secondPosition.getX_value(), 2)
+                        + pow(firstPosition.getY_value() - secondPosition.getY_value(), 2));
+    }
+
+    private static Pair<Double, Double> gravityForce(Body bodyA, Body bodyB) {
+
+        Pair<Double, Double> bodyAPosition = bodyA.getPosition();
+        Pair<Double, Double> bodyBPosition = bodyB.getPosition();
+
+        double scalar = (G * bodyA.getMass() * bodyB.getMass()) / pow(distance(bodyBPosition, bodyAPosition), 2);
+        Pair<Double, Double> eij = calculateEn(bodyAPosition,bodyBPosition);
+
+        return new Pair<>(scalar *eij.getX_value(), scalar*eij.getY_value());
+    }
+
+    private static Pair<Double, Double> calculateEn(Pair<Double, Double> firstPosition, Pair<Double, Double> secondPosition) {
+
+//        Me queda apuntando a (x2,y2)
+//        e (x2-x1/sqrt((x2-x1)²+(y2-y1)²)),y1-y1/sqrt((x2-x1)²+(y2-y1)²)))
+        double norm = distance(firstPosition, secondPosition);
+        double x = (secondPosition.getX_value() - firstPosition.getX_value()) / norm;
+        double y = (secondPosition.getY_value() - firstPosition.getY_value()) / norm;
+        return new Pair<>(x / norm, y / norm);
+    }
+
+
+}

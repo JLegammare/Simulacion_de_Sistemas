@@ -5,7 +5,7 @@ import ar.edu.itba.simulacion.methods.Euler;
 import ar.edu.itba.simulacion.methods.GearPredictoO5;
 import ar.edu.itba.simulacion.methods.OriginalVerlet;
 import ar.edu.itba.simulacion.models.Pair;
-import ar.edu.itba.simulacion.utils.ResultsGenerator;
+import ar.edu.itba.simulacion.utils.HarmonicResultsGenerator;
 
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -22,12 +22,12 @@ public class HarmonicOscillator {
     private static final double gamma = 100.0; //kg/s
     private static final double tf = 5.0; //s
     private static final double DT = 0.001;
-    private static final String Met = "VERLET";
+    private static final String Met = "GEAR";
     private static final double r0 = 1.0; //mts
     private static final double v0 = -gamma / (2 * M); //mts/s
     private static final Pair<Double, Double> initPosition = new Pair<>(r0, 0.0);
     private static final Pair<Double, Double> initVelocity = new Pair<>(v0, 0.0);
-    private static final double STEPS = tf/DT;
+    private static final double STEPS = tf / DT;
 
     private static final Pair<Double, Double> initForce = new Pair<>(
             calcForce(initPosition.getX_value(), initVelocity.getX_value()),
@@ -35,8 +35,6 @@ public class HarmonicOscillator {
     private static final Pair<Double, Double> initAcceleration = new Pair<>(
             initForce.getX_value() / M,
             0.0);
-
-
 
     public static void main(String[] args) throws IOException {
 
@@ -48,12 +46,12 @@ public class HarmonicOscillator {
         Pair<Double, Double> prevPos = Euler.prevPosition(initPosition, initVelocity, initForce, -DT, M);
         Pair<Double, Double> prevVel = Euler.prevVel(initVelocity, initForce, -DT, M);
         Pair<Double, Double> prevAcc = new Pair<>(
-                        calcForce(prevPos.getX_value(), prevVel.getX_value()) / M,
-                        0.0);
+                calcForce(prevPos.getX_value(), prevVel.getX_value()) / M,
+                0.0);
 
         ArrayList<Double> times = new ArrayList<>();
         String positionsResultsFilePath;
-        ResultsGenerator rg = null;
+        HarmonicResultsGenerator rg = null;
         double ecm = 0.0;
 
         switch (Met) {
@@ -63,7 +61,7 @@ public class HarmonicOscillator {
 
                 positionsResultsFilePath = String.format("%s/Beeman%s", RESULTS_DIRECTORY, POSITION_FILE);
 
-                rg = new ResultsGenerator(
+                rg = new HarmonicResultsGenerator(
                         positionsResultsFilePath,
                         RESULTS_DIRECTORY);
 
@@ -118,7 +116,7 @@ public class HarmonicOscillator {
                     times.add(t);
 
                     //TODO: DUDA nose si es currPos o newPosition
-                   ecm += Math.pow(newPosition.getX_value() - analiticSolution(t),2);
+                    ecm += Math.pow(newPosition.getX_value() - analiticSolution(t), 2);
                 }
 
                 break;
@@ -127,7 +125,7 @@ public class HarmonicOscillator {
 
                 positionsResultsFilePath = String.format("%s/Gear%s", RESULTS_DIRECTORY, POSITION_FILE);
 
-                rg = new ResultsGenerator(
+                rg = new HarmonicResultsGenerator(
                         positionsResultsFilePath,
                         RESULTS_DIRECTORY);
 
@@ -145,6 +143,7 @@ public class HarmonicOscillator {
 
                 velocities.add(initVelocity);
                 positions.add(initPosition);
+                accelerations.add(initAcceleration);
 
                 for (double t = 0; t <= tf; t += DT) {
 
@@ -166,7 +165,7 @@ public class HarmonicOscillator {
                     times.add(t);
 
                     //TODO: DUDA nose si es currPos o newPosition
-                    ecm += Math.pow(positions.get(positionsSize-1).getX_value() - analiticSolution(t),2);
+                    ecm += Math.pow(positions.get(positionsSize - 1).getX_value() - analiticSolution(t), 2);
                 }
 
                 break;
@@ -175,7 +174,7 @@ public class HarmonicOscillator {
 
                 positionsResultsFilePath = String.format("%s/Verlet%s", RESULTS_DIRECTORY, POSITION_FILE);
 
-                rg = new ResultsGenerator(
+                rg = new HarmonicResultsGenerator(
                         positionsResultsFilePath,
                         RESULTS_DIRECTORY);
 
@@ -225,7 +224,12 @@ public class HarmonicOscillator {
         }
         positions.remove(0);
         rg.addStateToPositionFile(times, positions);
-        System.out.println("error: " + ecm/STEPS);
+        System.out.println("error: " + ecm / STEPS);
+
+        //RESULTS:
+        //VERLET:   2.4846507873892497E-5
+        //BEEMAN:   1.0107704358417047E-5
+        //GEAR:     4.492325815909972E-5
 
     }
 
