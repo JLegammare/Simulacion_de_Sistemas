@@ -1,7 +1,5 @@
 package ar.edu.itba.simulacion.models;
 
-import java.util.Objects;
-
 public class Body implements Comparable<Body> {
 
     private final int id;

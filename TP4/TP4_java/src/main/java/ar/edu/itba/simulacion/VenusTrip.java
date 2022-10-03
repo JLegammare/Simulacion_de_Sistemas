@@ -5,10 +5,14 @@ import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 
-import static java.lang.Math.*;
+import static java.lang.Math.pow;
+import static java.lang.Math.sqrt;
 
 public class VenusTrip {
 
@@ -143,14 +147,15 @@ public class VenusTrip {
         Pair<Double, Double> eij = calculateEn(bodyAPosition,bodyBPosition);
 
         return new Pair<>(scalar * eij.getX_value(), scalar * eij.getY_value());
+
     }
 
     private static Pair<Double, Double> calculateEn(Pair<Double, Double> firstPosition, Pair<Double, Double> secondPosition) {
 
 //        el versor apunta de  (x1,y1) a(x2,y2)
         double norm = distance(firstPosition, secondPosition);
-        double x = (secondPosition.getX_value() - firstPosition.getX_value()) / norm;
-        double y = (secondPosition.getY_value() - firstPosition.getY_value()) / norm;
+        double x = (secondPosition.getX_value() - firstPosition.getX_value());
+        double y = (secondPosition.getY_value() - firstPosition.getY_value());
         return new Pair<>(x / norm, y / norm);
     }
 
