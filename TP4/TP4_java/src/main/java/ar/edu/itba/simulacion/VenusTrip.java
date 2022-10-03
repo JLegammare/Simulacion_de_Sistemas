@@ -68,7 +68,6 @@ public class VenusTrip {
                         + EARTH_RADIUS + earth.getPosition().getY_value()
         );
 
-        //TODO: REVISAR VELOCIDAD INICIAL DE LA NAVE
         Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
         double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - SPACESHIP_TAKE_OFF_VELOCITY
                 + earth.getVelocity().getX_value() * spaceshipVersor.getX_value()

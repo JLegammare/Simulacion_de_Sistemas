@@ -229,7 +229,7 @@ public class HarmonicOscillator {
         //RESULTS:
         //VERLET:   2.4846507873892497E-5
         //BEEMAN:   1.0107704358417047E-5
-        //GEAR:     4.492325815909972E-5
+        //GEAR:     3.684759563864711E-20
 
     }
 
