@@ -1,5 +1,6 @@
 package ar.edu.itba.simulacion.methods;
 
+import ar.edu.itba.simulacion.HarmonicOscillator;
 import ar.edu.itba.simulacion.models.Pair;
 
 import java.util.ArrayList;
@@ -54,9 +55,9 @@ public class GearPredictoO5 {
             predictedRs.add(rp);
         }
         //evaluate
-        double deltaA = r2 - predictedRs.get(2);
-        double deltaR2 = deltaA*Math.pow(dt,2)/2;
-
+        double acc = HarmonicOscillator.calcForce(predictedRs.get(0), predictedRs.get(1))/m;
+        double deltaR2 = ((acc - predictedRs.get(2)) * (Math.pow(dt, 2))) / 2;
+        
         //correct
         List<Double> correctedRs = new ArrayList<>();
         correctedRs.add(predictedRs.get(0) + alpha[0]*deltaR2); //el primero es la posicion corregida y no se divide por dt
