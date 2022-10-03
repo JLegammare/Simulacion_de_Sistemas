@@ -2,15 +2,17 @@ package ar.edu.itba.simulacion.models;
 
 import java.util.Objects;
 
-public class Body {
+public class Body implements Comparable<Body> {
 
     private final int id;
+    private final String name;
     private final double radius;
     private State state;
     private double mass;
 
-    public Body(int id, Pair<Double, Double> position, Pair<Double, Double> velocity, double radius, double mass) {
+    public Body(int id,String name, Pair<Double, Double> position, Pair<Double, Double> velocity, double radius, double mass) {
         this.id = id;
+        this.name = name;
         this.state = new State(position, velocity);
         this.radius = radius;
         this.mass = mass;
@@ -50,4 +52,8 @@ public class Body {
         return radius;
     }
 
+    @Override
+    public int compareTo(Body o) {
+        return this.id-o.id;
+    }
 }

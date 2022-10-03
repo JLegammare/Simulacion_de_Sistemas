@@ -38,7 +38,7 @@ public class PlanetsResultsGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\n",bodies.size()));
         for (Body b: bodies) {
-            sb.append(String.format("%d %f %f\n",b.getId(), b.getRadius(), b.getMass()));
+            sb.append(String.format("%d %2.2f %2.2f\n",b.getId(), b.getRadius(), b.getMass()));
         }
         pw.println(sb);
         pw.close();
@@ -57,7 +57,7 @@ public class PlanetsResultsGenerator {
         sb.append(String.format("%f\n",time));
 
         for (Body b: bodies) {
-            sb.append(String.format("%d %f %f %f %f \n",b.getId(),
+            sb.append(String.format("%d %4.4f %4.4f %4.4f %4.4f \n",b.getId(),
                     b.getPosition().getX_value(),
                     b.getPosition().getY_value(),
                     b.getVelocity().getX_value(),
