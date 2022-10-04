@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 public class VenusTripRunner {
 
@@ -61,8 +60,6 @@ public class VenusTripRunner {
             bodies.add(sun);
             bodies.add(venus);
             bodies.add(earth);
-            Body spaceship = VenusTrip.getSpaceship(sun,earth);
-            bodies.add(spaceship);
 
             PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
 

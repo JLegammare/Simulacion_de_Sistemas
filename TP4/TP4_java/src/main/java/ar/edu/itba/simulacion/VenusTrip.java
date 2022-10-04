@@ -2,8 +2,6 @@ package ar.edu.itba.simulacion;
 
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
-import ar.edu.itba.simulacion.models.State;
-import ar.edu.itba.simulacion.utils.Parser;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.io.IOException;
@@ -81,6 +79,7 @@ public class VenusTrip {
 
         //Aceleraciones en t=0
         Map<Body, Pair<Double, Double>> initAccelerations = new TreeMap<>();
+
         bodies.forEach(b -> {
             initAccelerations.put(b, calcAcceleration(b, bodies));
         });
