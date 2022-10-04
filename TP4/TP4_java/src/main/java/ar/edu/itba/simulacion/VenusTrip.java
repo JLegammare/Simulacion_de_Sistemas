@@ -4,9 +4,11 @@ import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
@@ -17,7 +19,10 @@ public class VenusTrip {
     private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
-
+    private static final Color SUN_COLOR = Color.yellow;
+    private static final Color EARTH_COLOR = Color.BLUE;
+    private static final Color VENUS_COLOR = Color.ORANGE;
+    private static final Color SPACESHIP_COLOR = Color.MAGENTA;
     private static final double G = 6.693E-20;
     private static final double DT = 0.001;
     private static final double TF = 70;
@@ -53,9 +58,9 @@ public class VenusTrip {
 
     public static void main(String[] args) throws IOException, ParseException {
 
-        Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS);
-        Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS);
-        Body earth = new Body(2, "EARTH", earthInitPosition, earthInitVelocity, EARTH_RADIUS, EARTH_MASS);
+        Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
+        Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS,VENUS_COLOR);
+        Body earth = new Body(2, "EARTH", earthInitPosition, earthInitVelocity, EARTH_RADIUS, EARTH_MASS,EARTH_COLOR);
 
         List<Body> bodies = new ArrayList<>();
         bodies.add(sun);
@@ -119,7 +124,7 @@ public class VenusTrip {
                 earthTangentialVelocity * spaceshipVersor.getX_value(),
                 earthTangentialVelocity * spaceshipVersor.getY_value()
         );
-        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS);
+        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS,SPACESHIP_COLOR);
     }
 
     private static Pair<Double, Double> calcAcceleration(Body bodySelected, List<Body> bodies) {

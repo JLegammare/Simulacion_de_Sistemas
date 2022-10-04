@@ -1,5 +1,7 @@
 package ar.edu.itba.simulacion.models;
 
+import java.awt.*;
+
 public class Body implements Comparable<Body> {
 
     private final int id;
@@ -7,13 +9,15 @@ public class Body implements Comparable<Body> {
     private final double radius;
     private State state;
     private double mass;
+    private final Color bodyColor;
 
-    public Body(int id,String name, Pair<Double, Double> position, Pair<Double, Double> velocity, double radius, double mass) {
+    public Body(int id,String name, Pair<Double, Double> position, Pair<Double, Double> velocity, double radius, double mass, Color bodyColor) {
         this.id = id;
         this.name = name;
         this.state = new State(position, velocity);
         this.radius = radius;
         this.mass = mass;
+        this.bodyColor = bodyColor;
     }
 
     public double getMass() {
