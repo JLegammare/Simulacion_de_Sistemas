@@ -13,8 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-
-import static ar.edu.itba.simulacion.VenusTrip.distance;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class VenusTripRunner {
 
@@ -55,20 +54,17 @@ public class VenusTripRunner {
             Body earth = new Body(2, "EARTH", p.getX_value().getPosition(), p.getX_value().getVelocity(),
                     EARTH_RADIUS, EARTH_MASS);
 
-
-            String directory = String.format("%s/%s", RESULTS_DIRECTORY, d.toString());
-            String staticFilePath = String.format("%s/%s", directory, STATIC_FILE);
-            String dynamicFilePath = String.format("%s/%s", directory, DYNAMIC_FILE);
+            String directory = String.format("%s/%s",RESULTS_DIRECTORY, d.toString());
 
             List<Body> bodies = new ArrayList<>();
 
             bodies.add(sun);
             bodies.add(venus);
             bodies.add(earth);
-            Body spaceship = getSpaceship(sun,earth);
+            Body spaceship = VenusTrip.getSpaceship(sun,earth);
             bodies.add(spaceship);
 
-            PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, directory);
+            PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
 
             try {
                 VenusTrip.venusTripMethod(rg,bodies,DT,TF);
@@ -79,31 +75,4 @@ public class VenusTripRunner {
 
     }
 
-    private static Body getSpaceship(Body sun, Body earth) {
-
-        double earthSunDistance = distance(sun.getPosition(), earth.getPosition());
-
-        Pair<Double, Double> sunEarthVersor = new Pair<>(
-                (earth.getPosition().getX_value() - sun.getPosition().getX_value()) / earthSunDistance,
-                (earth.getPosition().getY_value() - sun.getPosition().getY_value()) / earthSunDistance);
-
-
-        Pair<Double, Double> spaceshipInitPosition = new Pair<>(
-                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getX_value()
-                        + EARTH_RADIUS + earth.getPosition().getX_value(),
-                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getY_value()
-                        + EARTH_RADIUS + earth.getPosition().getY_value()
-        );
-
-        Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
-        double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - SPACESHIP_TAKE_OFF_VELOCITY
-                + earth.getVelocity().getX_value() * spaceshipVersor.getX_value()
-                + earth.getVelocity().getY_value() * spaceshipVersor.getY_value();
-
-        Pair<Double, Double> spaceshipInitVelocity = new Pair<>(
-                earthTangentialVelocity * spaceshipVersor.getX_value(),
-                earthTangentialVelocity * spaceshipVersor.getY_value()
-        );
-        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS);
-    }
 }

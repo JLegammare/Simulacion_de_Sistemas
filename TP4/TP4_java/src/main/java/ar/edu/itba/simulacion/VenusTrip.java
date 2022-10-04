@@ -59,6 +59,44 @@ public class VenusTrip {
         Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS);
         Body earth = new Body(2, "EARTH", earthInitPosition, earthInitVelocity, EARTH_RADIUS, EARTH_MASS);
 
+        List<Body> bodies = new ArrayList<>();
+        bodies.add(sun);
+        bodies.add(venus);
+        bodies.add(earth);
+
+        PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
+
+        venusTripMethod(rg, bodies, DT,TF);
+
+    }
+
+
+    public static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt,double tf) throws IOException {
+
+        Body spaceship = getSpaceship(bodies.get(0),bodies.get(2));
+        bodies.add(spaceship);
+        rg.fillStaticFile(bodies);
+
+        int i = 0;
+
+        //Aceleraciones en t=0
+        Map<Body, Pair<Double, Double>> initAccelerations = new TreeMap<>();
+        bodies.forEach(b -> {
+            initAccelerations.put(b, calcAcceleration(b, bodies));
+        });
+
+        rg.addStateToDynamicFile(bodies,0);
+
+//        for (double t = dt; t <= tf; t += dt, i += 1) {
+//            //TODO: IMPLEMENTAR EL GEAR PREDICT O5/BEEMAN/VERLET PARA CALCULAR LAS POSICIONES
+//
+//            rg.addStateToDynamicFile(bodies, t);
+//        }
+
+    }
+
+     public static Body getSpaceship(Body sun, Body earth) {
+
         double earthSunDistance = distance(sun.getPosition(), earth.getPosition());
 
         Pair<Double, Double> sunEarthVersor = new Pair<>(
@@ -82,38 +120,7 @@ public class VenusTrip {
                 earthTangentialVelocity * spaceshipVersor.getX_value(),
                 earthTangentialVelocity * spaceshipVersor.getY_value()
         );
-        Body spaceship = new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS);
-
-        List<Body> bodies = new ArrayList<>();
-        bodies.add(sun);
-        bodies.add(venus);
-        bodies.add(earth);
-        bodies.add(spaceship);
-
-        PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
-        rg.fillStaticFile(bodies);
-
-        venusTripMethod(rg, bodies, DT,TF);
-
-    }
-
-
-    public static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt,double tf) throws IOException {
-
-        int i = 0;
-
-        //Aceleraciones en t=0
-        Map<Body, Pair<Double, Double>> initAccelerations = new TreeMap<>();
-        bodies.forEach(b -> {
-            initAccelerations.put(b, calcAcceleration(b, bodies));
-        });
-
-        for (double t = dt; t <= tf; t += dt, i += 1) {
-            //TODO: IMPLEMENTAR EL GEAR PREDICT O5/BEEMAN/VERLET PARA CALCULAR LAS POSICIONES
-
-            rg.addStateToDynamicFile(bodies, t);
-        }
-
+        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS);
     }
 
     private static Pair<Double, Double> calcAcceleration(Body bodySelected, List<Body> bodies) {
