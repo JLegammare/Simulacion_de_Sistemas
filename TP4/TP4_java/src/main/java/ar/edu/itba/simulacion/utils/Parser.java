@@ -5,7 +5,6 @@ import ar.edu.itba.simulacion.models.Pair;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -22,16 +21,14 @@ public class Parser {
         File earthFile = new File(earthFilePath);
         File venusFile = new File(venusFilePath);
 
-        Scanner venusScanner = new Scanner(venusFile);
-
         Map<Date, Pair<State, State>> datePairMap = new TreeMap<>();
 
-        List<Pair<Date, State>> earthStates = parseStates(earthFile);
         List<Pair<Date, State>> venusStates = parseStates(venusFile);
+        List<Pair<Date, State>> earthStates = parseStates(earthFile);
 
-        int statesAmmount = earthStates.size();
+        int statesAmount = earthStates.size();
 
-        for (int i = 0; i <statesAmmount ; i++) {
+        for (int i = 0; i <statesAmount ; i++) {
 
             Pair<Date,State> earthSt = earthStates.get(i);
             Pair<Date,State> venusSt = venusStates.get(i);
@@ -52,7 +49,6 @@ public class Parser {
 
         Scanner earthScanner = new Scanner(earthFile);
         boolean firstDelimiter = false;
-        boolean secondDelimiter = false;
         while (earthScanner.hasNextLine()) {
 
             String line = earthScanner.nextLine();
@@ -63,6 +59,7 @@ public class Parser {
                     String dateLine = line.substring(line.lastIndexOf("A.D.")+5,line.length()-5);
                     SimpleDateFormat sdf  = new SimpleDateFormat(DATE_FORMAT,Locale.US);
                     Date date = sdf.parse(dateLine);
+
                     String positionLine = earthScanner.nextLine();
                     double x = Double.parseDouble(
                             positionLine.substring( positionLine.lastIndexOf("X")+3,
@@ -72,7 +69,6 @@ public class Parser {
                                     positionLine.lastIndexOf("Z")-2));
 
                     String velocityLine = earthScanner.nextLine();
-
                     double vx = Double.parseDouble(
                             velocityLine.substring( velocityLine.lastIndexOf("VX")+3,
                                     velocityLine.lastIndexOf("Y")-2));

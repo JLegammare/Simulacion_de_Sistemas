@@ -20,10 +20,6 @@ public class VenusTrip {
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
 
-    private static final String ASSETS_DIRECTORY = "assets";
-
-    private static final String EARTH_FILE_PATH = String.format("%s/earth_nasa.txt",ASSETS_DIRECTORY) ;
-    private static final String VENUS_FILE_PATH = String.format("%s/venus_nasa.txt",ASSETS_DIRECTORY) ;
     private static final double G = 6.693E-20;
     private static final double DT = 0.001;
     private static final double TF = 70;
@@ -58,10 +54,6 @@ public class VenusTrip {
     private static final double VENUS_MASS = 48.685E+23;
 
     public static void main(String[] args) throws IOException, ParseException {
-
-
-        Map<Date,Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH,VENUS_FILE_PATH,ASSETS_DIRECTORY);
-
 
         Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS);
         Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS);
@@ -101,12 +93,12 @@ public class VenusTrip {
         PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
         rg.fillStaticFile(bodies);
 
-        venusTripMethod(rg, bodies, DT);
+        venusTripMethod(rg, bodies, DT,TF);
 
     }
 
 
-    private static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt) throws IOException {
+    public static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt,double tf) throws IOException {
 
         int i = 0;
 
@@ -116,7 +108,7 @@ public class VenusTrip {
             initAccelerations.put(b, calcAcceleration(b, bodies));
         });
 
-        for (double t = dt; t <= TF; t += dt, i += 1) {
+        for (double t = dt; t <= tf; t += dt, i += 1) {
             //TODO: IMPLEMENTAR EL GEAR PREDICT O5/BEEMAN/VERLET PARA CALCULAR LAS POSICIONES
 
             rg.addStateToDynamicFile(bodies, t);
@@ -141,7 +133,7 @@ public class VenusTrip {
                 result.getY_value() / bodySelected.getMass());
     }
 
-    private static double distance(Pair<Double, Double> firstPosition, Pair<Double, Double> secondPosition) {
+    public static double distance(Pair<Double, Double> firstPosition, Pair<Double, Double> secondPosition) {
         return sqrt(
                 pow(firstPosition.getX_value() - secondPosition.getX_value(), 2)
                         + pow(firstPosition.getY_value() - secondPosition.getY_value(), 2));
