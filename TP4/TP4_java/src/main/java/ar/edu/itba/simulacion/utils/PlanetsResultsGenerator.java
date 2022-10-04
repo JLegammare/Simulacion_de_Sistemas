@@ -54,14 +54,20 @@ public class PlanetsResultsGenerator {
 
         StringBuilder sb = new StringBuilder();
 
-        sb.append(String.format("%f\n",time));
+//        sb.append(String.format("%f\n",time));
+        sb.append(String.format("%d\na\n", bodies.size()));
 
         for (Body b: bodies) {
-            sb.append(String.format("%d %4.4f %4.4f %4.4f %4.4f \n",b.getId(),
+            sb.append(String.format("%d %4.4f %4.4f %4.4f %4.4f %4.4f %d %d %d\n",
+                    b.getId(),
                     b.getPosition().getX_value(),
                     b.getPosition().getY_value(),
                     b.getVelocity().getX_value(),
-                    b.getVelocity().getY_value()
+                    b.getVelocity().getY_value(),
+                    b.getRadius(),
+                    b.getBodyColor().getRed(),
+                    b.getBodyColor().getBlue(),
+                    b.getBodyColor().getGreen()
                     ));
 
         }

@@ -54,6 +54,10 @@ public class Body implements Comparable<Body> {
         return radius;
     }
 
+    public Color getBodyColor() {
+        return bodyColor;
+    }
+
     @Override
     public int compareTo(Body o) {
         return this.id-o.id;
