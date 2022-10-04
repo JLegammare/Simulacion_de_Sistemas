@@ -2,7 +2,7 @@ package ar.edu.itba.simulacion.models;
 
 import java.util.Objects;
 
-public class State {
+public class State implements Comparable<State> {
 
     private Pair<Double,Double> position;
     private Pair<Double,Double> velocity;
@@ -40,5 +40,16 @@ public class State {
 
     public void setVelocity(Pair<Double, Double> velocity) {
         this.velocity = velocity;
+    }
+
+    @Override
+    public int compareTo(State o) {
+
+        int compToPosition = this.position.compareTo(o.position);
+
+        if(compToPosition==0)
+            return this.velocity.compareTo(o.position);
+
+        return compToPosition;
     }
 }

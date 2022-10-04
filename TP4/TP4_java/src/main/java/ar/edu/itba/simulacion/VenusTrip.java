@@ -2,13 +2,13 @@ package ar.edu.itba.simulacion;
 
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
+import ar.edu.itba.simulacion.models.State;
+import ar.edu.itba.simulacion.utils.Parser;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.text.ParseException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
@@ -19,6 +19,11 @@ public class VenusTrip {
     private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
+
+    private static final String ASSETS_DIRECTORY = "assets";
+
+    private static final String EARTH_FILE_PATH = String.format("%s/earth_nasa.txt",ASSETS_DIRECTORY) ;
+    private static final String VENUS_FILE_PATH = String.format("%s/venus_nasa.txt",ASSETS_DIRECTORY) ;
     private static final double G = 6.693E-20;
     private static final double DT = 0.001;
     private static final double TF = 70;
@@ -52,7 +57,11 @@ public class VenusTrip {
     private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws IOException, ParseException {
+
+
+        Map<Date,Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH,VENUS_FILE_PATH,ASSETS_DIRECTORY);
+
 
         Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS);
         Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS);
