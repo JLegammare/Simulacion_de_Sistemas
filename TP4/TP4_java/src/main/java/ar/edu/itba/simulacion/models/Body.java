@@ -50,6 +50,13 @@ public class Body implements Comparable<Body> {
         this.state.setVelocity(velocity);
     }
 
+    public String getName() {
+        return name;
+    }
+
+
+
+
     public double getRadius() {
         return radius;
     }
