@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
+import static javax.swing.UIManager.get;
 
 public class VenusTrip {
 
@@ -25,22 +26,20 @@ public class VenusTrip {
     private static final Color VENUS_COLOR = Color.RED;
     private static final Color SPACESHIP_COLOR = Color.MAGENTA;
     private static final double G = 6.693E-20;
-    private static final double DT = 0.001;
-    private static final double TF = 70;
+    private static final double DT = 300;
+    private static final double TF = 34560000;
     private static final int ORDER = 5;
-    private static final double GAMMA = 100.0;
-    private static final double k = Math.pow(10.0, 4);
-    private static final double[] alpha = {3.0/16, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
+    private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
     //SPACESHIP INPUT VALUES:
     private static final double SPACESHIP_INIT_DISTANCE_FROM_EARTH = 1500.0;
     private static final double SPACESHIP_ORBITAL_VELOCITY = 7.12;
     private static final double SPACESHIP_TAKE_OFF_VELOCITY = 8;
     private static final double SPACESHIP_MASS = 2E+5;
-    private static final double SPACESHIP_RADIUS = 1;
+    private static final double SPACESHIP_RADIUS = 100;
     //SUN INPUT VALUES:
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
     private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
-    private static final double SUN_RADIUS = 696000;
+    private static final double SUN_RADIUS = 1000;
     private static final double SUN_MASS = 1988500E+24;
     //EARTH INPUT VALUES:
     private static final Pair<Double, Double> earthInitPosition = new Pair<>(
@@ -49,7 +48,7 @@ public class VenusTrip {
     private static final Pair<Double, Double> earthInitVelocity = new Pair<>(
             -2.949925999285836E-01,
             2.968579130065282E+01);
-    private static final double EARTH_RADIUS = 6378.137;
+    private static final double EARTH_RADIUS = 500;
     private static final double EARTH_MASS = 5.97219E+24;
     //VENUS INPUT VALUES:
     private static final Pair<Double, Double> venusInitPosition = new Pair<>(
@@ -58,7 +57,7 @@ public class VenusTrip {
     private static final Pair<Double, Double> venusInitVelocity = new Pair<>(
             -1.166353075744313E+01,
             -3.324015683726970E+01);
-    private static final double VENUS_RADIUS = 6051.84;
+    private static final double VENUS_RADIUS = 200;
     private static final double VENUS_MASS = 48.685E+23;
 
 
@@ -87,21 +86,11 @@ public class VenusTrip {
         rg.fillStaticFile(bodies);
 
         int i = 0;
-
-        //Aceleraciones en t=0
-        Map<Body, Pair<Double, Double>> initAccelerations = new TreeMap<>();
-
-        bodies.forEach(b -> {
-            initAccelerations.put(b, calcAcceleration(b, bodies));
-        });
-
-        rg.addStateToDynamicFile(bodies,0);
-
+        Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
+        rg.addStateToDynamicFile(initRs,0);
         for (double t = dt; t <= tf; t += dt, i += 1) {
-//            //TODO: IMPLEMENTAR EL GEAR PREDICT O5/BEEMAN/VERLET PARA CALCULAR LAS POSICIONES
-
-//
-            rg.addStateToDynamicFile(bodies, t);
+            initRs = gearPredict05(initRs,dt);
+            rg.addStateToDynamicFile(initRs , t);
         }
 
     }
@@ -178,123 +167,131 @@ public class VenusTrip {
         return new Pair<>(x / norm, y / norm);
     }
 
-//    private static List<List<Pair<Double, Double>>> predict(List<Body> bodies, double dt){
-//        //r0: posicion
-//        //a , b y c
-//        //calulo r0 para los 3,
-//        //calulas r1 para los 3,
-//        //calcular r2 para los 3,
-//        //calculo r3 para los 3,
-//        //
-//
-//         Function<Pair<Pair<Double,Double>,Body>,Body> bodyTransform = p -> new Body(
-//                p.getY_value().getId(),
-//                p.getY_value().getName(),
-//                p.getY_value().getVelocity(),
-//                p.getX_value(),
-//                p.getY_value().getRadius(),
-//                p.getY_value().getMass());
-//
-//        List<Pair<Double,Double>> r0 = bodies.stream().map(Body::getPosition).collect(Collectors.toList());
-//        List<Pair<Double,Double>> r1 = bodies.stream().map(Body::getVelocity).collect(Collectors.toList());
-//        List<Pair<Double,Double>> r2 = bodies.stream().map(b->{
-//            List<Body> otherBodies = bodies.stream().filter(b2->!b2.equals(b)).collect(Collectors.toList());
-//            return calcAcceleration(b,otherBodies);
-//        }).collect(Collectors.toList());
-//
-//        List<>
-//
-//        List<Pair<Double,Double>> r3 = bodies.stream().map(bodyTransform);
-//
-//
-//        Pair<Double,Double> position = body.getPosition();
-//        Pair<Double,Double> vel = body.getVelocity();
-//        double m = body.getMass();
-//
-//
-//        Pair<Double,Double> r0 = body.getPosition();
-//        Pair<Double,Double> r1 = body.getVelocity();
-//        Pair<Double,Double> r2 = calcAcceleration(body,bodies);
-//
-//        Map <Body,Pair<Double,Double>> map = new TreeMap<>();
-//
-//        map.put(body,calcAcceleration(body,bodies));
-//        bodies.forEach(b-> map.put(b,calcAcceleration(bo)));
-//
-//        List<Body> newBodies = bodies.stream().map().collect(Collectors.toList());
-//
-//        Pair<Double,Double> r3 = calcAcceleration()
-//        Pair<Double,Double> r4 =
-//        Pair<Double,Double> r5 =
-//
-//        //r3 y de mas: no relevantes
-//        //en la ecuacion orignal -k*pos/m -GAMMA*v/m
-//        State st = new State(new Pair<>(r1x,r2y),new Pair<>(r2x,r2y));
-//
-//        double r3x = -k*r1x/m - GAMMA * r2x/m;
-//        double r3y = -k*r1y/m - GAMMA * r2y/m;
-//
-//        State st2= new State(new Pair<>(r2x,r2y),new Pair<>(r2x,r2y));
-//
-//        double r4x = -k*r2x/m - GAMMA * r3x/m;
-//        double r4y = -k*r2y/m - GAMMA * r3y/m;
-//
-//        State st3= new State(new Pair<>(r3x,r3y),new Pair<>(r2x,r2y));
-//
-//        double r5x = -k*r3x/m - GAMMA * r4x/m;
-//        double r5y = -k*r3y/m - GAMMA * r4y/m;
-//
-//
-//        //predict:
-//        List<Pair<Double,Double>> predictedRs = new ArrayList<>();
-//        double rpx = 0.0;
-//        double rpy = 0.0;
-//        for(int i = 0; i <= ORDER; i++){
-//            switch(i){
-//                case 0:
-//                   rpx = r0x + r1x*dt + r2x*(Math.pow(dt,2)/fact(2)) + r3x*(Math.pow(dt, 3)/fact(3)) + r4x*(Math.pow(dt, 4)/fact(4)) + r5x*(Math.pow(dt, 5)/fact(5));
-//                   rpy = r0y + r1y*dt + r2y*(Math.pow(dt,2)/fact(2)) + r3y*(Math.pow(dt, 3)/fact(3)) + r4y*(Math.pow(dt, 4)/fact(4)) + r5y*(Math.pow(dt, 5)/fact(5));
-//                   break;
-//                case 1:
-//                    rpx = r1x + r2x*dt + r3x*(Math.pow(dt, 2)/fact(2)) + r4x*(Math.pow(dt, 3)/fact(3)) + r5x*(Math.pow(dt, 4)/fact(4));
-//                    rpy = r1y + r2y*dt + r3y*(Math.pow(dt, 2)/fact(2)) + r4y*(Math.pow(dt, 3)/fact(3)) + r5y*(Math.pow(dt, 4)/fact(4));
-//                    break;
-//                case 2:
-//                    rpx = r2x + r3x*dt + r4x*(Math.pow(dt,2)/fact(2)) + r5x*(Math.pow(dt, 3)/fact(3));
-//                    rpy = r2y + r3y*dt + r4y*(Math.pow(dt,2)/fact(2)) + r5y*(Math.pow(dt, 3)/fact(3));
-//                    break;
-//                case 3:
-//                    rpx = r3x + r4x*dt + r5x*(Math.pow(dt,2)/fact(2));
-//                    rpy = r3y + r4y*dt + r5y*(Math.pow(dt,2)/fact(2));
-//                    break;
-//                case 4:
-//                    rpx = r4x + r5x*dt;
-//                    rpy = r4y + r5y*dt;
-//                    break;
-//                case 5:
-//                    rpx = r5x;
-//                    rpy = r5y;
-//                    break;
-//            }
-//            predictedRs.add(new Pair<>(rpx,rpy));
-//        }
-//        //evaluate
-//
-//        Pair<Double,Double> acc = VenusTrip.calcAcceleration(body, bodies);
-//
-//        double deltaR2x = ((acc.getX_value() - predictedRs.get(2).getX_value()) * (Math.pow(dt, 2))) / 2;
-//        double deltaR2y = ((acc.getY_value() - predictedRs.get(2).getY_value()) * (Math.pow(dt, 2))) / 2;
-//
-//        //correct
-//        List<Pair<Double, Double>> correctedRs = new ArrayList<>();
-//        correctedRs.add(new Pair<>(predictedRs.get(0).getX_value() + alpha[0]*deltaR2x, predictedRs.get(0).getY_value() + alpha[0]*deltaR2y));
-//        for(int i = 1; i <= ORDER; i++){
-//            double rcx = predictedRs.get(i).getX_value() + alpha[i]*deltaR2x*fact(i)/Math.pow(dt,i); //el 2do es la velocidad corregida. Los demas no se usan
-//            double rcy = predictedRs.get(i).getY_value() + alpha[i]*deltaR2y*fact(i)/Math.pow(dt,i);
-//            correctedRs.add(new Pair<>(rcx, rcy));
-//        }
-//        return correctedRs;
-//    }
+    private static Map<Body,List<Pair<Double,Double>>> initBodiesRs(List<Body> bodies){
+
+    List<Pair<Double, Double>> r0 = bodies.stream().map(Body::getPosition).collect(Collectors.toList());
+    List<Pair<Double, Double>> r1 = bodies.stream().map(Body::getVelocity).collect(Collectors.toList());
+    List<Pair<Double, Double>> r2 = bodies.stream().map(b -> {
+        List<Body> otherBodies = bodies.stream().filter(b2 -> !b2.equals(b)).collect(Collectors.toList());
+            return calcAcceleration(b, otherBodies);
+        }).collect(Collectors.toList());
+
+        List<Pair<Double, Double>> r3 = List.of(
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0)
+        );
+
+        List<Pair<Double, Double>> r4 = List.of(
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0)
+        );
+
+        List<Pair<Double, Double>> r5 = List.of(
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0),
+                new Pair<>(0.0, 0.0)
+        );
+        Map<Body,List<Pair<Double,Double>>> rsMap = new TreeMap<>();
+        for (int i = 0; i <bodies.size() ; i++) {
+            Body body = bodies.get(i);
+            rsMap.put(body,new ArrayList<>());
+            rsMap.get(body).add(r0.get(i));
+            rsMap.get(body).add(r1.get(i));
+            rsMap.get(body).add(r2.get(i));
+            rsMap.get(body).add(r3.get(i));
+            rsMap.get(body).add(r4.get(i));
+            rsMap.get(body).add(r5.get(i));
+        }
+
+        return rsMap;
+    }
+    private static Map<Body,List<Pair<Double, Double>>> gearPredict05(Map<Body,List<Pair<Double,Double>>> bodiesRs, double dt) {
+
+        List<Body> bodies = new ArrayList<>(bodiesRs.keySet());
+
+        Map<Body, List<Pair<Double, Double>>> bodyrMap = new TreeMap<>();
+
+        for (int i = 0; i < bodies.size(); i++) {
+            Body body = bodies.get(i);
+            bodyrMap.put(body, new ArrayList<>());
+            for (int j = 0; j <= ORDER; j++) {
+                bodyrMap.get(body).add(bodiesRs.get(body).get(j));
+            }
+        }
+
+        //Calculo las predicciones:
+        Map<Body, List<Pair<Double, Double>>> predictedRs = new TreeMap<>();
+
+        bodyrMap.forEach((p, r) -> {
+
+            List<Pair<Double, Double>> predicts = new ArrayList<>();
+
+            for (int i = 0; i <= ORDER; i++) {
+                Pair<Double, Double> rp = new Pair<>(0.0, 0.0);
+                for (int j = i; j <= ORDER; j++) {
+                    Pair<Double, Double> rj = r.get(j);
+                    rp.setX_value(rp.getX_value() + rj.getX_value() * pow(dt, j - i) / fact(j - i));
+                    rp.setY_value(rp.getY_value() + rj.getY_value() * pow(dt, j - i) / fact(j - i));
+                }
+                predicts.add(rp);
+            }
+            predictedRs.put(p, predicts);
+        });
+
+
+        Map<Body,Pair<Double,Double>> bodyAcc = new TreeMap<>();
+        bodies.forEach(b->{
+            List<Body> otherBodies = bodies.stream().filter(b2->!b2.equals(b)).collect(Collectors.toList());
+            Pair<Double,Double> f = new Pair<>(0.0,0.0);
+            Pair<Double,Double> b1Position = predictedRs.get(b).get(0);
+            otherBodies.forEach(b2->{
+                Pair<Double,Double> b2Position = predictedRs.get(b2).get(0);
+                Pair<Double,Double> deltaR0 = new Pair<>(
+                        b2Position.getX_value()-b1Position.getX_value(),
+                        b2Position.getY_value()-b1Position.getY_value()
+                );
+                double distance =  distance(b1Position,b2Position);
+                Pair<Double,Double> eij = new Pair<>(
+                        deltaR0.getX_value()/distance,
+                        deltaR0.getY_value()/distance);
+                double constant = G*b.getMass()*b2.getMass()/pow(distance,2);
+                f.setX_value(f.getX_value()+constant*eij.getX_value());
+                f.setY_value(f.getY_value()+constant*eij.getY_value());
+            });
+            bodyAcc.put(b,new Pair<>(f.getX_value()/b.getMass(),f.getY_value()/b.getMass()));
+        });
+
+        //calculos los Delta R2
+        Map<Body,Pair<Double,Double>> bodyR2Map = new TreeMap<>();
+        predictedRs.forEach((k,v)->{
+            Pair<Double,Double> detltaR2 = new Pair<>(
+                    (bodyAcc.get(k).getX_value()-predictedRs.get(k).get(2).getX_value())*pow(dt,2)/fact(2),
+                    (bodyAcc.get(k).getY_value()-predictedRs.get(k).get(2).getY_value())*pow(dt,2)/fact(2)
+                    );
+            bodyR2Map.put(k,detltaR2);
+        });
+
+        Map<Body,List<Pair<Double,Double>>> correctionsMap = new TreeMap<>();
+        predictedRs.forEach((k,v)->{
+            List<Pair<Double,Double>> correctedRp = new ArrayList<>();
+            for (int i = 0; i <= ORDER; i++) {
+                Pair<Double,Double> predictedRp = v.get(i);
+                Pair<Double,Double> rc = new Pair<>(
+                        predictedRp.getX_value()+alpha[i]*bodyR2Map.get(k).getX_value()*fact(i)/pow(dt,i),
+                        predictedRp.getY_value()+alpha[i]*bodyR2Map.get(k).getY_value()*fact(i)/pow(dt,i)
+                );
+                correctedRp.add(rc);
+            }
+            correctionsMap.put(k,correctedRp);
+        });
+
+        return correctionsMap;
+    }
 
     private static int fact (int n) {
         if (n==0)

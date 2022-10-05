@@ -1,9 +1,11 @@
 package ar.edu.itba.simulacion.utils;
 
 import ar.edu.itba.simulacion.models.Body;
+import ar.edu.itba.simulacion.models.Pair;
 
 import java.io.*;
 import java.util.List;
+import java.util.Map;
 
 public class PlanetsResultsGenerator {
     private final File dynamicFile;
@@ -46,7 +48,7 @@ public class PlanetsResultsGenerator {
 
 
 
-    public void addStateToDynamicFile(List<Body> bodies, double time ) throws IOException {
+    public void addStateToDynamicFile(Map<Body,List<Pair<Double,Double>>> rsMap, double time ) throws IOException {
 
         FileWriter fwDynamic = new FileWriter(dynamicFile,true);
         BufferedWriter bwDynamic = new BufferedWriter(fwDynamic);
@@ -55,22 +57,25 @@ public class PlanetsResultsGenerator {
         StringBuilder sb = new StringBuilder();
 
 //        sb.append(String.format("%f\n",time));
-        sb.append(String.format("%d\na\n", bodies.size()));
-
-        for (Body b: bodies) {
-            sb.append(String.format("%d %4.4f %4.4f %4.4f %4.4f %4.4f %d %d %d\n",
-                    b.getId(),
-                    b.getPosition().getX_value(),
-                    b.getPosition().getY_value(),
-                    b.getVelocity().getX_value(),
-                    b.getVelocity().getY_value(),
-                    b.getRadius(),
-                    b.getBodyColor().getRed(),
-                    b.getBodyColor().getBlue(),
-                    b.getBodyColor().getGreen()
+        sb.append(String.format("%d\na\n", rsMap.keySet().size()));
+        // sol 1000
+        // venus 200
+        // tierra 500
+        // spaceship 100
+        rsMap.forEach((k,v)->{
+            sb.append(String.format("%d %4.4f %4.4f %d %4.4f %4.4f %4.4f %d %d %d\n",
+                    k.getId(),
+                    v.get(0).getX_value(),
+                    v.get(0).getY_value(),
+                    0,
+                    v.get(1).getX_value(),
+                    v.get(1).getY_value(),
+                    k.getRadius(),
+                    k.getBodyColor().getRed(),
+                    k.getBodyColor().getGreen(),
+                    k.getBodyColor().getBlue()
                     ));
-
-        }
+        });
 
         pwDynamic.print(sb);
         pwDynamic.close();
