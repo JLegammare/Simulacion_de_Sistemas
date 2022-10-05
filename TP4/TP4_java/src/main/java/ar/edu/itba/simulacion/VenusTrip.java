@@ -22,7 +22,7 @@ public class VenusTrip {
     private static final String STATIC_FILE = "Static.txt";
     private static final Color SUN_COLOR = Color.yellow;
     private static final Color EARTH_COLOR = Color.BLUE;
-    private static final Color VENUS_COLOR = Color.ORANGE;
+    private static final Color VENUS_COLOR = Color.RED;
     private static final Color SPACESHIP_COLOR = Color.MAGENTA;
     private static final double G = 6.693E-20;
     private static final double DT = 0.001;

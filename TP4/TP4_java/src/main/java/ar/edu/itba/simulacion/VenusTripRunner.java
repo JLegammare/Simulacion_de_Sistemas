@@ -38,7 +38,7 @@ public class VenusTripRunner {
 
     private static final Color SUN_COLOR = Color.yellow;
     private static final Color EARTH_COLOR = Color.BLUE;
-    private static final Color VENUS_COLOR = Color.ORANGE;
+    private static final Color VENUS_COLOR = Color.RED;
 
     public static void main(String[] args) throws FileNotFoundException, ParseException {
 
