@@ -70,7 +70,7 @@ public class PlanetsResultsGenerator {
                     0,
                     v.get(1).getX_value(),
                     v.get(1).getY_value(),
-                    k.getRadius(),
+                    getRadius(k.getName()),
                     k.getBodyColor().getRed(),
                     k.getBodyColor().getGreen(),
                     k.getBodyColor().getBlue()
@@ -81,5 +81,22 @@ public class PlanetsResultsGenerator {
         pwDynamic.close();
     }
 
+    private double getRadius(String bodyName){
+
+        switch (bodyName){
+
+            case "VENUS":
+                return 300;
+            case "SUN":
+                return 1000;
+            case "SPACESHIP":
+                return 100;
+            case "EARTH":
+                return 400;
+        }
+
+        return 0;
+
+    }
 
 }

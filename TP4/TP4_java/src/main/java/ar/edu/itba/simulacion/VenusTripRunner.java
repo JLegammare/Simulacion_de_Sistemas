@@ -64,6 +64,7 @@ public class VenusTripRunner {
             PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
 
             try {
+                System.out.printf("Running %s\n",d.toString());
                 VenusTrip.venusTripMethod(rg,bodies,DT,TF);
             } catch (IOException e) {
                 throw new RuntimeException(e);

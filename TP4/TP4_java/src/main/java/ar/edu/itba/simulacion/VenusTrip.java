@@ -2,6 +2,7 @@ package ar.edu.itba.simulacion;
 
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
+import ar.edu.itba.simulacion.models.State;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
@@ -39,7 +40,7 @@ public class VenusTrip {
     //SUN INPUT VALUES:
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
     private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
-    private static final double SUN_RADIUS = 1000;
+    private static final double SUN_RADIUS = 696000;
     private static final double SUN_MASS = 1988500E+24;
     //EARTH INPUT VALUES:
     private static final Pair<Double, Double> earthInitPosition = new Pair<>(
@@ -48,7 +49,7 @@ public class VenusTrip {
     private static final Pair<Double, Double> earthInitVelocity = new Pair<>(
             -2.949925999285836E-01,
             2.968579130065282E+01);
-    private static final double EARTH_RADIUS = 500;
+    private static final double EARTH_RADIUS = 6378.137;
     private static final double EARTH_MASS = 5.97219E+24;
     //VENUS INPUT VALUES:
     private static final Pair<Double, Double> venusInitPosition = new Pair<>(
@@ -57,7 +58,7 @@ public class VenusTrip {
     private static final Pair<Double, Double> venusInitVelocity = new Pair<>(
             -1.166353075744313E+01,
             -3.324015683726970E+01);
-    private static final double VENUS_RADIUS = 200;
+    private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
 
 
@@ -105,10 +106,10 @@ public class VenusTrip {
 
 
         Pair<Double, Double> spaceshipInitPosition = new Pair<>(
-                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getX_value()
-                        + EARTH_RADIUS + earth.getPosition().getX_value(),
-                SPACESHIP_INIT_DISTANCE_FROM_EARTH * -sunEarthVersor.getY_value()
-                        + EARTH_RADIUS + earth.getPosition().getY_value()
+                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + earth.getRadius())* -sunEarthVersor.getX_value()
+                        + earth.getPosition().getX_value(),
+                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + earth.getRadius()) * -sunEarthVersor.getY_value()
+                        + earth.getPosition().getY_value()
         );
 
         Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
