@@ -2,20 +2,17 @@ package ar.edu.itba.simulacion;
 
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
-import ar.edu.itba.simulacion.models.State;
+import ar.edu.itba.simulacion.models.TripResult;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.*;
 import java.util.List;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
-import static javax.swing.UIManager.get;
 
 public class VenusTrip {
 
@@ -29,7 +26,6 @@ public class VenusTrip {
     private static final double G = 6.693E-20;
     private static final double DT = 300;
     private static final double TF = 34560000;
-
     private static final double TAKE_OFF_TIME = 518400;
     private static final int ORDER = 5;
     private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
@@ -62,10 +58,8 @@ public class VenusTrip {
             -3.324015683726970E+01);
     private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
-    private static final double MAX_TIME = 60;
 
-
-    public static void main(String[] args) throws IOException, ParseException {
+    public static void main(String[] args) throws IOException{
 
         Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
         Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS,VENUS_COLOR);
@@ -82,25 +76,34 @@ public class VenusTrip {
 
     }
 
-
-    public static void venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt,double tf) throws IOException {
+    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf) throws IOException {
 
         Body spaceship = getSpaceship(bodies.get(0),bodies.get(2));
         bodies.add(spaceship);
         rg.fillStaticFile(bodies);
 
         int i = 0;
-        Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
-        rg.addStateToDynamicFile(initRs,0);
+        double t;
 
-        for (double t = dt; endCondition(initRs,t,tf); t += dt, i += 1) {
+        Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
+
+        rg.addStateToDynamicFile(initRs,0);
+        TripResult tr = new TripResult(false,
+                false,
+                0,
+                0,
+                TripResult.TripStatus.LEAVING_EARTH);
+
+        for (t = dt; !tr.isFinished(); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
+            tr = checkEndCondition(initRs,t,tf);
         }
 
+        return tr;
     }
 
-    private static boolean endCondition(Map<Body,List<Pair<Double,Double>>> initRs, double t,double tf){
+    private static TripResult checkEndCondition(Map<Body,List<Pair<Double,Double>>> initRs, double t, double tf){
 //         initRs.forEach((k,v)->{
 //                bodies.forEach(b->{
 //                    if(!k.equals(b)){
@@ -108,7 +111,16 @@ public class VenusTrip {
 //                    }
 //                });
 //            });
-        return t<=TF;
+
+
+//      Si se choca con la tierra porque todavia no despego
+        TripResult.TripStatus ts = t<TAKE_OFF_TIME?TripResult.TripStatus.LEAVING_EARTH:TripResult.TripStatus.TRAVELLING;
+
+//       Si se excede del tiempo
+        boolean timeExceeded = t >= tf;
+
+        return new TripResult(timeExceeded,false,0,0,
+                timeExceeded? TripResult.TripStatus.TRAVELLING: TripResult.TripStatus.SPACESHIP_LOST);
     }
 
     private static boolean collisionBetweenBodies(Body venus, Body spaceship) {
@@ -156,7 +168,8 @@ public class VenusTrip {
                 earthTangentialVelocity * spaceshipVersor.getX_value(),
                 earthTangentialVelocity * spaceshipVersor.getY_value()
         );
-        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS, SPACESHIP_MASS,SPACESHIP_COLOR);
+        return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS,
+                SPACESHIP_MASS,SPACESHIP_COLOR);
     }
 
     public static Pair<Double, Double> calcAcceleration(Body bodySelected, List<Body> bodies) {
@@ -252,8 +265,7 @@ public class VenusTrip {
 
         Map<Body, List<Pair<Double, Double>>> bodyrMap = new TreeMap<>();
 
-        for (int i = 0; i < bodies.size(); i++) {
-            Body body = bodies.get(i);
+        for (Body body : bodies) {
             bodyrMap.put(body, new ArrayList<>());
             for (int j = 0; j <= ORDER; j++) {
                 bodyrMap.get(body).add(bodiesRs.get(body).get(j));
@@ -278,7 +290,6 @@ public class VenusTrip {
             }
             predictedRs.put(p, predicts);
         });
-
 
         Map<Body,Pair<Double,Double>> bodyAcc = new TreeMap<>();
         bodies.forEach(b->{
@@ -328,15 +339,11 @@ public class VenusTrip {
 
         return correctionsMap;
     }
-
     private static int fact (int n) {
         if (n==0)
             return 1;
         else
             return n * fact(n-1);
     }
-
-
-
 
 }

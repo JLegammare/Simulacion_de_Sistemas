@@ -3,6 +3,7 @@ package ar.edu.itba.simulacion;
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.models.State;
+import ar.edu.itba.simulacion.models.TripResult;
 import ar.edu.itba.simulacion.utils.Parser;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
@@ -10,10 +11,8 @@ import java.awt.*;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public class VenusTripRunner {
 
@@ -35,7 +34,6 @@ public class VenusTripRunner {
     //VENUS INPUT VALUES:
     private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
-
     private static final Color SUN_COLOR = Color.yellow;
     private static final Color EARTH_COLOR = Color.BLUE;
     private static final Color VENUS_COLOR = Color.RED;
@@ -45,6 +43,7 @@ public class VenusTripRunner {
         Map<Date, Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH, VENUS_FILE_PATH, ASSETS_DIRECTORY);
 
         Body sun = new Body(0, "SUN", sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
+        Map<Date, TripResult> resultsMap = new TreeMap<>();
 
         states.forEach((d, p) -> {
 
@@ -62,14 +61,18 @@ public class VenusTripRunner {
             bodies.add(earth);
 
             PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
-
             try {
                 System.out.printf("Running %s\n",d.toString());
-                VenusTrip.venusTripMethod(rg,bodies,DT,TF);
+                TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF);
+                resultsMap.put(d,tr);
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         });
+
+        //TODO: AGARRAR LOS RESULTSGENERATOR Y EVALUAR CUAL FECHA FUE EXITOSA Y LA MEJOR FECHA
+        // PARA LA MEJOR FECHA QUEDARNOS CON ESA Y HACER EL VIAJE DE RETORNO
+        //
 
     }
 
