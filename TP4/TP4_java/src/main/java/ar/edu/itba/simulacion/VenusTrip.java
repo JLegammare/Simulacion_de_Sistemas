@@ -59,6 +59,7 @@ public class VenusTrip {
             -3.324015683726970E+01);
     private static final double VENUS_RADIUS = 200;
     private static final double VENUS_MASS = 48.685E+23;
+    private static final double MAX_TIME = 60;
 
 
     public static void main(String[] args) throws IOException, ParseException {
@@ -88,14 +89,41 @@ public class VenusTrip {
         int i = 0;
         Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
         rg.addStateToDynamicFile(initRs,0);
-        for (double t = dt; t <= tf; t += dt, i += 1) {
+        boolean collisionWithVenus = false;
+        double totalTime = 0;
+        double t = dt;
+        while(!collisionWithVenus || totalTime < MAX_TIME) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
+            double  time = 1;
+            collisionWithVenus = collisionBetweenBodies(bodies.get(1), bodies.get(1));
+            totalTime+=time;
+            t+=dt;
         }
 
     }
 
-     public static Body getSpaceship(Body sun, Body earth) {
+    private static boolean collisionBetweenBodies(Body venus, Body spaceship) {
+        double o = venus.getRadius() + spaceship.getRadius();
+
+        Pair<Double,Double> deltaR = new Pair<>(
+                spaceship.getPosition().getX_value()-venus.getPosition().getX_value(),
+                spaceship.getPosition().getY_value()-venus.getPosition().getY_value());
+
+        Pair<Double,Double> deltaV = new Pair<>(
+                spaceship.getVelocity().getX_value()-venus.getVelocity().getX_value(),
+                spaceship.getVelocity().getY_value()-venus.getVelocity().getY_value());
+
+        double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
+        double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
+        double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value() + deltaR.getY_value()*deltaV.getY_value();
+
+        double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
+
+        return d >= 0 && deltaRXdeltaV < 0;
+    }
+
+    public static Body getSpaceship(Body sun, Body earth) {
 
         double earthSunDistance = distance(sun.getPosition(), earth.getPosition());
 
