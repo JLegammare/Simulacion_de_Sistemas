@@ -29,6 +29,8 @@ public class VenusTrip {
     private static final double G = 6.693E-20;
     private static final double DT = 300;
     private static final double TF = 34560000;
+
+    private static final double TAKE_OFF_TIME = 518400;
     private static final int ORDER = 5;
     private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
     //SPACESHIP INPUT VALUES:
@@ -90,18 +92,23 @@ public class VenusTrip {
         int i = 0;
         Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
         rg.addStateToDynamicFile(initRs,0);
-        boolean collisionWithVenus = false;
-        double totalTime = 0;
-        double t = dt;
-        while(!collisionWithVenus || totalTime < MAX_TIME) {
+
+        for (double t = dt; endCondition(initRs,t,tf); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
-            double  time = 1;
-            collisionWithVenus = collisionBetweenBodies(bodies.get(1), bodies.get(1));
-            totalTime+=time;
-            t+=dt;
         }
 
+    }
+
+    private static boolean endCondition(Map<Body,List<Pair<Double,Double>>> initRs, double t,double tf){
+//         initRs.forEach((k,v)->{
+//                bodies.forEach(b->{
+//                    if(!k.equals(b)){
+//                        collision &= collisionBetweenBodies(initRs.get(k).get(0), bodies.get(3));
+//                    }
+//                });
+//            });
+        return t<=TF;
     }
 
     private static boolean collisionBetweenBodies(Body venus, Body spaceship) {
