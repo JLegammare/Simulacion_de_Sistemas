@@ -82,66 +82,73 @@ public class VenusTrip {
         bodies.add(spaceship);
         rg.fillStaticFile(bodies);
 
+
+        Body venus = bodies.get(1);
+
         int i = 0;
         double t;
+        double distanceTraveled = 0;
 
         Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
 
         rg.addStateToDynamicFile(initRs,0);
-        TripResult tr = new TripResult(false,
-                false,
+        TripResult tr = new TripResult(
                 0,
                 0,
-                TripResult.TripStatus.LEAVING_EARTH);
+                TripResult.TripStatus.LEAVING_EARTH,null);
+
+        Pair<Double,Double> spaceshipInitPosition = initRs.get(spaceship).get(0);
+        Pair<Double,Double> previusPosition = spaceshipInitPosition;
 
         for (t = dt; !tr.isFinished(); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
-            tr = checkEndCondition(initRs,t,tf);
+            distanceTraveled+= distance(previusPosition,initRs.get(spaceship).get(0));
+            tr = checkEndCondition(initRs,bodies,t,tf,distanceTraveled);
+            previusPosition = initRs.get(spaceship).get(0);
         }
+        System.out.println(tr.getTs());
 
         return tr;
     }
 
-    private static TripResult checkEndCondition(Map<Body,List<Pair<Double,Double>>> initRs, double t, double tf){
-//         initRs.forEach((k,v)->{
-//                bodies.forEach(b->{
-//                    if(!k.equals(b)){
-//                        collision &= collisionBetweenBodies(initRs.get(k).get(0), bodies.get(3));
-//                    }
-//                });
-//            });
+    private static TripResult checkEndCondition(Map<Body,List<Pair<Double,Double>>> initRs, List<Body> bodies, double t, double tf, double distanceTraveled){
 
+        Body spaceship = bodies.get(3);
+        Body earth = bodies.get(2);
+        Body venus = bodies.get(1);
 
-//      Si se choca con la tierra porque todavia no despego
-        TripResult.TripStatus ts = t<TAKE_OFF_TIME?TripResult.TripStatus.LEAVING_EARTH:TripResult.TripStatus.TRAVELLING;
+        List<Body> othersBodies = initRs.keySet().stream().filter(b-> !b.equals(spaceship) && !b.equals(earth)).collect(Collectors.toList());
+        Body collisionedBody = null;
+        for(Body b :  othersBodies) {
+            if(collisionBetweenBodies(initRs.get(b).get(0), b.getRadius(), initRs.get(spaceship).get(0), spaceship.getRadius())) {
+                collisionedBody = b;
+            }
+        }
 
-//       Si se excede del tiempo
+        TripResult.TripStatus ts = TripResult.TripStatus.TRAVELLING;
+
+        if(collisionedBody!=null){
+            if(collisionedBody.equals(venus)){
+                return new TripResult(distanceTraveled,t, TripResult.TripStatus.VENUS_SUCCESS, collisionedBody);
+            }
+            else {
+
+                return new TripResult(distanceTraveled,t, TripResult.TripStatus.OTHER_COLLISION, collisionedBody);
+            }
+        }
         boolean timeExceeded = t >= tf;
 
-        return new TripResult(timeExceeded,false,0,0,
-                timeExceeded? TripResult.TripStatus.TRAVELLING: TripResult.TripStatus.SPACESHIP_LOST);
+        return new TripResult(distanceTraveled,t,
+                timeExceeded? TripResult.TripStatus.SPACESHIP_LOST: ts,null);
     }
 
-    private static boolean collisionBetweenBodies(Body venus, Body spaceship) {
-        double o = venus.getRadius() + spaceship.getRadius();
-
-        Pair<Double,Double> deltaR = new Pair<>(
-                spaceship.getPosition().getX_value()-venus.getPosition().getX_value(),
-                spaceship.getPosition().getY_value()-venus.getPosition().getY_value());
-
-        Pair<Double,Double> deltaV = new Pair<>(
-                spaceship.getVelocity().getX_value()-venus.getVelocity().getX_value(),
-                spaceship.getVelocity().getY_value()-venus.getVelocity().getY_value());
-
-        double deltaRXdeltaR = Math.pow(deltaR.getX_value(),2) + Math.pow(deltaR.getY_value(),2);
-        double deltaVXdeltaV = Math.pow(deltaV.getX_value(),2) + Math.pow(deltaV.getY_value(),2);
-        double deltaRXdeltaV = deltaR.getX_value()*deltaV.getX_value() + deltaR.getY_value()*deltaV.getY_value();
-
-        double d = Math.pow(deltaRXdeltaV,2)-deltaVXdeltaV*(deltaRXdeltaR-Math.pow(o,2));
-
-        return d >= 0 && deltaRXdeltaV < 0;
+    private static boolean collisionBetweenBodies(Pair<Double,Double> positionBody1, Double radiusBody1, Pair<Double,Double> positionBody2, Double radiusBody2) {
+        double distanceBetweenBodies = distance(positionBody1,positionBody2);
+        double maxDistance = radiusBody1 + radiusBody2;
+        return maxDistance > distanceBetweenBodies;
     }
+
 
     public static Body getSpaceship(Body sun, Body earth) {
 

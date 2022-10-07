@@ -1,27 +1,26 @@
 package ar.edu.itba.simulacion.models;
 
-public class TripResult {
-    private final boolean success;
+public class TripResult implements Comparable<TripResult>{
     private final double distanceTraveled;
     private final double time;
-    private final boolean finished;
     private final TripStatus ts;
+    private final Body bodyCollision;
 
-    public TripResult(boolean finished, boolean success, double distanceTraveled, double time, TripStatus ts) {
-        this.finished = finished;
-        this.success = success;
+    public TripResult( double distanceTraveled, double time, TripStatus ts, Body collisionBodies) {
         this.distanceTraveled = distanceTraveled;
         this.time = time;
         this.ts = ts;
+        this.bodyCollision = collisionBodies;
 
     }
     public TripStatus getTs() {
         return ts;
     }
 
-    public boolean isSuccess() {
-        return success;
+    public Body getBodyCollision() {
+        return bodyCollision;
     }
+
 
     public double getDistanceTraveled() {
         return distanceTraveled;
@@ -32,7 +31,12 @@ public class TripResult {
     }
 
     public boolean isFinished() {
-        return finished;
+        return !this.ts.equals(TripStatus.TRAVELLING) && !this.ts.equals(TripStatus.LEAVING_EARTH);
+    }
+
+    @Override
+    public int compareTo(TripResult o) {
+        return 0;
     }
 
     public enum TripStatus{
