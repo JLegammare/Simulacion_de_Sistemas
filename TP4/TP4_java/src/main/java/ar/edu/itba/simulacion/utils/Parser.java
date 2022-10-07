@@ -63,18 +63,18 @@ public class Parser {
                     String positionLine = earthScanner.nextLine();
                     double x = Double.parseDouble(
                             positionLine.substring( positionLine.lastIndexOf("X")+3,
-                                    positionLine.lastIndexOf("Y")-2));
+                                    positionLine.lastIndexOf("Y")-1));
                     double y = Double.parseDouble(
                             positionLine.substring( positionLine.lastIndexOf("Y")+3,
-                                    positionLine.lastIndexOf("Z")-2));
+                                    positionLine.lastIndexOf("Z")-1));
 
                     String velocityLine = earthScanner.nextLine();
                     double vx = Double.parseDouble(
                             velocityLine.substring( velocityLine.lastIndexOf("VX")+3,
-                                    velocityLine.lastIndexOf("Y")-2));
+                                    velocityLine.lastIndexOf("Y")-1));
                     double vy = Double.parseDouble(
                             velocityLine.substring( velocityLine.lastIndexOf("VY")+3,
-                                    velocityLine.lastIndexOf("Z")-2));
+                                    velocityLine.lastIndexOf("Z")-1));
 
 
                     Pair<Date,State> entry = new Pair<>(date,new State(new Pair<>(x,y),new Pair<>(vx,vy)));
