@@ -55,7 +55,7 @@ def errors(beeman_error: str, verlet_error: str, gear_error: str):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title=r'$\Large{\text{dt (s) }}$', exponentformat="power", type="log", showgrid=False, linecolor='black', ticks='inside'),
+            xaxis=dict(title=r'$\Large{\text{dt (s) }}$', exponentformat="power", type="log", dtick="L0",showgrid=False, linecolor='black', ticks='inside'),
             yaxis=dict(title=r'$\Large{\text{Error Cuadrático Medio } (\text{m}^{\text{2}})}$', type="log", exponentformat="power", showgrid=False,
                        linecolor='black',
                        ticks='inside'),
