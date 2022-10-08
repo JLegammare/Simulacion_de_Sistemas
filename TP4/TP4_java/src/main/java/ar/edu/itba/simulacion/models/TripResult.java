@@ -5,6 +5,7 @@ public class TripResult implements Comparable<TripResult>{
     private final double time;
     private final TripStatus ts;
     private final Body bodyCollision;
+    private double minDistance;
 
     public TripResult( double distanceTraveled, double time, TripStatus ts, Body collisionBodies) {
         this.distanceTraveled = distanceTraveled;
@@ -32,6 +33,14 @@ public class TripResult implements Comparable<TripResult>{
 
     public boolean isFinished() {
         return !this.ts.equals(TripStatus.TRAVELLING) && !this.ts.equals(TripStatus.LEAVING_EARTH);
+    }
+
+    public double getMinDistance() {
+        return minDistance;
+    }
+
+    public void setMinDistance(double minDistance) {
+        this.minDistance = minDistance;
     }
 
     @Override
