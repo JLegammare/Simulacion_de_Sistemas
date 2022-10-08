@@ -8,8 +8,7 @@ import ar.edu.itba.simulacion.utils.Parser;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.util.*;
 import java.util.List;
@@ -22,8 +21,9 @@ public class VenusTripRunner {
     private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
-    private static final double DT = 0.001;
-    private static final double TF = 900;
+    private static final String MIN_DISTANCE_FILE  = "MinDistance.txt";
+    private static final double DT = 300;
+    private static final double TF = 31557600/2.0;
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
     private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
     private static final double SUN_RADIUS = 696000;
@@ -38,7 +38,7 @@ public class VenusTripRunner {
     private static final Color EARTH_COLOR = Color.BLUE;
     private static final Color VENUS_COLOR = Color.RED;
 
-    public static void main(String[] args) throws FileNotFoundException, ParseException {
+    public static void main(String[] args) throws IOException, ParseException {
 
         Map<Date, Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH, VENUS_FILE_PATH, ASSETS_DIRECTORY);
 
@@ -62,7 +62,7 @@ public class VenusTripRunner {
 
             PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
             try {
-                System.out.printf("Running %s\n",d.toString());
+                System.out.printf("Running %s\n", d);
                 TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF);
                 resultsMap.put(d,tr);
             } catch (IOException e) {
@@ -70,9 +70,27 @@ public class VenusTripRunner {
             }
         });
 
-        //TODO: AGARRAR LOS RESULTSGENERATOR Y EVALUAR CUAL FECHA FUE EXITOSA Y LA MEJOR FECHA
-        // PARA LA MEJOR FECHA QUEDARNOS CON ESA Y HACER EL VIAJE DE RETORNO
-        //
+        persistMinDistances(resultsMap,String.format("%s/%s",RESULTS_DIRECTORY,MIN_DISTANCE_FILE));
+
+    }
+
+    private static void persistMinDistances(Map<Date, TripResult> resultsMap,String minDistanceFilePath) throws IOException {
+
+        File minDistanceFile = new File(minDistanceFilePath);
+        if(minDistanceFile.exists())
+            minDistanceFile.delete();
+
+        FileWriter fw = new FileWriter(minDistanceFile,false);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+        StringBuilder sb = new StringBuilder();
+
+        resultsMap.forEach((k,v)-> {
+            sb.append(String.format("%s,%f\n",k,v.getMinDistance()));
+        });
+
+        pw.print(sb);
+        pw.close();
 
     }
 

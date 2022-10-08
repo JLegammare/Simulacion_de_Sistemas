@@ -25,7 +25,7 @@ public class VenusTrip {
     private static final Color SPACESHIP_COLOR = Color.MAGENTA;
     private static final double G = 6.693E-20;
     private static final double DT = 300;
-    private static final double TF = 34560000;
+    private static final double TF = 31557600;
     private static final double TAKE_OFF_TIME = 518400;
     private static final int ORDER = 5;
     private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
@@ -100,15 +100,22 @@ public class VenusTrip {
         Pair<Double,Double> spaceshipInitPosition = initRs.get(spaceship).get(0);
         Pair<Double,Double> previusPosition = spaceshipInitPosition;
 
+        double minDistanceToVenus = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
+
         for (t = dt; !tr.isFinished(); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
             distanceTraveled+= distance(previusPosition,initRs.get(spaceship).get(0));
+            double newDistance = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
+            if(newDistance<minDistanceToVenus){
+                minDistanceToVenus = newDistance;
+            }
             tr = checkEndCondition(initRs,bodies,t,tf,distanceTraveled);
             previusPosition = initRs.get(spaceship).get(0);
         }
+        tr.setMinDistance(minDistanceToVenus);
         System.out.println(tr.getTs());
-
+        System.out.println(tr.getMinDistance());
         return tr;
     }
 
@@ -329,7 +336,7 @@ public class VenusTrip {
                     );
             bodyR2Map.put(k,detltaR2);
         });
-
+        //se corrige
         Map<Body,List<Pair<Double,Double>>> correctionsMap = new TreeMap<>();
         predictedRs.forEach((k,v)->{
             List<Pair<Double,Double>> correctedRp = new ArrayList<>();
