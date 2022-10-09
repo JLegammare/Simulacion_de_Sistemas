@@ -1,4 +1,3 @@
-
 import plotly.graph_objects as go
 
 from datetime import datetime
@@ -11,11 +10,9 @@ def takeoff_dates(min_distance: str):
     min_distance = []
     for line in lines:
         values = line.split(",")
-        day.append(datetime.strptime(values[0].replace("ART", "GMT"), '%a %b %d %H:%M:%S %Z %Y').strftime('%d-%m-%Y %H:%M'))
+        day.append(
+            datetime.strptime(values[0].replace("ART", "GMT"), '%a %b %d %H:%M:%S %Z %Y').strftime('%d-%m-%Y %H:%M'))
         min_distance.append(float(values[1]))
-
-    print(day)
-
 
     data = [go.Scatter(
         y=min_distance[:],
@@ -27,8 +24,8 @@ def takeoff_dates(min_distance: str):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Día (s)', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
-            yaxis=dict(title='Distancia (m)', exponentformat="power", showgrid=False, linecolor='black',
+            xaxis=dict(title='Día', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
+            yaxis=dict(title='Distancia (km)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
             font=dict(
                 family="Arial",
