@@ -15,15 +15,15 @@ import java.util.List;
 
 public class VenusTripRunner {
 
-    private static final String ASSETS_DIRECTORY = "assets";
-    private static final String EARTH_FILE_PATH = String.format("%s/earth_nasa.txt", ASSETS_DIRECTORY);
-    private static final String VENUS_FILE_PATH = String.format("%s/venus_nasa.txt", ASSETS_DIRECTORY);
-    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
+    private static final String ASSETS_DIRECTORY = "assets/ByDay";
+    private static final String EARTH_FILE_PATH = String.format("%s/earth.txt", ASSETS_DIRECTORY);
+    private static final String VENUS_FILE_PATH = String.format("%s/venus.txt", ASSETS_DIRECTORY);
+    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip/ByDay";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String MIN_DISTANCE_FILE  = "MinDistance.txt";
     private static final double DT = 300;
-    private static final double TF = 31557600/2.0;
+    private static final double TF = 31557600/8.0;
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
     private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
     private static final double SUN_RADIUS = 696000;
