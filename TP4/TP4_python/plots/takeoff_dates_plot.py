@@ -11,7 +11,7 @@ def takeoff_dates(min_distance: str):
     for line in lines:
         values = line.split(",")
         day.append(
-            datetime.strptime(values[0].replace("ART", "GMT"), '%a %b %d %H:%M:%S %Z %Y').strftime('%d-%m-%Y %H:%M'))
+            datetime.strptime(values[0].replace("ART", "GMT"), '%a %b %d %H:%M:%S %Z %Y').strftime('%d-%m-%Y'))
         min_distance.append(float(values[1]))
 
     data = [go.Scatter(
@@ -24,12 +24,12 @@ def takeoff_dates(min_distance: str):
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Día', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
-            yaxis=dict(title='Distancia (km)', exponentformat="power", showgrid=False, linecolor='black',
+            xaxis=dict(title='Día salida', exponentformat="power", showgrid=False, linecolor='black', ticks='inside'),
+            yaxis=dict(title='Distancia mínima (km)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
             font=dict(
                 family="Arial",
-                size=20,
+                size=24,
             ),
             plot_bgcolor='white',
         )
@@ -40,5 +40,5 @@ def takeoff_dates(min_distance: str):
 
 
 if __name__ == "__main__":
-    min_distance = '../../simulation_results/Venus_Mission/MinDistance.txt'
+    min_distance = '../../simulation_results/Venus_Mission/VenusTrip/ByDay/MinDistance.txt'
     takeoff_dates(min_distance)
