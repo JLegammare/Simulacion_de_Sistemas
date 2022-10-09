@@ -32,7 +32,7 @@ public class VenusTrip {
     //SPACESHIP INPUT VALUES:
     private static final double SPACESHIP_INIT_DISTANCE_FROM_EARTH = 1500.0;
     private static final double SPACESHIP_ORBITAL_VELOCITY = 7.12;
-    private static final double SPACESHIP_TAKE_OFF_VELOCITY = 8;
+    private static double spaceshipTakeOffVelocity = 8;
     private static final double SPACESHIP_MASS = 2E+5;
     private static final double SPACESHIP_RADIUS = 100;
     //SUN INPUT VALUES:
@@ -75,6 +75,11 @@ public class VenusTrip {
 
         venusTripMethod(rg, bodies, DT,TF);
 
+    }
+
+    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf, double spaceshipInitSpeed) throws IOException{
+        spaceshipTakeOffVelocity = spaceshipInitSpeed;
+        return venusTripMethod(rg,bodies,dt,tf);
     }
 
     public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf) throws IOException {
@@ -174,7 +179,7 @@ public class VenusTrip {
         );
 
         Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
-        double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - SPACESHIP_TAKE_OFF_VELOCITY
+        double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - spaceshipTakeOffVelocity
                 + earth.getVelocity().getX_value() * spaceshipVersor.getX_value()
                 + earth.getVelocity().getY_value() * spaceshipVersor.getY_value();
 

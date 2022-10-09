@@ -5,8 +5,17 @@ public class TripResult implements Comparable<TripResult>{
     private final double time;
     private final TripStatus ts;
     private double minDistance;
+    private double initSpaceshipSpeed;
 
-    public TripResult( double distanceTraveled, double time, TripStatus ts) {
+    public double getInitSpaceshipSpeed() {
+        return initSpaceshipSpeed;
+    }
+
+    public void setInitSpaceshipSpeed(double initSpaceshipSpeed) {
+        this.initSpaceshipSpeed = initSpaceshipSpeed;
+    }
+
+    public TripResult(double distanceTraveled, double time, TripStatus ts) {
         this.distanceTraveled = distanceTraveled;
         this.time = time;
         this.ts = ts;
