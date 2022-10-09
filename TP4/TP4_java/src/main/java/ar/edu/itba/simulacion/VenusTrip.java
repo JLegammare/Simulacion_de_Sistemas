@@ -58,6 +58,7 @@ public class VenusTrip {
             -3.324015683726970E+01);
     private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
+    private static final double DISTANCE_ERROR  = 1500;
 
     public static void main(String[] args) throws IOException{
 
@@ -151,7 +152,7 @@ public class VenusTrip {
 
     private static boolean collisionBetweenBodies(Pair<Double,Double> positionBody1, Double radiusBody1, Pair<Double,Double> positionBody2, Double radiusBody2) {
         double distanceBetweenBodies = distance(positionBody1,positionBody2);
-        double maxDistance = radiusBody1 + radiusBody2;
+        double maxDistance = radiusBody1 + radiusBody2 + DISTANCE_ERROR;
         return maxDistance > distanceBetweenBodies;
     }
 
