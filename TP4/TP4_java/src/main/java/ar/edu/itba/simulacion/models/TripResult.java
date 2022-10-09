@@ -40,7 +40,7 @@ public class TripResult implements Comparable<TripResult>{
 
     @Override
     public int compareTo(TripResult o) {
-        return 0;
+        return Double.compare(minDistance,o.minDistance);
     }
 
 
