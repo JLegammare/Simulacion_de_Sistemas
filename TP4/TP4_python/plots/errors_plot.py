@@ -51,7 +51,6 @@ def errors(beeman_error: str, verlet_error: str, gear_error: str):
         name="Gear",
         marker=dict(size=10)
     )]
-    r'$\Large{\text{ECM } (\text{m}^{\text{2}})}$'
     fig = go.Figure(
         data=data,
         layout=go.Layout(
