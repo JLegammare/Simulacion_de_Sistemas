@@ -3,6 +3,7 @@ package ar.edu.itba.simulacion;
 import ar.edu.itba.simulacion.models.Body;
 import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.models.TripResult;
+import ar.edu.itba.simulacion.models.TripStatus;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
@@ -26,7 +27,6 @@ public class VenusTrip {
     private static final double G = 6.693E-20;
     private static final double DT = 300;
     private static final double TF = 31557600;
-    private static final double TAKE_OFF_TIME = 518400;
     private static final int ORDER = 5;
     private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
     //SPACESHIP INPUT VALUES:
@@ -95,23 +95,22 @@ public class VenusTrip {
         TripResult tr = new TripResult(
                 0,
                 0,
-                TripResult.TripStatus.LEAVING_EARTH,null);
+               TripStatus.TRAVELLING);
 
-        Pair<Double,Double> spaceshipInitPosition = initRs.get(spaceship).get(0);
-        Pair<Double,Double> previusPosition = spaceshipInitPosition;
+        Pair<Double,Double> previousPosition = initRs.get(spaceship).get(0);
 
         double minDistanceToVenus = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
 
         for (t = dt; !tr.isFinished(); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
             rg.addStateToDynamicFile(initRs , t);
-            distanceTraveled+= distance(previusPosition,initRs.get(spaceship).get(0));
+            distanceTraveled+= distance(previousPosition,initRs.get(spaceship).get(0));
             double newDistance = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
             if(newDistance<minDistanceToVenus){
                 minDistanceToVenus = newDistance;
             }
             tr = checkEndCondition(initRs,bodies,t,tf,distanceTraveled);
-            previusPosition = initRs.get(spaceship).get(0);
+            previousPosition = initRs.get(spaceship).get(0);
         }
         tr.setMinDistance(minDistanceToVenus);
         System.out.println(tr.getTs());
@@ -133,21 +132,21 @@ public class VenusTrip {
             }
         }
 
-        TripResult.TripStatus ts = TripResult.TripStatus.TRAVELLING;
+       TripStatus ts =TripStatus.TRAVELLING;
 
         if(collisionedBody!=null){
             if(collisionedBody.equals(venus)){
-                return new TripResult(distanceTraveled,t, TripResult.TripStatus.VENUS_SUCCESS, collisionedBody);
+                return new TripResult(distanceTraveled,t,TripStatus.VENUS_SUCCESS);
             }
             else {
 
-                return new TripResult(distanceTraveled,t, TripResult.TripStatus.OTHER_COLLISION, collisionedBody);
+                return new TripResult(distanceTraveled,t,TripStatus.OTHER_COLLISION);
             }
         }
         boolean timeExceeded = t >= tf;
 
         return new TripResult(distanceTraveled,t,
-                timeExceeded? TripResult.TripStatus.SPACESHIP_LOST: ts,null);
+                timeExceeded?TripStatus.SPACESHIP_LOST: ts);
     }
 
     private static boolean collisionBetweenBodies(Pair<Double,Double> positionBody1, Double radiusBody1, Pair<Double,Double> positionBody2, Double radiusBody2) {
