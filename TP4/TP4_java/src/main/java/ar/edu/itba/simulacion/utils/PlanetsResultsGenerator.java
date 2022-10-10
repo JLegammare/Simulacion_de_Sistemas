@@ -88,11 +88,11 @@ public class PlanetsResultsGenerator {
             case "VENUS":
                 return 300;
             case "SUN":
-                return 1000;
+                return 1100;
             case "SPACESHIP":
-                return 100;
+                return 150;
             case "EARTH":
-                return 400;
+                return 450;
         }
 
         return 0;

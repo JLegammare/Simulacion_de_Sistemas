@@ -17,7 +17,7 @@ def takeoff_dates(min_distance: str):
     data = [go.Scatter(
         y=min_distance[:],
         x=day[:],
-        line=dict(color="Green"),
+        line=dict(color="#e9bd15"),
         name="Beeman",
     )]
 
