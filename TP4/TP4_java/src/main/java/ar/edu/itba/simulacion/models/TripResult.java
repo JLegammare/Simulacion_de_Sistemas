@@ -2,7 +2,7 @@ package ar.edu.itba.simulacion.models;
 
 public class TripResult implements Comparable<TripResult>{
     private final double distanceTraveled;
-    private final double time;
+    private double time;
     private final TripStatus ts;
     private double minDistance;
     private double initSpaceshipSpeed;
@@ -33,6 +33,10 @@ public class TripResult implements Comparable<TripResult>{
 
     public double getTime() {
         return time;
+    }
+
+    public void setTime(double time) {
+        this.time = time;
     }
 
     public boolean isFinished() {

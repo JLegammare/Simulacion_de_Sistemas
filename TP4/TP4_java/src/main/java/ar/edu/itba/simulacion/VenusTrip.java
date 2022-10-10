@@ -94,6 +94,7 @@ public class VenusTrip {
         int i = 0;
         double t;
         double distanceTraveled = 0;
+        double minTime = 0;
 
         Map<Body,List<Pair<Double,Double>>> initRs = initBodiesRs(bodies);
 
@@ -114,13 +115,15 @@ public class VenusTrip {
             double newDistance = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
             if(newDistance<minDistanceToVenus){
                 minDistanceToVenus = newDistance;
+                minTime = t;
             }
             tr = checkEndCondition(initRs,bodies,t,tf,distanceTraveled);
             previousPosition = initRs.get(spaceship).get(0);
         }
         tr.setMinDistance(minDistanceToVenus);
-        System.out.println(tr.getTs());
-        System.out.println(tr.getMinDistance());
+        tr.setTime(minTime);
+        System.out.println(String.format("%s\t%f\t%f",tr.getTs(),tr.getMinDistance(),tr.getTime()));
+
         return tr;
     }
 

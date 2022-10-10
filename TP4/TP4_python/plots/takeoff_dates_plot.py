@@ -40,5 +40,5 @@ def takeoff_dates(min_distance: str):
 
 
 if __name__ == "__main__":
-    min_distance = '../../simulation_results/Venus_Mission/VenusTrip/ByDay/MinDistance.txt'
+    min_distance = './simulation_results/Venus_Mission/VenusTrip/ByDay/MinDistance.txt'
     takeoff_dates(min_distance)
