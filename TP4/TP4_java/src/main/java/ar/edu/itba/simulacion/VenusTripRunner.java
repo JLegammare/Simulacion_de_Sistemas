@@ -22,7 +22,7 @@ public class VenusTripRunner {
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String MIN_DISTANCE_FILE  = "MinDistance.txt";
-    private static final double DT = 200;
+    private static final double DT = 300;
     private static final double TF = 31557600;
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
     private static final Pair<Double, Double> sunVelocity = new Pair<>(0.0, 0.0);
@@ -40,44 +40,42 @@ public class VenusTripRunner {
 
     public static void main(String[] args) throws IOException, ParseException {
 
-        Map<Date, Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH, VENUS_FILE_PATH, ASSETS_DIRECTORY);
+            Map<Date, Pair<State, State>> states = Parser.parseBodies(EARTH_FILE_PATH, VENUS_FILE_PATH, ASSETS_DIRECTORY);
 
-        Body sun = new Body(0, "SUN", sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
-        Map<Date, TripResult> resultsMap = new TreeMap<>();
+            Body sun = new Body(0, "SUN", sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
+            List<TripResult> resultsMap = new ArrayList<>();
 
-        states.forEach((d, p) -> {
+            states.forEach((d, p) -> {
 
-            Body venus = new Body(1, "VENUS", p.getY_value().getPosition(), p.getY_value().getVelocity(),
-                    VENUS_RADIUS, VENUS_MASS,VENUS_COLOR);
-            Body earth = new Body(2, "EARTH", p.getX_value().getPosition(), p.getX_value().getVelocity(),
-                    EARTH_RADIUS, EARTH_MASS,EARTH_COLOR);
+                Body venus = new Body(1, "VENUS", p.getY_value().getPosition(), p.getY_value().getVelocity(),
+                        VENUS_RADIUS, VENUS_MASS,VENUS_COLOR);
+                Body earth = new Body(2, "EARTH", p.getX_value().getPosition(), p.getX_value().getVelocity(),
+                        EARTH_RADIUS, EARTH_MASS,EARTH_COLOR);
 
-            String directory = String.format("%s/%s",RESULTS_DIRECTORY, d.toString());
+                String directory = String.format("%s/%s",RESULTS_DIRECTORY, d.toString());
 
-            List<Body> bodies = new ArrayList<>();
 
-            bodies.add(sun);
-            bodies.add(venus);
-            bodies.add(earth);
+                PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
+                try {
+                    List<Body> bodies = new ArrayList<>();
 
-            PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
-            try {
-                System.out.printf("Running %s\n", d);
-                TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF);
-                resultsMap.put(d,tr);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        });
+                    bodies.add(sun);
+                    bodies.add(venus);
+                    bodies.add(earth);
+                    System.out.printf("Running %s\n", d);
+                    TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF,d);
+                    resultsMap.add(tr);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            });
 
-        persistMinDistances(resultsMap,String.format("%s/%s",RESULTS_DIRECTORY,MIN_DISTANCE_FILE));
-        Pair<Date,Double> min = resultsMap.keySet().stream()
-                .map(d-> new Pair<>(d, resultsMap.get(d).getMinDistance()))
-                .min(Comparator.comparing(Pair::getY_value)).get();
-        System.out.printf("***** MIN ******:\n\tDATE:%s\tDISTANCE:%f%n",min.getX_value(),min.getY_value());
+            persistMinDistances(resultsMap,String.format("%s/%s",RESULTS_DIRECTORY,MIN_DISTANCE_FILE));
+            TripResult min = resultsMap.stream().min(Comparator.comparingDouble(TripResult::getDistanceTraveled)).get();
+            System.out.printf("***** MIN ******:\n\tDATE:%s\tDISTANCE:%f\tTIME:%f%n",min.getStartDate(),min.getMinDistance(),min.getTime());
     }
 
-    private static void persistMinDistances(Map<Date, TripResult> resultsMap,String minDistanceFilePath) throws IOException {
+    private static void persistMinDistances(List <TripResult> resultsList,String minDistanceFilePath) throws IOException {
 
         File minDistanceFile = new File(minDistanceFilePath);
         if(minDistanceFile.exists())
@@ -88,8 +86,8 @@ public class VenusTripRunner {
         PrintWriter pw = new PrintWriter(bw);
         StringBuilder sb = new StringBuilder();
 
-        resultsMap.forEach((k,v)-> {
-            sb.append(String.format("%s,%f\n",k,v.getMinDistance()));
+        resultsList.forEach((r)-> {
+            sb.append(String.format("%s,%f\n",r.getStartDate(),r.getMinDistance()));
         });
 
         pw.print(sb);

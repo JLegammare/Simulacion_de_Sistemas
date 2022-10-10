@@ -28,7 +28,7 @@ def distance_velocity_plot(distance_vel: str):
                        ticks='inside'),
             font=dict(
                 family="Arial",
-                size=20,
+                size=24,
             ),
             plot_bgcolor='white',
         )
@@ -39,5 +39,5 @@ def distance_velocity_plot(distance_vel: str):
 
 
 if __name__ == "__main__":
-    distance_vel = '../../simulation_results/Venus_Mission/VenusTrip/ByDay/DistanceVelocity.txt'
+    distance_vel = './simulation_results/Venus_Mission/VenusTrip/SpeedDistance.txt'
     distance_velocity_plot(distance_vel)
