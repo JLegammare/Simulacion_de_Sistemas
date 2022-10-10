@@ -18,12 +18,12 @@ public class VenusSpeedRunner {
     private static final String ASSETS_DIRECTORY = "assets/OptimalDate";
     private static final String EARTH_FILE_PATH = String.format("%s/earth.txt", ASSETS_DIRECTORY);
     private static final String VENUS_FILE_PATH = String.format("%s/venus.txt", ASSETS_DIRECTORY);
-    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip";
+    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip/Dt";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String MIN_DISTANCE_FILE  = "SpeedDistance.txt";
     private static final double INIT_VELOCITY = 5;
-    private static final double FINAL_VELOCITY = 20;
+    private static final double FINAL_VELOCITY = 20.1;
     private static final double VELOCITY_OFF_SET = 0.1;
     private static final double DT = 300;
     private static final double TF = 31557600;
@@ -55,13 +55,9 @@ public class VenusSpeedRunner {
             Body earth = new Body(2, "EARTH", p.getX_value().getPosition(), p.getX_value().getVelocity(),
                     EARTH_RADIUS, EARTH_MASS,EARTH_COLOR);
 
-            String directory = String.format("%s/%s",RESULTS_DIRECTORY, d.toString());
-
-
-
-            PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
-
             for (double v = INIT_VELOCITY; v <=FINAL_VELOCITY ; v+=VELOCITY_OFF_SET) {
+            String directory = String.format("%s/%f",RESULTS_DIRECTORY,v);
+            PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE,STATIC_FILE,directory);
                 try {
                     List<Body> bodies = new ArrayList<>();
 
@@ -70,9 +66,8 @@ public class VenusSpeedRunner {
                     bodies.add(earth);
 
                     System.out.printf("Running %s - dt = %f \n", d,v);
-                    TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF,v);
-                    tr.setInitSpaceshipSpeed(v);
-                    resultsMap.put(v,tr);
+                    resultsMap.put(v,VenusTrip.venusTripMethod(rg,bodies,DT,TF,d,v));
+                    resultsMap.get(v).setInitSpaceshipSpeed(v);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -85,7 +80,7 @@ public class VenusSpeedRunner {
                 .map(d-> new Pair<>(resultsMap.get(d).getInitSpaceshipSpeed(), resultsMap.get(d)))
                 .min(Comparator.comparing(Pair::getY_value)).get();
 
-        System.out.printf("***** MIN ******:\n\tINIT_SPEED:%f\tDISTANCE:%f\tTIME:%f",min.getX_value(),min.getY_value().getTime(),min.getY_value().getTime());
+        System.out.printf("***** MIN ******:\n\tINIT_SPEED:%f\tDISTANCE:%f\tTIME:%f",min.getX_value(),min.getY_value().getMinDistance(),min.getY_value().getTime());
     }
 
     private static void persistMinDistances(Map<Double, TripResult> resultsMap,String minDistanceFilePath) throws IOException {
@@ -100,7 +95,7 @@ public class VenusSpeedRunner {
         StringBuilder sb = new StringBuilder();
 
         resultsMap.forEach((k,v)-> {
-            sb.append(String.format("%f,%f\n",k,v.getMinDistance()));
+            sb.append(String.format("%s,%f,%f\n",v.getStartDate(),k,v.getMinDistance()));
         });
 
         pw.print(sb);

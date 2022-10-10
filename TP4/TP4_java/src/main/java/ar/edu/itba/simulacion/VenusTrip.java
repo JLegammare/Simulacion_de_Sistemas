@@ -8,6 +8,8 @@ import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -59,8 +61,9 @@ public class VenusTrip {
     private static final double VENUS_RADIUS = 6051.84;
     private static final double VENUS_MASS = 48.685E+23;
     private static final double DISTANCE_ERROR  = 1500;
+    private static final String DATE_FORMAT = "yyyy-MMM-dd HH:mm:ss.SSSS";
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws IOException, ParseException {
 
         Body sun = new Body(0, "SUN",sunPosition, sunVelocity, SUN_RADIUS, SUN_MASS,SUN_COLOR);
         Body venus = new Body(1, "VENUS",venusInitPosition, venusInitVelocity, VENUS_RADIUS, VENUS_MASS,VENUS_COLOR);
@@ -72,17 +75,18 @@ public class VenusTrip {
         bodies.add(earth);
 
         PlanetsResultsGenerator rg = new PlanetsResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
+        SimpleDateFormat sdf  = new SimpleDateFormat(DATE_FORMAT,Locale.US);
 
-        venusTripMethod(rg, bodies, DT,TF);
+        venusTripMethod(rg, bodies, DT,TF,sdf.parse( "2022-Sep-23 00:00:00.0000"));
 
     }
 
-    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf, double spaceshipInitSpeed) throws IOException{
+    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf,Date date,double spaceshipInitSpeed) throws IOException{
         spaceshipTakeOffVelocity = spaceshipInitSpeed;
-        return venusTripMethod(rg,bodies,dt,tf);
+        return venusTripMethod(rg,bodies,dt,tf,date);
     }
 
-    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf) throws IOException {
+    public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf, Date date) throws IOException {
 
         Body spaceship = getSpaceship(bodies.get(0),bodies.get(2));
         bodies.add(spaceship);
@@ -122,6 +126,7 @@ public class VenusTrip {
         }
         tr.setMinDistance(minDistanceToVenus);
         tr.setTime(minTime);
+        tr.setStartDate(date);
         System.out.println(String.format("%s\t%f\t%f",tr.getTs(),tr.getMinDistance(),tr.getTime()));
 
         return tr;

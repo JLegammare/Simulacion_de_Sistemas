@@ -1,7 +1,11 @@
 package ar.edu.itba.simulacion.models;
 
+import java.time.LocalDate;
+import java.util.Date;
+
 public class TripResult implements Comparable<TripResult>{
     private final double distanceTraveled;
+    private Date startDate;
     private double time;
     private final TripStatus ts;
     private double minDistance;
@@ -24,8 +28,9 @@ public class TripResult implements Comparable<TripResult>{
     public TripStatus getTs() {
         return ts;
     }
-
-
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
+    }
 
     public double getDistanceTraveled() {
         return distanceTraveled;
@@ -57,4 +62,7 @@ public class TripResult implements Comparable<TripResult>{
     }
 
 
+    public Date getStartDate() {
+        return startDate;
+    }
 }
