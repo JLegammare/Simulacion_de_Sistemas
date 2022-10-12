@@ -15,16 +15,16 @@ import java.util.List;
 
 public class VenusSpeedRunner {
 
-    private static final String ASSETS_DIRECTORY = "assets/OptimalDate";
+    private static final String ASSETS_DIRECTORY = "assets/OptimalDate/OneDate";
     private static final String EARTH_FILE_PATH = String.format("%s/earth.txt", ASSETS_DIRECTORY);
     private static final String VENUS_FILE_PATH = String.format("%s/venus.txt", ASSETS_DIRECTORY);
-    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip/Dt";
+    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip/Velocity";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String MIN_DISTANCE_FILE  = "SpeedDistance.txt";
-    private static final double INIT_VELOCITY = 5;
-    private static final double FINAL_VELOCITY = 20.1;
-    private static final double VELOCITY_OFF_SET = 0.1;
+    private static final double INIT_VELOCITY = 7.5;
+    private static final double FINAL_VELOCITY = 9.5;
+    private static final double VELOCITY_OFF_SET = 0.01;
     private static final double DT = 300;
     private static final double TF = 31557600;
     private static final Pair<Double, Double> sunPosition = new Pair<>(0.0, 0.0);
@@ -95,7 +95,7 @@ public class VenusSpeedRunner {
         StringBuilder sb = new StringBuilder();
 
         resultsMap.forEach((k,v)-> {
-            sb.append(String.format("%s,%f,%f\n",v.getStartDate(),k,v.getMinDistance()));
+            sb.append(String.format("%s,%f,%f\n",v.getStartDate(),k,v.getMinDistance(),v.getTime()));
         });
 
         pw.print(sb);

@@ -1,13 +1,11 @@
 package ar.edu.itba.simulacion;
 
-import ar.edu.itba.simulacion.models.Body;
-import ar.edu.itba.simulacion.models.Pair;
-import ar.edu.itba.simulacion.models.TripResult;
-import ar.edu.itba.simulacion.models.TripStatus;
+import ar.edu.itba.simulacion.models.*;
+import ar.edu.itba.simulacion.utils.Parser;
 import ar.edu.itba.simulacion.utils.PlanetsResultsGenerator;
 
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -17,7 +15,8 @@ import java.util.stream.Collectors;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
-public class VenusTrip {
+public class EarthTrip {
+
 
     private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
@@ -88,12 +87,12 @@ public class VenusTrip {
 
     public static TripResult venusTripMethod(PlanetsResultsGenerator rg, List<Body> bodies, double dt, double tf, Date date) throws IOException {
 
-        Body spaceship = getSpaceship(bodies.get(0),bodies.get(2));
+        Body spaceship = getSpaceship(bodies.get(0),bodies.get(1));
         bodies.add(spaceship);
         rg.fillStaticFile(bodies);
 
 
-        Body venus = bodies.get(1);
+        Body earth = bodies.get(2);
 
         int i = 0;
         double t;
@@ -110,23 +109,21 @@ public class VenusTrip {
 
         Pair<Double,Double> previousPosition = initRs.get(spaceship).get(0);
 
-        double minDistanceToVenus = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
+        double minDistanceToEarth = distance(initRs.get(earth).get(0),initRs.get(spaceship).get(0));
 
         for (t = dt; !tr.isFinished(); t += dt, i += 1) {
             initRs = gearPredict05(initRs,dt);
-            if(t<=5765800.000000){
-                rg.addStateToDynamicFile(initRs , t);
-            }
+            rg.addStateToDynamicFile(initRs , t);
             distanceTraveled+= distance(previousPosition,initRs.get(spaceship).get(0));
-            double newDistance = distance(initRs.get(venus).get(0),initRs.get(spaceship).get(0));
-            if(newDistance<minDistanceToVenus){
-                minDistanceToVenus = newDistance;
+            double newDistance = distance(initRs.get(earth).get(0),initRs.get(spaceship).get(0));
+            if(newDistance<minDistanceToEarth){
+                minDistanceToEarth = newDistance;
                 minTime = t;
             }
             tr = checkEndCondition(initRs,bodies,t,tf,distanceTraveled);
             previousPosition = initRs.get(spaceship).get(0);
         }
-        tr.setMinDistance(minDistanceToVenus);
+        tr.setMinDistance(minDistanceToEarth);
         tr.setTime(minTime);
         tr.setStartDate(date);
         System.out.println(String.format("%s\t%f\t%f",tr.getTs(),tr.getMinDistance(),tr.getTime()));
@@ -136,19 +133,10 @@ public class VenusTrip {
 
     private static TripResult checkEndCondition(Map<Body,List<Pair<Double,Double>>> initRs, List<Body> bodies, double t, double tf, double distanceTraveled){
 
-        Body spaceship = bodies.get(3);
-        Body earth = bodies.get(2);
         Body venus = bodies.get(1);
+        Body spaceship = bodies.get(3);
 
-        List<Body> othersBodies = initRs.keySet().stream().filter(b-> !b.equals(spaceship) && !b.equals(earth)).collect(Collectors.toList());
-        Body collisionedBody = null;
-        for(Body b :  othersBodies) {
-            if(collisionBetweenBodies(initRs.get(b).get(0), b.getRadius(), initRs.get(spaceship).get(0), spaceship.getRadius())) {
-                collisionedBody = b;
-            }
-        }
-
-       TripStatus ts =TripStatus.TRAVELLING;
+        TripStatus ts = TripStatus.TRAVELLING;
 
         boolean timeExceeded = t >= tf;
 
@@ -163,30 +151,30 @@ public class VenusTrip {
     }
 
 
-    public static Body getSpaceship(Body sun, Body earth) {
+    public static Body getSpaceship(Body sun, Body venus) {
 
-        double earthSunDistance = distance(sun.getPosition(), earth.getPosition());
+        double venusSunDistance = distance(sun.getPosition(), venus.getPosition());
 
         Pair<Double, Double> sunEarthVersor = new Pair<>(
-                (earth.getPosition().getX_value() - sun.getPosition().getX_value()) / earthSunDistance,
-                (earth.getPosition().getY_value() - sun.getPosition().getY_value()) / earthSunDistance);
+                (venus.getPosition().getX_value() - sun.getPosition().getX_value()) / venusSunDistance,
+                (venus.getPosition().getY_value() - sun.getPosition().getY_value()) / venusSunDistance);
 
 
         Pair<Double, Double> spaceshipInitPosition = new Pair<>(
-                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + earth.getRadius())* -sunEarthVersor.getX_value()
-                        + earth.getPosition().getX_value(),
-                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + earth.getRadius()) * -sunEarthVersor.getY_value()
-                        + earth.getPosition().getY_value()
+                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + venus.getRadius())* -sunEarthVersor.getX_value()
+                        + venus.getPosition().getX_value(),
+                (SPACESHIP_INIT_DISTANCE_FROM_EARTH + venus.getRadius()) * -sunEarthVersor.getY_value()
+                        + venus.getPosition().getY_value()
         );
 
         Pair<Double, Double> spaceshipVersor = new Pair<>(-sunEarthVersor.getY_value(), sunEarthVersor.getX_value());
-        double earthTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - spaceshipTakeOffVelocity
-                + earth.getVelocity().getX_value() * spaceshipVersor.getX_value()
-                + earth.getVelocity().getY_value() * spaceshipVersor.getY_value();
+        double venusTangentialVelocity = -SPACESHIP_ORBITAL_VELOCITY - spaceshipTakeOffVelocity
+                + venus.getVelocity().getX_value() * spaceshipVersor.getX_value()
+                + venus.getVelocity().getY_value() * spaceshipVersor.getY_value();
 
         Pair<Double, Double> spaceshipInitVelocity = new Pair<>(
-                earthTangentialVelocity * spaceshipVersor.getX_value(),
-                earthTangentialVelocity * spaceshipVersor.getY_value()
+                venusTangentialVelocity * spaceshipVersor.getX_value(),
+                venusTangentialVelocity * spaceshipVersor.getY_value()
         );
         return new Body(3, "SPACESHIP", spaceshipInitPosition, spaceshipInitVelocity, SPACESHIP_RADIUS,
                 SPACESHIP_MASS,SPACESHIP_COLOR);
@@ -365,5 +353,7 @@ public class VenusTrip {
         else
             return n * fact(n-1);
     }
-
 }
+
+
+

@@ -8,15 +8,15 @@ def distance_velocity_plot(distance_vel: str):
     min_distance = []
     for line in lines:
         values = line.split(",")
-        print(values[0])
-        print(values[1])
-        velocity.append(float(values[0]))
-        min_distance.append(float(values[1]))
+        print(values[2])
+        print(values[2])
+        velocity.append(float(values[1]))
+        min_distance.append(float(values[2]))
 
     data = [go.Scatter(
         y=min_distance[:],
         x=velocity[:],
-        line=dict(color="Green"),
+        line=dict(color="yellow"),
         name="Distancia mínima vs Rapidez",
     )]
 
@@ -39,5 +39,5 @@ def distance_velocity_plot(distance_vel: str):
 
 
 if __name__ == "__main__":
-    distance_vel = './simulation_results/Venus_Mission/VenusTrip/SpeedDistance.txt'
+    distance_vel = './simulation_results/Venus_Mission/VenusTrip/Velocity/SpeedDistance.txt'
     distance_velocity_plot(distance_vel)

@@ -15,10 +15,10 @@ import java.util.List;
 
 public class VenusTripRunner {
 
-    private static final String ASSETS_DIRECTORY = "assets/ByDay";
+    private static final String ASSETS_DIRECTORY = "assets/OptimalDate";
     private static final String EARTH_FILE_PATH = String.format("%s/earth.txt", ASSETS_DIRECTORY);
     private static final String VENUS_FILE_PATH = String.format("%s/venus.txt", ASSETS_DIRECTORY);
-    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/VenusTrip/ByDay";
+    private static final String RESULTS_DIRECTORY = "simulation_results/Venus_Mission/EarthTrip/ByDay";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String MIN_DISTANCE_FILE  = "MinDistance.txt";
@@ -63,7 +63,7 @@ public class VenusTripRunner {
                     bodies.add(venus);
                     bodies.add(earth);
                     System.out.printf("Running %s\n", d);
-                    TripResult tr = VenusTrip.venusTripMethod(rg,bodies,DT,TF,d);
+                    TripResult tr = EarthTrip.venusTripMethod(rg,bodies,DT,TF,d);
                     resultsMap.add(tr);
                 } catch (IOException e) {
                     throw new RuntimeException(e);
@@ -71,7 +71,7 @@ public class VenusTripRunner {
             });
 
             persistMinDistances(resultsMap,String.format("%s/%s",RESULTS_DIRECTORY,MIN_DISTANCE_FILE));
-            TripResult min = resultsMap.stream().min(Comparator.comparingDouble(TripResult::getDistanceTraveled)).get();
+            TripResult min = resultsMap.stream().min(Comparator.comparingDouble(TripResult::getMinDistance)).get();
             System.out.printf("***** MIN ******:\n\tDATE:%s\tDISTANCE:%f\tTIME:%f%n",min.getStartDate(),min.getMinDistance(),min.getTime());
     }
 
