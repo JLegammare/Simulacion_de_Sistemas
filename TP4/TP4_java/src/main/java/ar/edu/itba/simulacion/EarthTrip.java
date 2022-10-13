@@ -32,8 +32,8 @@ public class EarthTrip {
     private static final double[] alpha = {3.0/20, 251.0/360, 1.0, 11.0/18, 1.0/6, 1.0/60};
     //SPACESHIP INPUT VALUES:
     private static final double SPACESHIP_INIT_DISTANCE_FROM_EARTH = 1500.0;
-    private static final double SPACESHIP_ORBITAL_VELOCITY = 5.8;
-    private static double spaceshipTakeOffVelocity = 4.4;
+    private static final double SPACESHIP_ORBITAL_VELOCITY = 7.12;
+    private static double spaceshipTakeOffVelocity = 8;
     private static final double SPACESHIP_MASS = 2E+5;
     private static final double SPACESHIP_RADIUS = 100;
     //SUN INPUT VALUES:
