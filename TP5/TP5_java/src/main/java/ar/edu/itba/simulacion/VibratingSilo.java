@@ -13,13 +13,13 @@ import static java.lang.Math.*;
 
 public class VibratingSilo {
 
-    final static int W = 20;
-    final static int L = 70;
+    final static double W = 20.0;
+    final static double L = 70.0;
     final static int D = 3;
     final static double w = 5;
     final static double A = 0.15;
     final static double G = 5;
-    final static int NUMBER_OF_PARTICLES = 200;
+    final static int NUMBER_OF_PARTICLES = 50;
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
@@ -47,12 +47,36 @@ public class VibratingSilo {
 
             currentRs = beemanRs(previousRS, currentRs, DT, t);
             //2.CONDICIONES DE CONTORNO: SI SE PASA L/10 POR DEBAJO DE LA SALIDA REINYECTARLAS POR ARRIBA
+            //iterar por las particulas y ver cuales estan por debajo de la rendija
+            //Ponerlas arriba de toodo, setearles la velocidad y aceleracion en 0 (mandarlas al init)
+            //Es basicamente reiniciarla, hacerle el euler y toda la bola esa
+            List<Particle> reinsertParticles = new ArrayList<>();
+            currentRs.forEach((k,v) -> {
+                if(v.get(0).getY_value() < - (double)L/10){
+                    reinsertParticles.add(k);
+                }
+            });
+            if(reinsertParticles.size() > 0) {
+                for (Particle k : reinsertParticles) {
+                    currentRs.remove(k);
+                }
+                //las mando arriba
+                toTop(reinsertParticles);
+                Map<Particle, List<Pair<Double, Double>>> reinsertedRs = initParticleRs(reinsertParticles);
+                Map<Particle, List<Pair<Double, Double>>> prevReinsertedRs = eulerParticleRs(reinsertedRs, -DT);
+                reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t);
+                currentRs.putAll(reinsertedRs);
+            }
+            
             System.out.println(t);
                 rg.addStateToDynamicFile(currentRs, t);
             previousRS = currentRs;
         }
 
     }
+
+    //todo: no generarlas tan alto
+
 
     private static Map<Particle, List<Pair<Double, Double>>> eulerParticleRs(Map<Particle, List<Pair<Double, Double>>> currentRs, double dt) {
 
@@ -243,6 +267,20 @@ public class VibratingSilo {
         return sqrt(
                 pow(firstPosition.getX_value() - secondPosition.getX_value(), 2)
                         + pow(firstPosition.getY_value() - secondPosition.getY_value(), 2));
+    }
+
+    private static void toTop(List<Particle> particles){
+        int i = 0;
+        while(i < particles.size()){
+            Particle p = particles.get(i);
+            List<Particle> auxParticles = new ArrayList<>(particles);
+            auxParticles.remove(i);
+            p.setPosition(new Pair<>(Math.random() * W, 40 + (Math.random() * (30)))); //todo: debe ser entre [40, 70]
+            p.setVelocity(new Pair<>(0.0, 0.0));
+            if(i == 0 || ParticleGenerator.particleSeparated(p.getRadius(), p.getPosition(), W, L, auxParticles)){
+                i++;
+            }
+        }
     }
 
 

@@ -34,7 +34,7 @@ public class ParticleGenerator {
 
     }
 
-    private static boolean particleSeparated(
+    public static boolean particleSeparated(
             
             double particleRadius,
             Pair<Double,Double> initPosition,
