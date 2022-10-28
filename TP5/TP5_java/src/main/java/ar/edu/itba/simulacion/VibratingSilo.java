@@ -19,7 +19,7 @@ public class VibratingSilo {
     final static double w = 5;
     final static double A = 0.15;
     final static double G = 5;
-    final static int NUMBER_OF_PARTICLES = 50;
+    final static int NUMBER_OF_PARTICLES = 1;
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
@@ -43,7 +43,7 @@ public class VibratingSilo {
 
         rg.addStateToDynamicFile(currentRs, 0);
         int it = 1;
-        for (double t = DT; t <= FINAL_T; t += DT, it+=1) {
+        for (double t = DT; t <= FINAL_T; t += DT, it += 1) {
 
             currentRs = beemanRs(previousRS, currentRs, DT, t);
             //2.CONDICIONES DE CONTORNO: SI SE PASA L/10 POR DEBAJO DE LA SALIDA REINYECTARLAS POR ARRIBA
@@ -67,9 +67,9 @@ public class VibratingSilo {
                 reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t);
                 currentRs.putAll(reinsertedRs);
             }
-            
+
             System.out.println(t);
-                rg.addStateToDynamicFile(currentRs, t);
+            rg.addStateToDynamicFile(currentRs, t);
             previousRS = currentRs;
         }
 
@@ -137,7 +137,7 @@ public class VibratingSilo {
             double dt,
             double t
     ) {
-        Map<Particle, List<Pair<Double, Double>>> newRsMap = new TreeMap<>();
+        Map<Particle, List<Pair<Double, Double>>> newRsMap = new HashMap<>();
 
         previousRs.forEach((p, prevParticleRs) -> {
 
@@ -209,18 +209,49 @@ public class VibratingSilo {
         particlesRs.entrySet().forEach(e -> {
 
             Particle p = e.getKey();
+            List<Pair<Double,Double>> pRs = e.getValue();
 
             if (!selectedParticle.equals(p)) {
-                Pair<Double, Double> force = collisionForce(selectedParticle.getRadius(), p.getRadius(), particlesRs.get(selectedParticle), particlesRs.get(p));
+                Pair<Double, Double> force = collisionForce(
+                        selectedParticle.getRadius(), p.getRadius(),
+                        particlesRs.get(selectedParticle), particlesRs.get(p));
                 totalForce.setX_value(totalForce.getX_value() + force.getX_value());
                 totalForce.setX_value(totalForce.getY_value() + force.getY_value());
             }
 
+            List<Pair<Double, Double>> leftWallRs = new ArrayList<>();
+            List<Pair<Double, Double>> rightWallRs = new ArrayList<>();
+            List<Pair<Double, Double>> bottomWallRs = new ArrayList<>();
+
+
+            List<Pair<Double,Double>> wallForces = new ArrayList<>();
+
+            if(pRs.get(0).getX_value()-p.getRadius()<=0){
+                leftWallRs.add(0, new Pair<>(0.0, particlesRs.get(p).get(0).getY_value()));
+                leftWallRs.add(1,siloRs.get(1));
+                wallForces.add(collisionForce(p.getRadius(),0,pRs,leftWallRs));
+            }
+
+            if(pRs.get(0).getX_value()+p.getRadius()>=W){
+                rightWallRs.add(0, new Pair<>(W,particlesRs.get(p).get(0).getY_value() ));
+                rightWallRs.add(1,siloRs.get(1));
+                wallForces.add(collisionForce(p.getRadius(),0,pRs,rightWallRs));
+            }
+
+            if(pRs.get(0).getY_value()<=p.getRadius()){
+
+                //Si no es el borde de la rendija
+                bottomWallRs.add(0,new Pair<>(pRs.get(0).getX_value(),siloRs.get(0).getY_value()));
+                bottomWallRs.add(1,new Pair<>(0.0,siloRs.get(1).getY_value()));
+                wallForces.add(collisionForce(p.getRadius(),0,pRs,bottomWallRs));
+
+            }
+
+            wallForces.forEach(f->{
+                totalForce.setX_value(totalForce.getX_value()+f.getX_value());
+                totalForce.setY_value(totalForce.getY_value()+f.getY_value());
+            });
         });
-//        TODO: VER CHOQUE CON PAREDES
-        List<Pair<Double, Double>> leftWall = new ArrayList<>();
-        List<Pair<Double, Double>> rightWall = new ArrayList<>();
-        List<Pair<Double, Double>> bottomWall = new ArrayList<>();
 
         totalForce.setY_value(totalForce.getY_value() - G * selectedParticle.getMass());
 
@@ -228,6 +259,7 @@ public class VibratingSilo {
                 totalForce.getY_value() / selectedParticle.getMass());
 
     }
+
 
     private static Pair<Double, Double> collisionForce(double particleRadiusA,
                                                        double particleRadiusB,
@@ -238,7 +270,7 @@ public class VibratingSilo {
         Pair<Double, Double> deltaPosition = new Pair<>(
                 particleBrs.get(0).getX_value() - particleArs.get(0).getX_value(),
                 particleBrs.get(0).getY_value() - particleArs.get(0).getY_value());
-        double distance = distance(particleArs.get(0), particleBrs.get(0));
+        double distance = hypot(deltaPosition.getX_value(), deltaPosition.getY_value());
         double overlapping = particleRadiusA + particleRadiusB - distance;
 
         if (overlapping >= 0) {
@@ -256,7 +288,7 @@ public class VibratingSilo {
                     (relativeSpeed.getX_value() * et.getX_value() + relativeSpeed.getY_value() * et.getY_value());
 
             force.setX_value(FN * en.getX_value() + FT * et.getX_value());
-            force.setX_value(FN * en.getX_value() + FT * et.getY_value());
+            force.setY_value(FN * en.getY_value() + FT * et.getY_value());
         }
 
         return force;
