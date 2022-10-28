@@ -28,6 +28,7 @@ public class VibratingSilo {
     private static final String RESULTS_DIRECTORY = "simulation_results";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
+    private static final String TIME_FILE = "Time.txt";
 
     public static void main(String[] args) throws IOException {
 

@@ -77,5 +77,23 @@ public class ResultsGenerator {
         pwDynamic.close();
     }
 
+    public void createParticlesTimeFile(List<Double> time, String resultsDirectory, String path) throws IOException {
+        String particlesTimeFilePath = String.format("%s/%s", resultsDirectory, path);
+
+        File particlesTimeFile = new File(particlesTimeFilePath);
+        if(particlesTimeFile.exists())
+            particlesTimeFile.delete();
+
+        FileWriter fw = new FileWriter(particlesTimeFile,false);
+        BufferedWriter bw = new BufferedWriter(fw);
+        PrintWriter pw = new PrintWriter(bw);
+
+        StringBuilder sb = new StringBuilder();
+        for (Double t: time) {
+            sb.append(String.format("%2.2f\n", t));
+        }
+        pw.println(sb);
+        pw.close();
+    }
 
 }
