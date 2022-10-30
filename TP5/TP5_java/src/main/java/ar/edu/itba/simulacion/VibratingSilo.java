@@ -36,6 +36,11 @@ public class VibratingSilo {
         ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
         rg.fillStaticFile(particles);
 
+        vibratingSilo(rg, particles, w);
+    }
+
+    public static void vibratingSilo(ResultsGenerator rg, List<Particle> particles, double w) throws IOException
+    {
         //0.CALCULAR VELOCIDADES INICIALES Y FUERZAS (EXPRESIONES N.2 Y T.3 DE LA DIAPOSITIVA 15 DE LA TEORICA 5) PARA t=0;
 
         Map<Particle, List<Pair<Double, Double>>> currentRs = initParticleRs(particles);
@@ -45,7 +50,7 @@ public class VibratingSilo {
         int it = 1;
         for (double t = DT; t <= FINAL_T; t += DT, it += 1) {
 
-            Map<Particle,List<Pair<Double,Double>>> nextRs = beemanRs(previousRS, currentRs, DT, t);
+            currentRs = beemanRs(previousRS, currentRs, DT, t, w);
             //2.CONDICIONES DE CONTORNO: SI SE PASA L/10 POR DEBAJO DE LA SALIDA REINYECTARLAS POR ARRIBA
             //iterar por las particulas y ver cuales estan por debajo de la rendija
             //Ponerlas arriba de toodo, setearles la velocidad y aceleracion en 0 (mandarlas al init)
@@ -65,7 +70,7 @@ public class VibratingSilo {
                 toTop(reinsertParticles, rangeParticles);
                 Map<Particle, List<Pair<Double, Double>>> reinsertedRs = initParticleRs(reinsertParticles);
                 Map<Particle, List<Pair<Double, Double>>> prevReinsertedRs = eulerParticleRs(reinsertedRs, -DT);
-                reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t);
+                reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t, w);
                 nextRs.putAll(reinsertedRs);
                 rangeParticles.clear();
             }
@@ -74,7 +79,6 @@ public class VibratingSilo {
             rg.addStateToDynamicFile(nextRs, t);
             currentRs = nextRs;
         }
-
     }
 
     private static Map<Particle, List<Pair<Double, Double>>> eulerParticleRs(Map<Particle, List<Pair<Double, Double>>> currentRs, double dt) {
@@ -134,7 +138,8 @@ public class VibratingSilo {
             Map<Particle, List<Pair<Double, Double>>> previousRs,
             Map<Particle, List<Pair<Double, Double>>> currentRs,
             double dt,
-            double t
+            double t,
+            double w
     ) {
         Map<Particle, List<Pair<Double, Double>>> newRsMap = new HashMap<>();
 
