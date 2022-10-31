@@ -5,8 +5,10 @@ import ar.edu.itba.simulacion.models.Particle;
 import ar.edu.itba.simulacion.utils.ParticleGenerator;
 import ar.edu.itba.simulacion.utils.ResultsGenerator;
 
+import java.awt.*;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import static java.lang.Math.*;
@@ -18,12 +20,12 @@ public class VibratingSilo {
     final static int D = 3;
     final static double w = 5;
     final static double A = 0.15;
-    final static double G = 5;
+    final static double G = 2;
     final static int NUMBER_OF_PARTICLES = 10;
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
-    final static double FINAL_T = 10.0;
+    final static double FINAL_T = 30.0;
 
     private static final String RESULTS_DIRECTORY = "simulation_results";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
@@ -46,15 +48,12 @@ public class VibratingSilo {
         Map<Particle, List<Pair<Double, Double>>> currentRs = initParticleRs(particles);
         Map<Particle, List<Pair<Double, Double>>> previousRS = eulerParticleRs(currentRs, -DT);
 
-        rg.addStateToDynamicFile(currentRs, 0);
+        rg.addStateToDynamicFile(currentRs, W,L,D,w,A,0);
         int it = 1;
         for (double t = DT; t <= FINAL_T; t += DT, it += 1) {
 
-            currentRs = beemanRs(previousRS, currentRs, DT, t, w);
-            //2.CONDICIONES DE CONTORNO: SI SE PASA L/10 POR DEBAJO DE LA SALIDA REINYECTARLAS POR ARRIBA
-            //iterar por las particulas y ver cuales estan por debajo de la rendija
-            //Ponerlas arriba de toodo, setearles la velocidad y aceleracion en 0 (mandarlas al init)
-            //Es basicamente reiniciarla, hacerle el euler y toda la bola esa
+            Map<Particle,List<Pair<Double,Double>>> nextRs = beemanRs(previousRS, currentRs, DT, t, w);
+
             List<Particle> reinsertParticles = new ArrayList<>();
             nextRs.forEach((k,v) -> {
                 if(v.get(0).getY_value() < - L/10.0){
@@ -76,7 +75,9 @@ public class VibratingSilo {
             }
 
             System.out.println(t);
-            rg.addStateToDynamicFile(nextRs, t);
+            if((it+1)%10==0){
+                rg.addStateToDynamicFile(nextRs,W,L,D,w,A,t);
+            }
             currentRs = nextRs;
         }
     }
@@ -152,22 +153,22 @@ public class VibratingSilo {
             Pair<Double, Double> position = new Pair<>(
                     currentParticleRs.get(0).getX_value()
                             + currentParticleRs.get(1).getX_value() * dt
-                            + (2.0 / 3.0) * currentParticleRs.get(2).getX_value()
-                            - (1.0 / 6.0) * prevParticleRs.get(2).getX_value() * dt * dt,
+                            + ((2.0 / 3.0) * currentParticleRs.get(2).getX_value()
+                            - (1.0 / 6.0) * prevParticleRs.get(2).getX_value()) * dt * dt,
                     currentParticleRs.get(0).getY_value()
                             + currentParticleRs.get(1).getY_value() * dt
-                            + (2.0 / 3) * currentParticleRs.get(2).getY_value()
-                            - (1.0 / 6) * prevParticleRs.get(2).getY_value() * dt * dt
+                            + ((2.0 / 3.0) * currentParticleRs.get(2).getY_value()
+                            - (1.0 / 6.0) * prevParticleRs.get(2).getY_value()) * dt * dt
             );
             newParticleRs.add(0, position);
 
             Pair<Double, Double> predictedVelocity = new Pair<>(
                     currentParticleRs.get(1).getX_value()
-                            + (3.0 / 2.0) * currentParticleRs.get(2).getX_value()
-                            - (1.0 / 2.0) * prevParticleRs.get(2).getX_value() * dt,
+                            + ((3.0 / 2.0) * currentParticleRs.get(2).getX_value()
+                            - (1.0 / 2.0) * prevParticleRs.get(2).getX_value()) * dt,
                     currentParticleRs.get(1).getY_value()
-                            + (3.0 / 2) * currentParticleRs.get(2).getY_value()
-                            - (1.0 / 2) * prevParticleRs.get(2).getY_value() * dt
+                            + ((3.0 / 2.0) * currentParticleRs.get(2).getY_value()
+                            - (1.0 / 2.0) * prevParticleRs.get(2).getY_value()) * dt
             );
             newParticleRs.add(1, predictedVelocity);
 
@@ -185,13 +186,13 @@ public class VibratingSilo {
             Pair<Double, Double> predictedAcc = calcAcceleration(p, newRsMap, siloCurrentRS);
             newRsMap.get(p).set(1, new Pair<>(
                     currentParticleRs.get(1).getX_value()
-                            + (1.0 / 3.0) * predictedAcc.getX_value()
+                            + ((1.0 / 3.0) * predictedAcc.getX_value()
                             + (5.0 / 6.0) * currentParticleRs.get(2).getX_value()
-                            - (1.0 / 6.0) * previousRs.get(p).get(2).getX_value() * dt,
+                            - (1.0 / 6.0) * previousRs.get(p).get(2).getX_value())* dt,
                     currentParticleRs.get(1).getY_value()
-                            + (1.0 / 3.0) * predictedAcc.getY_value()
+                            + ((1.0 / 3.0) * predictedAcc.getY_value()
                             + (5.0 / 6.0) * currentParticleRs.get(2).getY_value()
-                            - (1.0 / 6.0) * previousRs.get(p).get(2).getY_value() * dt
+                            - (1.0 / 6.0) * previousRs.get(p).get(2).getY_value()) * dt
             ));
         });
 

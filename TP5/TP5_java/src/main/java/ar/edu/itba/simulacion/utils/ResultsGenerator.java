@@ -2,13 +2,19 @@ package ar.edu.itba.simulacion.utils;
 import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.models.Particle;
 
+import java.awt.*;
 import java.io.*;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 public class ResultsGenerator {
     private final File dynamicFile;
     private final File staticFile;
+    private final Color BORDER_COLOUR = Color.WHITE;
+    private final double BORDER_RADIUS = 0.25;
 
     public ResultsGenerator(String dynamicFilePath, String staticFilePath, String resultsDirectory) {
 
@@ -47,7 +53,9 @@ public class ResultsGenerator {
 
 
 
-    public void addStateToDynamicFile(Map<Particle,List<Pair<Double,Double>>> rsMap, double time ) throws IOException {
+    public void addStateToDynamicFile(Map<Particle,List<Pair<Double,Double>>> rsMap,
+                                      double W, double L, double D,double w, double A,
+                                      double t) throws IOException {
 
         FileWriter fwDynamic = new FileWriter(dynamicFile,true);
         BufferedWriter bwDynamic = new BufferedWriter(fwDynamic);
@@ -56,7 +64,7 @@ public class ResultsGenerator {
         StringBuilder sb = new StringBuilder();
 
 //        sb.append(String.format("%f\n",time));
-        sb.append(String.format("%d\na\n", rsMap.keySet().size()));
+        sb.append(String.format("%d\na\n", rsMap.keySet().size()+280));
 
         rsMap.forEach((k,v)->{
             sb.append(String.format("%d %4.4f %4.4f %d %4.4f %4.4f %4.4f %d %d %d\n",
@@ -72,6 +80,39 @@ public class ResultsGenerator {
                     k.getParticleColor().getBlue()
                     ));
         });
+
+        double posWall = A * sin(w * t);
+        double speedWall = A * w * cos(w * t);
+
+        //paredes laterales
+        for (int i = 0; i < 140 ; i++) {
+            sb.append(String.format("%d %4.4f %4.4f %d %4.4f %4.4f %4.4f %d %d %d\n",
+                    900,
+                    0-BORDER_RADIUS,
+                    L-i*BORDER_RADIUS*2+posWall,
+                    0,
+                    0.0,
+                    speedWall,
+                    BORDER_RADIUS,
+                    BORDER_COLOUR.getRed(),
+                    BORDER_COLOUR.getGreen(),
+                    BORDER_COLOUR.getBlue()
+                    ));
+            sb.append(String.format("%d %4.4f %4.4f %d %4.4f %4.4f %4.4f %d %d %d\n",
+                    901,
+                    W+BORDER_RADIUS,
+                    L-i*BORDER_RADIUS*2+posWall,
+                    0,
+                    0.0,
+                    speedWall,
+                    BORDER_RADIUS,
+                    BORDER_COLOUR.getRed(),
+                    BORDER_COLOUR.getGreen(),
+                    BORDER_COLOUR.getBlue()
+                    ));
+        }
+
+        //TODO: AGREGAR PARED INFERIOR
 
         pwDynamic.print(sb);
         pwDynamic.close();
