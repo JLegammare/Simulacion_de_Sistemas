@@ -15,23 +15,23 @@ public class VibratingSiloRunner {
 
     final static double W = 20.0;
     final static double L = 70.0;
-    final static int NUMBER_OF_PARTICLES = 1;
-    final static double DT = 1E-3;
-    final static double FINAL_T = 10.0;
+    final static int NUMBER_OF_PARTICLES = 50;
+    final static double D = 3;
 
     private static final String RESULTS_DIRECTORY = "simulation_results";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
+    private static final String EXIT_FILE = "Times.txt";
 
     public static void main(String[] args) throws IOException {
-        ArrayList<Integer> wValues = new ArrayList<>(Arrays.asList(5, 10, 15, 20, 30, 50));
-        for(Integer w : wValues) {
+        ArrayList<Double> wValues = new ArrayList<>(Arrays.asList(5.0, 10.0, 15.0, 20.0, 30.0, 50.0));
+        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
 
-            List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
-            ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE, RESULTS_DIRECTORY);
+        for(Double w : wValues) {
+            String directory = String.format("%s/%f",RESULTS_DIRECTORY, w);
+            ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE,EXIT_FILE, directory);
             rg.fillStaticFile(particles);
-
-            VibratingSilo.vibratingSilo(rg, particles, w);
+            VibratingSilo.vibratingSilo(rg, particles, w,D);
         }
     }
 }

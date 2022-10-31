@@ -14,13 +14,15 @@ import static java.lang.Math.sin;
 public class ResultsGenerator {
     private final File dynamicFile;
     private final File staticFile;
+    private final File timeFile;
     private final Color BORDER_COLOUR = Color.WHITE;
     private final double BORDER_RADIUS = 0.25;
 
-    public ResultsGenerator(String dynamicFilePath, String staticFilePath, String resultsDirectory) {
+    public ResultsGenerator(String dynamicFilePath, String staticFilePath,String timeFilePath, String resultsDirectory) {
 
         String dynamicResultsFilePath = String.format("%s/%s", resultsDirectory, dynamicFilePath);
         String staticResultsFilePath = String.format("%s/%s", resultsDirectory, staticFilePath);
+        String timesResultsFilePath = String.format("%s/%s", resultsDirectory, timeFilePath);
 
         File directory = new File(resultsDirectory);
         directory.mkdir();
@@ -34,6 +36,11 @@ public class ResultsGenerator {
         if (stcFile.exists())
             stcFile.delete();
         this.staticFile = stcFile;
+
+        File tmFile = new File(timesResultsFilePath);
+        if (tmFile.exists())
+            tmFile.delete();
+        this.timeFile = tmFile;
 
     }
 
@@ -68,7 +75,6 @@ public class ResultsGenerator {
 
         int totalBorderParticles = oneLateralParticles * 2 + oneBottomWallParticles * 2;
 
-//        sb.append(String.format("%f\n",time));
         sb.append(String.format("%d\na\n", rsMap.keySet().size() + totalBorderParticles));
 
         rsMap.forEach((k, v) -> {
@@ -149,22 +155,13 @@ public class ResultsGenerator {
         pwDynamic.close();
     }
 
-    public void createParticlesTimeFile(List<Double> time, String resultsDirectory, String path) throws IOException {
-        String particlesTimeFilePath = String.format("%s/%s", resultsDirectory, path);
+    public void addTimeToFile(double time) throws IOException {
 
-        File particlesTimeFile = new File(particlesTimeFilePath);
-        if (particlesTimeFile.exists())
-            particlesTimeFile.delete();
-
-        FileWriter fw = new FileWriter(particlesTimeFile, false);
+        FileWriter fw = new FileWriter(timeFile, true);
         BufferedWriter bw = new BufferedWriter(fw);
         PrintWriter pw = new PrintWriter(bw);
 
-        StringBuilder sb = new StringBuilder();
-        for (Double t : time) {
-            sb.append(String.format("%2.2f\n", t));
-        }
-        pw.println(sb);
+        pw.println(time);
         pw.close();
     }
 
