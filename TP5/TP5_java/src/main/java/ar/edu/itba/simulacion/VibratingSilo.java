@@ -20,7 +20,7 @@ public class VibratingSilo {
     final static int D = 3;
     final static double w = 5;
     final static double A = 0.15;
-    final static double G = 2;
+    final static double G = 5;
     final static int NUMBER_OF_PARTICLES = 50;
     final static int kN = 250;
     final static int kT = 2 * kN;
@@ -220,7 +220,7 @@ public class VibratingSilo {
                         selectedParticle.getRadius(), p.getRadius(),
                         particlesRs.get(selectedParticle), particlesRs.get(p));
                 totalForce.setX_value(totalForce.getX_value() + force.getX_value());
-                totalForce.setX_value(totalForce.getY_value() + force.getY_value());
+                totalForce.setY_value(totalForce.getY_value() + force.getY_value());
             }
         });
 
