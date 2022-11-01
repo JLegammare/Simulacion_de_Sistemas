@@ -22,7 +22,7 @@ public class ParticleGenerator {
         List<Particle> particles = new ArrayList<>();
         int particleId = 0;
         while (particles.size() < numberOfParticles){
-            Pair<Double,Double> initPosition = new Pair<>(1 + (Math.random() * (W-1)),Math.random() * L);
+            Pair<Double,Double> initPosition = new Pair<>(Math.random() * W,Math.random() * L);
             Pair<Double,Double> initialSpeed = new Pair<>(0.0,0.0);
             double radius = Math.random()*(rn-r0) + r0;
             if(particleSeparated(radius,initPosition,W,L,particles)) {
