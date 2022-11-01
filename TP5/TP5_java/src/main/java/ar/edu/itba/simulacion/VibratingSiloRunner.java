@@ -26,12 +26,22 @@ public class VibratingSiloRunner {
     public static void main(String[] args) throws IOException {
         ArrayList<Double> wValues = new ArrayList<>(Arrays.asList(5.0, 10.0, 15.0, 20.0, 30.0, 50.0));
         List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
+        List<Particle> auxParticles = new ArrayList<>();
+
+        for(Particle p : particles){
+            auxParticles.add(new Particle(p.getID(), p.getPosition(), p.getVelocity(), p.getRadius(), p.getMass(),p.getParticleColor()));
+        }
 
         for(Double w : wValues) {
             String directory = String.format("%s/%f",RESULTS_DIRECTORY, w);
             ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE,EXIT_FILE, directory);
             rg.fillStaticFile(particles);
             VibratingSilo.vibratingSilo(rg, particles, w,D);
+            particles.clear();
+            for(Particle p : auxParticles){
+                particles.add(new Particle(p.getID(), p.getPosition(), p.getVelocity(), p.getRadius(), p.getMass(),p.getParticleColor()));
+            }
+
         }
     }
 }

@@ -21,11 +21,11 @@ public class VibratingSilo {
     final static double w = 5;
     final static double A = 0.15;
     final static double G = 5;
-    final static int NUMBER_OF_PARTICLES = 50;
+    final static int NUMBER_OF_PARTICLES = 200;
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
-    final static double FINAL_T = 60.0;
+    final static double FINAL_T = 20.0;
 
     private static final String RESULTS_DIRECTORY = "simulation_results";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
