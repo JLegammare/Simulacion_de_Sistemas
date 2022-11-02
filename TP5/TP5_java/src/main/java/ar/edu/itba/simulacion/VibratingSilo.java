@@ -25,7 +25,7 @@ public class VibratingSilo {
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
-    final static double FINAL_T = 5.0;
+    final static double FINAL_T = 1000.0;
 
     private static final String RESULTS_DIRECTORY = "simulation_results/test";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
@@ -74,8 +74,6 @@ public class VibratingSilo {
                 nextRs.putAll(reinsertedRs);
                 rangeParticles.clear();
             }
-
-            System.out.println(t);
             if((it+1)%100==0){
                 rg.addStateToDynamicFile(nextRs,W,L,D,w,A,t);
             }
