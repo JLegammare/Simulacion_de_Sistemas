@@ -18,7 +18,7 @@ public class VibratingSilo {
     final static double W = 20.0;
     final static double L = 70.0;
     final static int D = 3;
-    final static double w = 5;
+    final static double w = 50;
     final static double A = 0.15;
     final static double G = 5;
     final static int NUMBER_OF_PARTICLES = 200;
@@ -237,15 +237,15 @@ public class VibratingSilo {
         List<Pair<Double, Double>> wallForces = new ArrayList<>();
 
         if (pRs.get(0).getX_value() - selectedParticle.getRadius() <= 0) {
-            leftWallRs.add(0, new Pair<>(0.0, particlesRs.get(selectedParticle).get(0).getY_value()));
+            leftWallRs.add(0, new Pair<>(-selectedParticle.getRadius(), particlesRs.get(selectedParticle).get(0).getY_value()));
             leftWallRs.add(1, siloRs.get(1));
-            wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, leftWallRs));
+            wallForces.add(collisionForce(selectedParticle.getRadius(), selectedParticle.getRadius(), pRs, leftWallRs));
         }
 
         if (pRs.get(0).getX_value() + selectedParticle.getRadius() >= W) {
-            rightWallRs.add(0, new Pair<>(W, particlesRs.get(selectedParticle).get(0).getY_value()));
+            rightWallRs.add(0, new Pair<>(W+selectedParticle.getRadius(), particlesRs.get(selectedParticle).get(0).getY_value()));
             rightWallRs.add(1, siloRs.get(1));
-            wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, rightWallRs));
+            wallForces.add(collisionForce(selectedParticle.getRadius(), selectedParticle.getRadius(), pRs, rightWallRs));
         }
 
         if (pRs.get(0).getY_value() <= selectedParticle.getRadius()) {
@@ -259,9 +259,9 @@ public class VibratingSilo {
                 wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, leftBorderRendija));
                 wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, rightBorderRendija));
             } else {
-                bottomWallRs.add(0, new Pair<>(pRs.get(0).getX_value(), siloRs.get(0).getY_value()));
+                bottomWallRs.add(0, new Pair<>(pRs.get(0).getX_value(), siloRs.get(0).getY_value()-selectedParticle.getRadius()));
                 bottomWallRs.add(1, new Pair<>(0.0, siloRs.get(1).getY_value()));
-                wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, bottomWallRs));
+                wallForces.add(collisionForce(selectedParticle.getRadius(), selectedParticle.getRadius(), pRs, bottomWallRs));
             }
         }
 
