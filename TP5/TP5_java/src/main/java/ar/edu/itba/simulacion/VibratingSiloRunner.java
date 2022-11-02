@@ -22,10 +22,9 @@ public class VibratingSiloRunner {
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String EXIT_FILE = "Times.txt";
-
     public static void main(String[] args) throws IOException {
         ArrayList<Double> wValues = new ArrayList<>(Arrays.asList(5.0, 10.0, 15.0, 20.0, 30.0, 50.0));
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
+        List<Particle> particles = ParticleGenerator.parseParticles("simulation_results/Static.txt");
         List<Particle> auxParticles = new ArrayList<>();
 
         for(Particle p : particles){

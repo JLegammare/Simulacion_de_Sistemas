@@ -4,8 +4,11 @@ import ar.edu.itba.simulacion.models.Pair;
 import ar.edu.itba.simulacion.models.Particle;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class ParticleGenerator {
 
@@ -34,6 +37,26 @@ public class ParticleGenerator {
 
     }
 
+        public static List<Particle> parseParticles(String staticFilePath) throws IOException {
+
+        File staticFile = new File(staticFilePath);
+        Scanner staticScanner = new Scanner(staticFile);
+
+        int numberOfParticles = staticScanner.nextInt();
+        List<Particle> particles = new ArrayList<>();
+
+        for (int j = 0; j<numberOfParticles; j++) {
+            int id = staticScanner.nextInt();
+            double radius = staticScanner.nextDouble();
+            double mass = staticScanner.nextDouble();
+            Double x = staticScanner.nextDouble();
+            Double y = staticScanner.nextDouble();
+            particles.add(new Particle(id,new Pair<>(x,y),new Pair<>(0.0,0.0),radius,mass,Color.RED));
+        }
+
+        return particles;
+    }
+
     public static boolean particleSeparated(
             
             double particleRadius,
@@ -59,48 +82,4 @@ public class ParticleGenerator {
                 || y + particleRadius >= L;
     }
 
-//    public static void generateFiles(List<Particle> particles,
-//                                     String dynamicFileName,
-//                                     String staticFileName,
-//                                     String directoryPath) throws IOException {
-//
-//        File directory = new File(directoryPath);
-//        directory.mkdir();
-//
-//        File dymFile = new File(String.format("%s/%s", directoryPath, dynamicFileName));
-//        if (dymFile.exists())
-//            dymFile.delete();
-//
-//        File stcFile = new File(String.format("%s/%s", directoryPath, staticFileName));
-//        if (stcFile.exists())
-//            stcFile.delete();
-//
-//        FileWriter fwd = new FileWriter(dymFile, false);
-//        BufferedWriter bwd = new BufferedWriter(fwd);
-//        PrintWriter pwd = new PrintWriter(bwd);
-//
-//        FileWriter fws = new FileWriter(stcFile, false);
-//        BufferedWriter bws = new BufferedWriter(fws);
-//        PrintWriter pws = new PrintWriter(bws);
-//
-//        StringBuilder staticSB = new StringBuilder();
-//        StringBuilder dynamicSB = new StringBuilder();
-//
-//        dynamicSB.append("0\n");
-//        staticSB.append(String.format("%d\n",particles.size()));
-//        for (Particle p : particles) {
-//            dynamicSB.append(String.format("%d %f %f %f %f\n",
-//                    p.getID(),
-//                    p.getPosition(),
-//                    p.getY(),
-//                    p.getVelocityModule(),
-//                    p.getOmega()));
-//            staticSB.append(String.format("%f %f\n", p.getRadius(), p.getProperty()));
-//        }
-//        pwd.print(dynamicSB);
-//        pwd.close();
-//        pws.println(staticSB);
-//        pws.close();
-//
-//    }
 }

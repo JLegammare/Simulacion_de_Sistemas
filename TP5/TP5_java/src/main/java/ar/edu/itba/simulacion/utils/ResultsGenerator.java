@@ -53,7 +53,8 @@ public class ResultsGenerator {
         StringBuilder sb = new StringBuilder();
         sb.append(String.format("%d\n", bodies.size()));
         for (Particle particle : bodies) {
-            sb.append(String.format("%d %2.2f %2.2f\n", particle.getID(), particle.getRadius(), particle.getMass()));
+            sb.append(String.format("%d %f %f %f %f \n", particle.getID(), particle.getRadius(), particle.getMass(),
+                    particle.getPosition().getX_value(),particle.getPosition().getY_value()));
         }
         pw.println(sb);
         pw.close();

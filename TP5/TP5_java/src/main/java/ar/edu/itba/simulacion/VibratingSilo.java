@@ -25,42 +25,42 @@ public class VibratingSilo {
     final static int kN = 250;
     final static int kT = 2 * kN;
     final static double DT = 1E-3;
-    final static double FINAL_T = 20.0;
+    final static double FINAL_T = 5.0;
 
-    private static final String RESULTS_DIRECTORY = "simulation_results";
+    private static final String RESULTS_DIRECTORY = "simulation_results/test";
     private static final String DYNAMIC_FILE = "Dynamic.txt";
     private static final String STATIC_FILE = "Static.txt";
     private static final String TIME_FILE = "Time.txt";
 
     public static void main(String[] args) throws IOException {
 
-        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
-        ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE,TIME_FILE, RESULTS_DIRECTORY);
+//        List<Particle> particles = ParticleGenerator.generateRandomParticles(NUMBER_OF_PARTICLES, L, W);
+        List<Particle> particles = ParticleGenerator.parseParticles("simulation_results/Static.txt");
+        ResultsGenerator rg = new ResultsGenerator(DYNAMIC_FILE, STATIC_FILE, TIME_FILE, RESULTS_DIRECTORY);
         rg.fillStaticFile(particles);
 
-        vibratingSilo(rg, particles, w,D);
+        vibratingSilo(rg, particles, w, D);
     }
 
-    public static void vibratingSilo(ResultsGenerator rg, List<Particle> particles, double w,double D) throws IOException
-    {
+    public static void vibratingSilo(ResultsGenerator rg, List<Particle> particles, double w, double D) throws IOException {
         //0.CALCULAR VELOCIDADES INICIALES Y FUERZAS (EXPRESIONES N.2 Y T.3 DE LA DIAPOSITIVA 15 DE LA TEORICA 5) PARA t=0;
 
         Map<Particle, List<Pair<Double, Double>>> currentRs = initParticleRs(particles);
         Map<Particle, List<Pair<Double, Double>>> previousRS = eulerParticleRs(currentRs, -DT);
 
-        rg.addStateToDynamicFile(currentRs, W,L,D,w,A,0);
+        rg.addStateToDynamicFile(currentRs, W, L, D, w, A, 0);
         int it = 1;
         for (double t = DT; t <= FINAL_T; t += DT, it += 1) {
 
-            Map<Particle,List<Pair<Double,Double>>> nextRs = beemanRs(previousRS, currentRs, DT, t, w,D);
+            Map<Particle, List<Pair<Double, Double>>> nextRs = beemanRs(previousRS, currentRs, DT, t, w, D);
 
             List<Particle> reinsertParticles = new ArrayList<>();
-            nextRs.forEach((k,v) -> {
-                if(v.get(0).getY_value() < - L/10.0){
+            nextRs.forEach((k, v) -> {
+                if (v.get(0).getY_value() < -L / 10.0) {
                     reinsertParticles.add(k);
                 }
             });
-            if(reinsertParticles.size() > 0) {
+            if (reinsertParticles.size() > 0) {
                 for (Particle k : reinsertParticles) {
                     nextRs.remove(k);
                     rg.addTimeToFile(t);
@@ -70,13 +70,13 @@ public class VibratingSilo {
                 toTop(reinsertParticles, rangeParticles);
                 Map<Particle, List<Pair<Double, Double>>> reinsertedRs = initParticleRs(reinsertParticles);
                 Map<Particle, List<Pair<Double, Double>>> prevReinsertedRs = eulerParticleRs(reinsertedRs, -DT);
-                reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t, w,D);
+                reinsertedRs = beemanRs(prevReinsertedRs, reinsertedRs, DT, t, w, D);
                 nextRs.putAll(reinsertedRs);
                 rangeParticles.clear();
             }
 
             System.out.println(t);
-            if((it+1)%10==0){
+            if((it+1)%100==0){
                 rg.addStateToDynamicFile(nextRs,W,L,D,w,A,t);
             }
             currentRs = nextRs;
@@ -185,12 +185,12 @@ public class VibratingSilo {
 
         currentRs.forEach((p, currentParticleRs) -> {
 
-            Pair<Double, Double> predictedAcc = calcAcceleration(p, newRsMap, siloCurrentRS,D);
+            Pair<Double, Double> predictedAcc = calcAcceleration(p, newRsMap, siloCurrentRS, D);
             newRsMap.get(p).set(1, new Pair<>(
                     currentParticleRs.get(1).getX_value()
                             + ((1.0 / 3.0) * predictedAcc.getX_value()
                             + (5.0 / 6.0) * currentParticleRs.get(2).getX_value()
-                            - (1.0 / 6.0) * previousRs.get(p).get(2).getX_value())* dt,
+                            - (1.0 / 6.0) * previousRs.get(p).get(2).getX_value()) * dt,
                     currentParticleRs.get(1).getY_value()
                             + ((1.0 / 3.0) * predictedAcc.getY_value()
                             + (5.0 / 6.0) * currentParticleRs.get(2).getY_value()
@@ -199,7 +199,7 @@ public class VibratingSilo {
         });
 
         newRsMap.forEach((p, particleRs) -> {
-            Pair<Double, Double> newAcceleration = calcAcceleration(p, newRsMap, siloCurrentRS,D);
+            Pair<Double, Double> newAcceleration = calcAcceleration(p, newRsMap, siloCurrentRS, D);
             newRsMap.get(p).add(2, newAcceleration);
 
         });
@@ -227,12 +227,12 @@ public class VibratingSilo {
         });
 
 
-        List<Pair<Double,Double>> pRs = particlesRs.get(selectedParticle);
+        List<Pair<Double, Double>> pRs = particlesRs.get(selectedParticle);
         List<Pair<Double, Double>> leftWallRs = new ArrayList<>();
         List<Pair<Double, Double>> rightWallRs = new ArrayList<>();
         List<Pair<Double, Double>> bottomWallRs = new ArrayList<>();
-        List<Pair<Double, Double>> leftBorderRendija= new ArrayList<>();
-        List<Pair<Double, Double>> rightBorderRendija= new ArrayList<>();
+        List<Pair<Double, Double>> leftBorderRendija = new ArrayList<>();
+        List<Pair<Double, Double>> rightBorderRendija = new ArrayList<>();
 
         List<Pair<Double, Double>> wallForces = new ArrayList<>();
 
@@ -251,15 +251,14 @@ public class VibratingSilo {
         if (pRs.get(0).getY_value() <= selectedParticle.getRadius()) {
 
             double xPosition = pRs.get(0).getX_value();
-            if(xPosition> W/2.0-D/2.0 && xPosition< W/2.0+D/2.0){
-                leftBorderRendija.add(0,new Pair<>(W/2.0-D/2.0,0.0));
-                rightBorderRendija.add(0,new Pair<>(W/2.0+D/2.0,0.0));
-                leftBorderRendija.add(1,new Pair<>(0.0,siloRs.get(1).getY_value()));
-                rightBorderRendija.add(1,new Pair<>(0.0,siloRs.get(1).getY_value()));
-                wallForces.add(collisionForce(selectedParticle.getRadius(),0,pRs,leftBorderRendija));
-                wallForces.add(collisionForce(selectedParticle.getRadius(),0,pRs,rightBorderRendija));
-            }
-            else{
+            if (xPosition > W / 2.0 - D / 2.0 && xPosition < W / 2.0 + D / 2.0) {
+                leftBorderRendija.add(0, new Pair<>(W / 2.0 - D / 2.0, 0.0));
+                rightBorderRendija.add(0, new Pair<>(W / 2.0 + D / 2.0, 0.0));
+                leftBorderRendija.add(1, new Pair<>(0.0, siloRs.get(1).getY_value()));
+                rightBorderRendija.add(1, new Pair<>(0.0, siloRs.get(1).getY_value()));
+                wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, leftBorderRendija));
+                wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, rightBorderRendija));
+            } else {
                 bottomWallRs.add(0, new Pair<>(pRs.get(0).getX_value(), siloRs.get(0).getY_value()));
                 bottomWallRs.add(1, new Pair<>(0.0, siloRs.get(1).getY_value()));
                 wallForces.add(collisionForce(selectedParticle.getRadius(), 0, pRs, bottomWallRs));
@@ -314,25 +313,26 @@ public class VibratingSilo {
         return force;
 
     }
-    private static void toTop(List<Particle> particles, List<Particle> rangeParticles){
+
+    private static void toTop(List<Particle> particles, List<Particle> rangeParticles) {
         int i = 0;
-        while(i < particles.size()){
+        while (i < particles.size()) {
             Particle p = particles.get(i);
             //List<Particle> auxParticles = new ArrayList<>(particles);
             //auxParticles.remove(i);
             p.setPosition(new Pair<>(Math.random() * W, 40 + (Math.random() * (30))));
             p.setVelocity(new Pair<>(0.0, 0.0));
-            if(i == 0 || ParticleGenerator.particleSeparated(p.getRadius(), p.getPosition(), W, L, rangeParticles)){
+            if (i == 0 || ParticleGenerator.particleSeparated(p.getRadius(), p.getPosition(), W, L, rangeParticles)) {
                 i++;
                 rangeParticles.add(p);
             }
         }
     }
 
-    private static List<Particle> getParticlesInRange(List<Particle> particles, int min, int max){
+    private static List<Particle> getParticlesInRange(List<Particle> particles, int min, int max) {
         List<Particle> rangeParticles = new ArrayList<>();
-        for(Particle p : particles){
-            if(p.getPosition().getY_value() >= min && p.getPosition().getY_value() <= max)
+        for (Particle p : particles) {
+            if (p.getPosition().getY_value() >= min && p.getPosition().getY_value() <= max)
                 rangeParticles.add(p);
         }
         return rangeParticles;
