@@ -41,8 +41,12 @@ def particles_vs_time_plot(particles_times):
 
 if __name__ == "__main__":
     particle_times = [
-                      './simulation_results/15.000000/Times.txt',
-                      './simulation_results/20.000000/Times.txt'
+        './simulation_results/5.000000/Times.txt',
+        './simulation_results/10.000000/Times.txt',
+        './simulation_results/15.000000/Times.txt',
+        './simulation_results/20.000000/Times.txt',
+        './simulation_results/30.000000/Times.txt',
+        './simulation_results/50.000000/Times.txt'
                       ]
 
     particles_vs_time_plot(particle_times)

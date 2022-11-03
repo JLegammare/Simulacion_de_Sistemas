@@ -7,7 +7,7 @@ def ECM_plot(particles_times: list[str]):
     stderr = []
     slope = []
 
-    omega_values = [5.0, 10.0, 15.0]
+    omega_values = [5.0, 10.0, 15.0, 20.0, 30.0, 50.0]
 
     for file in particles_times:
 
@@ -57,21 +57,21 @@ def ECM_plot(particles_times: list[str]):
         data=go.Scatter(
             x=omega_values,
             y=slope,
-            error_y=dict(type='data',array=stderr),
+            error_y=dict(type='data', array=stderr),
             mode='lines',
             showlegend=False
         ),
         layout=go.Layout(
-                xaxis=dict(title='w(Hz)', exponentformat="power", showgrid=False, linecolor='black',
-                           ticks='inside'),
-                yaxis=dict(title='Q (1/seg)', exponentformat="power", showgrid=False, linecolor='black',
-                           ticks='inside'),
-                font=dict(
-                    family="Arial",
-                    size=24,
-                ),
-                plot_bgcolor='white',
-            )
+            xaxis=dict(title='w(Hz)', exponentformat="power", showgrid=False, linecolor='black',
+                       ticks='inside'),
+            yaxis=dict(title='Q (1/seg)', exponentformat="power", showgrid=False, linecolor='black',
+                       ticks='inside'),
+            font=dict(
+                family="Arial",
+                size=24,
+            ),
+            plot_bgcolor='white',
+        )
     )
 
     fig.show()
@@ -81,10 +81,10 @@ if __name__ == "__main__":
     particle_times = [
         './simulation_results/5.000000/Times.txt',
         './simulation_results/10.000000/Times.txt',
-        './simulation_results/15.000000/Times.txt'
-        # './simulation_results/20.000000/Times.txt',
-        # './simulation_results/30.000000/Times.txt',
-        # './simulation_results/50.000000/Times.txt'
+        './simulation_results/15.000000/Times.txt',
+        './simulation_results/20.000000/Times.txt',
+        './simulation_results/30.000000/Times.txt',
+        './simulation_results/50.000000/Times.txt'
     ]
 
     ECM_plot(particle_times)
