@@ -18,7 +18,7 @@ def ECM_plot(particles_times: list[str]):
             times.append(float(line))
 
         np_times = np.array(times)
-        np_particles = np.array([*range(0, len(np_times), 1)])
+        np_particles = np.array([*range(1, len(np_times)+1, 1)])
         rg = linregress(x=np_times, y=np_particles)
         ecm = (sum((np_particles - np_times * rg.slope + rg.intercept) ** 2)) / len(np_times)
         print(ecm)

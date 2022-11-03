@@ -8,7 +8,7 @@ def particles_vs_time_plot(particles_times):
         lines = particles_times_file.readlines()
         time = []
         particles = []
-        i:int = 0
+        i:int = 1
         for line in lines:
             time.append(float(line))
             particles.append(i)
