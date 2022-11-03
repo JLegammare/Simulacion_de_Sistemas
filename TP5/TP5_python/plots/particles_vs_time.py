@@ -3,12 +3,15 @@ import plotly.graph_objects as go
 
 def particles_vs_time_plot(particles_times):
     data = []
+    j: int = 0
     for p in particles_times:
         particles_times_file = open(p)
         lines = particles_times_file.readlines()
         time = []
         particles = []
-        i:int = 1
+        i: int = 1
+
+        w = [5, 10, 15, 20, 30, 50]
         for line in lines:
             time.append(float(line))
             particles.append(i)
@@ -17,19 +20,21 @@ def particles_vs_time_plot(particles_times):
         data.append(go.Scatter(
             y=particles[:],
             x=time[:],
-            name="Cantidad de Partículas vs Tiempo",
+            marker=dict(size=10),
+            name=" w = " + str(w[j]) + " Hz",
         ))
+        j += 1
 
     fig = go.Figure(
         data=data,
         layout=go.Layout(
-            xaxis=dict(title='Tiempo (s)', exponentformat="power",  showgrid=False, linecolor='black',
+            xaxis=dict(title='Tiempo (s)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
             yaxis=dict(title='Cantidad Partículas', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
             font=dict(
                 family="Arial",
-                size=24,
+                size=40,
             ),
             plot_bgcolor='white',
         )
