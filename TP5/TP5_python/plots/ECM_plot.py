@@ -20,7 +20,7 @@ def ECM_plot(particles_times: list[str]):
         np_times = np.array(times)
         np_particles = np.array([*range(0, len(np_times), 1)])
         rg = linregress(x=np_times, y=np_particles)
-        ecm = (sum((np_particles - np_times * rg.slope + rg.intercept)) ** 2) / len(np_times)
+        ecm = (sum((np_particles - np_times * rg.slope + rg.intercept) ** 2)) / len(np_times)
         print(ecm)
         lrg_y_values = np_times * rg.slope + rg.intercept
         fig = go.Figure(
@@ -49,6 +49,7 @@ def ECM_plot(particles_times: list[str]):
             )
         )
 
+        fig.update_layout(width=1000, height=1000)
         fig.show()
         stderr.append(rg.stderr)
         slope.append(rg.slope)
@@ -73,6 +74,7 @@ def ECM_plot(particles_times: list[str]):
             plot_bgcolor='white',
         )
     )
+
 
     fig.show()
 
