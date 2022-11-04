@@ -30,7 +30,7 @@ def particles_vs_time_plot(particles_times):
         layout=go.Layout(
             xaxis=dict(title='Tiempo (s)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
-            yaxis=dict(title='Cantidad Partículas', exponentformat="power", showgrid=False, linecolor='black',
+            yaxis=dict(title='Descarga (u)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
             font=dict(
                 family="Arial",

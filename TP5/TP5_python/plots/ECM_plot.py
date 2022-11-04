@@ -37,6 +37,7 @@ def ECM_plot(particles_times: list[str]):
                 )
             ],
             layout=go.Layout(
+                title=file,
                 xaxis=dict(title='Tiempo (s)', exponentformat="power", showgrid=False, linecolor='black',
                            ticks='inside'),
                 yaxis=dict(title='ECM', exponentformat="power", showgrid=False, linecolor='black',
@@ -63,7 +64,7 @@ def ECM_plot(particles_times: list[str]):
             showlegend=False
         ),
         layout=go.Layout(
-            xaxis=dict(title='w(Hz)', exponentformat="power", dtick=5, showgrid=False, linecolor='black',
+            xaxis=dict(title='w (Hz)', exponentformat="power", dtick=5, showgrid=False, linecolor='black',
                        ticks='inside'),
             yaxis=dict(title='Q (1/seg)', exponentformat="power", showgrid=False, linecolor='black',
                        ticks='inside'),
@@ -76,6 +77,8 @@ def ECM_plot(particles_times: list[str]):
     )
 
     fig.update_layout(width=1000, height=1000)
+    print(slope)
+
     fig.show()
 
 
