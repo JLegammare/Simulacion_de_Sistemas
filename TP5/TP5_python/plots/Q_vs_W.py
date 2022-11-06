@@ -25,7 +25,7 @@ def Q_W_plot(particles_times: list[str]):
         rg = linregress(x=np_times, y=np_particles)
         ecm = (sum((np_particles - np_times * rg.slope + rg.intercept) ** 2)) / len(np_times)
         lrg_y_values = np_times * rg.slope + rg.intercept
-        slopes.append(rg.slope)
+        slopes.append(rg.slope) #viejo
         q_s = []
         t_medios = []
 
@@ -83,7 +83,7 @@ def Q_W_plot(particles_times: list[str]):
                            ticks='inside'),
                 font=dict(
                     family="Arial",
-                    size=24,
+                    size=35,
                 ),
                 plot_bgcolor='white',
             )
@@ -108,7 +108,7 @@ def Q_W_plot(particles_times: list[str]):
                 y=slopes,
                 error_y=dict(type='data', array=stderr),
                 mode='lines',
-                showlegend=False
+                showlegend=True
             ),
         ],
         layout=go.Layout(
@@ -118,7 +118,7 @@ def Q_W_plot(particles_times: list[str]):
                        ticks='inside'),
             font=dict(
                 family="Arial",
-                size=24,
+                size=40,
             ),
             plot_bgcolor='white',
         )
